@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --primary-deep-blue: #1A237E;
+  --primary-dark-gray: #263238;
+  --primary-light-gray: #ECEFF1;
+  --primary-medium-gray: #CFD8DC;
+  
+  --accent-turquoise: #00BCD4;
+  --accent-lavender: #BA68C8;
+  --accent-gold: #FFC107;
+  --accent-gold-secondary: #FFAB40;
+  
+  --font-primary: 'Montserrat', sans-serif;
+  --font-heading: 'Poppins', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+  
+  --animation-fast: 0.2s;
+  --animation-medium: 0.4s;
+  --animation-slow: 0.8s;
+  --animation-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  background: var(--primary-deep-blue);
+  color: var(--primary-light-gray);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.zen-button {
+  background: var(--accent-turquoise);
+  color: var(--primary-light-gray);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: var(--font-primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--animation-fast) var(--animation-easing);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.zen-button:hover {
+  background: #00ACC1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+}
+
+.zen-button:active {
+  transform: translateY(0);
+}
+
+.zen-button.secondary {
+  background: var(--accent-lavender);
+}
+
+.zen-button.secondary:hover {
+  background: #9C27B0;
+  box-shadow: 0 4px 12px rgba(186, 104, 200, 0.3);
+}
+
+.zen-button.gold {
+  background: var(--accent-gold);
+  color: var(--primary-deep-blue);
+}
+
+.zen-button.gold:hover {
+  background: var(--accent-gold-secondary);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.zen-card {
+  background: var(--primary-dark-gray);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all var(--animation-medium) var(--animation-easing);
+}
+
+.zen-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.zen-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--primary-light-gray);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: var(--font-primary);
+  transition: all var(--animation-fast) var(--animation-easing);
+}
+
+.zen-input:focus {
+  outline: none;
+  border-color: var(--accent-turquoise);
+  box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.2);
+}
+
+.zen-input::placeholder {
+  color: var(--primary-medium-gray);
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--primary-light-gray);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.fade-in {
+  animation: fadeIn var(--animation-medium) var(--animation-easing);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+  animation: slideIn var(--animation-medium) var(--animation-easing);
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.glow-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-effect::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 188, 212, 0.1) 0%, transparent 70%);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+  
+  .zen-card {
+    padding: 16px;
+  }
+  
+  .zen-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
