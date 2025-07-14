@@ -2,8 +2,8 @@
 const TelegramBot = require('node-telegram-bot-api');
 
 // Bot Token from @BotFather
-const token = 'YOUR_BOT_TOKEN_HERE';
-const webAppUrl = 'https://your-domain.vercel.app';
+const token = process.env.BOT_TOKEN || 'YOUR_BOT_TOKEN_HERE';
+const webAppUrl = 'https://zen-game.vercel.app';
 
 const bot = new TelegramBot(token, { polling: true });
 

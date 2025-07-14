@@ -86,6 +86,7 @@ const DailyQuests = () => {
     return Math.min((quest.progress / quest.target) * 100, 100);
   };
 
+  // eslint-disable-next-line no-unused-vars
   const getStatusColor = (status) => {
     switch (status) {
       case QUEST_STATUS.ACTIVE: return 'var(--accent-turquoise)';

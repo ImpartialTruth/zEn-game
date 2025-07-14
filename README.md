@@ -45,7 +45,7 @@
 
 ```bash
 # რეპოზიტორიის კლონირება
-git clone https://github.com/your-username/zen-game.git
+git clone https://github.com/ImpartialTruth/zen-game.git
 
 # დირექტორიაში გადასვლა
 cd zen-game
