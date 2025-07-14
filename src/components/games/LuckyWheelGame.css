@@ -1,7 +1,11 @@
 .lucky-wheel-game {
-  max-width: 1000px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: clamp(12px, 3vw, 20px);
+  box-sizing: border-box;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .game-header {
@@ -39,14 +43,21 @@
 
 .game-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  grid-template-columns: 1fr;
+  gap: clamp(16px, 4vw, 32px);
+  width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+  .game-content {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .wheel-display {
   background: var(--primary-dark-gray);
-  border-radius: 20px;
-  padding: 40px;
+  border-radius: clamp(12px, 3vw, 20px);
+  padding: clamp(20px, 5vw, 40px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
@@ -54,13 +65,16 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .wheel-container {
   position: relative;
-  width: 300px;
-  height: 300px;
-  margin-bottom: 32px;
+  width: clamp(200px, 40vw, 300px);
+  height: clamp(200px, 40vw, 300px);
+  margin-bottom: clamp(16px, 4vw, 32px);
+  flex-shrink: 0;
 }
 
 .wheel-pointer {
@@ -118,9 +132,10 @@
 }
 
 .section-label {
-  font-size: 16px;
+  font-size: clamp(10px, 2.5vw, 16px);
   font-weight: bold;
   font-family: var(--font-mono);
+  line-height: 1;
 }
 
 .wheel-center {
@@ -128,11 +143,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 60px;
-  height: 60px;
+  width: clamp(40px, 8vw, 60px);
+  height: clamp(40px, 8vw, 60px);
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-secondary));
-  border: 3px solid var(--primary-deep-blue);
+  border: clamp(2px, 0.5vw, 3px) solid var(--primary-deep-blue);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -141,8 +156,9 @@
 }
 
 .center-logo {
-  font-size: 24px;
+  font-size: clamp(16px, 4vw, 24px);
   color: var(--primary-deep-blue);
+  line-height: 1;
 }
 
 .result-display {
@@ -151,36 +167,39 @@
 }
 
 .result-section {
-  width: 80px;
-  height: 80px;
+  width: clamp(60px, 12vw, 80px);
+  height: clamp(60px, 12vw, 80px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
-  border: 3px solid var(--accent-gold);
+  margin: 0 auto clamp(8px, 2vw, 16px);
+  border: clamp(2px, 0.5vw, 3px) solid var(--accent-gold);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .result-multiplier {
-  font-size: 24px;
+  font-size: clamp(16px, 4vw, 24px);
   font-weight: bold;
   color: white;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  line-height: 1;
 }
 
 .result-text {
-  font-size: 24px;
+  font-size: clamp(18px, 4vw, 24px);
   font-weight: bold;
   color: var(--primary-light-gray);
-  margin-bottom: 8px;
+  margin-bottom: clamp(4px, 1vw, 8px);
+  line-height: 1.2;
 }
 
 .result-amount {
-  font-size: 20px;
+  font-size: clamp(14px, 3.5vw, 20px);
   font-weight: 600;
   color: var(--accent-gold);
   font-family: var(--font-mono);
+  line-height: 1;
 }
 
 .game-controls {
@@ -310,17 +329,22 @@
 
 .spin-button,
 .play-again-button {
-  padding: 16px 24px;
+  padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 24px);
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: clamp(8px, 2vw, 12px);
+  font-size: clamp(14px, 3.5vw, 16px);
   font-weight: 600;
   cursor: pointer;
   transition: all var(--animation-medium) var(--animation-easing);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: clamp(4px, 1vw, 8px);
+  min-height: 48px;
+  width: 100%;
+  box-sizing: border-box;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .spin-button {
@@ -461,32 +485,86 @@
   100% { transform: rotate(360deg); }
 }
 
-@media (max-width: 768px) {
-  .game-content {
-    grid-template-columns: 1fr;
-    gap: 24px;
+/* Mobile First Responsive Design */
+@media screen and (max-width: 480px) {
+  .lucky-wheel-game {
+    padding: 12px;
+    min-height: calc(100vh - 24px);
+  }
+  
+  .game-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .back-button {
+    padding: 8px 12px;
+    font-size: 12px;
+    min-height: 36px;
   }
   
   .wheel-display {
-    padding: 32px;
+    padding: 16px;
+    border-radius: 8px;
   }
   
   .wheel-container {
-    width: 250px;
-    height: 250px;
+    width: clamp(180px, 35vw, 220px);
+    height: clamp(180px, 35vw, 220px);
+    margin-bottom: 16px;
   }
   
-  .section-label {
+  .game-controls {
+    padding: 12px;
+    gap: 12px;
+    border-radius: 8px;
+  }
+  
+  .betting-section {
+    gap: 12px;
+  }
+  
+  .prizes-grid {
+    grid-template-columns: 1fr;
+    max-height: 150px;
+  }
+  
+  .spin-button,
+  .play-again-button {
+    min-height: 44px;
+    font-size: 13px;
+  }
+  
+  .input-wrapper input {
+    min-height: 44px;
+    padding: 10px 32px 10px 12px;
     font-size: 14px;
   }
   
-  .wheel-center {
-    width: 50px;
-    height: 50px;
+  .prize-item {
+    padding: 6px;
   }
   
-  .center-logo {
-    font-size: 20px;
+  .prize-label,
+  .prize-amount {
+    font-size: 10px;
+  }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .wheel-display {
+    padding: 24px;
+  }
+  
+  .wheel-container {
+    width: clamp(220px, 35vw, 280px);
+    height: clamp(220px, 35vw, 280px);
+  }
+  
+  .game-controls {
+    padding: 20px;
   }
   
   .prizes-grid {
@@ -494,44 +572,84 @@
   }
 }
 
-@media (max-width: 480px) {
+@media screen and (min-width: 769px) and (max-width: 1023px) {
   .lucky-wheel-game {
-    padding: 16px;
+    max-width: 800px;
+    padding: 24px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .lucky-wheel-game {
+    max-width: 1000px;
+  }
+}
+
+/* Landscape mobile optimizations */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .lucky-wheel-game {
+    padding: 8px;
   }
   
   .game-header {
-    flex-direction: column;
-    align-items: flex-start;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+  
+  .game-content {
     gap: 12px;
   }
   
-  .game-title {
-    font-size: 24px;
-  }
-  
   .wheel-display {
-    padding: 24px;
+    padding: 12px;
   }
   
   .wheel-container {
-    width: 200px;
-    height: 200px;
-  }
-  
-  .section-label {
-    font-size: 12px;
-  }
-  
-  .wheel-center {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .center-logo {
-    font-size: 16px;
+    width: clamp(120px, 25vw, 180px);
+    height: clamp(120px, 25vw, 180px);
+    margin-bottom: 8px;
   }
   
   .game-controls {
-    padding: 20px;
+    padding: 12px;
+    gap: 8px;
+  }
+  
+  .betting-section {
+    gap: 8px;
+  }
+  
+  .prizes-grid {
+    max-height: 100px;
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .spin-button,
+  .play-again-button {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+/* Touch optimization */
+@media (hover: none) and (pointer: coarse) {
+  .spin-button,
+  .play-again-button {
+    min-height: 48px;
+  }
+  
+  .back-button {
+    min-height: 44px;
+    padding: 10px 16px;
+  }
+  
+  .input-wrapper input {
+    min-height: 48px;
+  }
+  
+  .prize-item {
+    min-height: 36px;
+    padding: 8px;
   }
 }

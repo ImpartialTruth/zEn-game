@@ -1,8 +1,10 @@
 .main-layout {
   min-height: 100vh;
+  width: 100%;
   background: linear-gradient(135deg, var(--primary-deep-blue) 0%, #283593 50%, #1A237E 100%);
   position: relative;
   overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .background-overlay {
@@ -49,22 +51,33 @@
 .app-header {
   position: relative;
   z-index: 10;
-  padding: 20px 0;
+  padding: clamp(12px, 3vw, 20px) 0;
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 clamp(12px, 3vw, 20px);
+  box-sizing: border-box;
+}
+
+@media screen and (min-width: 1200px) {
+  .header-content {
+    max-width: 1200px;
+  }
 }
 
 .logo-section {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: clamp(8px, 2vw, 12px);
+  width: 100%;
 }
 
 .zen-logo-mini {
@@ -74,19 +87,20 @@
 }
 
 .logo-circle {
-  width: 40px;
-  height: 40px;
+  width: clamp(32px, 8vw, 40px);
+  height: clamp(32px, 8vw, 40px);
   border-radius: 50%;
   background: linear-gradient(45deg, var(--accent-turquoise), var(--accent-lavender));
   display: flex;
   align-items: center;
   justify-content: center;
   animation: logoGlow 3s ease-in-out infinite;
+  flex-shrink: 0;
 }
 
 .logo-inner {
-  width: 28px;
-  height: 28px;
+  width: clamp(22px, 6vw, 28px);
+  height: clamp(22px, 6vw, 28px);
   border-radius: 50%;
   background: var(--primary-deep-blue);
   position: relative;
@@ -97,8 +111,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 18px;
-  height: 18px;
+  width: clamp(14px, 4vw, 18px);
+  height: clamp(14px, 4vw, 18px);
   background: linear-gradient(45deg, transparent 40%, var(--accent-turquoise) 50%, transparent 60%);
   border-radius: 50%;
   transform: translate(-50%, -50%);
@@ -106,24 +120,38 @@
 }
 
 .app-title {
-  font-size: 28px;
+  font-size: clamp(20px, 5vw, 28px);
   font-weight: 700;
   color: var(--primary-light-gray);
   text-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
   margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .main-content {
   position: relative;
   z-index: 5;
-  min-height: calc(100vh - 100px);
-  padding: 40px 0;
+  min-height: calc(100vh - clamp(80px, 15vw, 100px));
+  padding: clamp(20px, 5vw, 40px) 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .content-wrapper {
-  max-width: 1200px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 clamp(12px, 3vw, 20px);
+  box-sizing: border-box;
+}
+
+@media screen and (min-width: 1200px) {
+  .content-wrapper {
+    max-width: 1200px;
+  }
 }
 
 .ambient-glow {
@@ -136,8 +164,8 @@
 }
 
 .ambient-glow-1 {
-  width: 300px;
-  height: 300px;
+  width: clamp(150px, 30vw, 300px);
+  height: clamp(150px, 30vw, 300px);
   background: var(--accent-turquoise);
   top: 10%;
   left: 10%;
@@ -145,8 +173,8 @@
 }
 
 .ambient-glow-2 {
-  width: 250px;
-  height: 250px;
+  width: clamp(120px, 25vw, 250px);
+  height: clamp(120px, 25vw, 250px);
   background: var(--accent-lavender);
   top: 60%;
   right: 15%;
@@ -154,8 +182,8 @@
 }
 
 .ambient-glow-3 {
-  width: 200px;
-  height: 200px;
+  width: clamp(100px, 20vw, 200px);
+  height: clamp(100px, 20vw, 200px);
   background: var(--accent-gold);
   bottom: 20%;
   left: 20%;
@@ -214,27 +242,56 @@
   80% { transform: translate(-60px, 60px) scale(0.95); }
 }
 
-@media (max-width: 768px) {
+/* Mobile First Responsive Design */
+@media screen and (max-width: 480px) {
+  .app-header {
+    padding: 12px 0;
+  }
+  
+  .header-content {
+    padding: 0 12px;
+  }
+  
+  .logo-section {
+    gap: 8px;
+  }
+  
+  .logo-circle {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .logo-inner {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .app-title {
+    font-size: 18px;
+  }
+  
+  .main-content {
+    padding: 16px 0;
+    min-height: calc(100vh - 70px);
+  }
+  
+  .content-wrapper {
+    padding: 0 12px;
+  }
+  
+  .ambient-glow {
+    filter: blur(40px);
+    opacity: 0.05;
+  }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
   .app-header {
     padding: 16px 0;
   }
   
   .header-content {
     padding: 0 16px;
-  }
-  
-  .app-title {
-    font-size: 24px;
-  }
-  
-  .logo-circle {
-    width: 36px;
-    height: 36px;
-  }
-  
-  .logo-inner {
-    width: 24px;
-    height: 24px;
   }
   
   .main-content {
@@ -248,19 +305,74 @@
   .ambient-glow {
     filter: blur(60px);
   }
-  
-  .ambient-glow-1 {
-    width: 200px;
-    height: 200px;
+}
+
+@media screen and (min-width: 769px) and (max-width: 1023px) {
+  .header-content,
+  .content-wrapper {
+    max-width: 900px;
+    padding: 0 24px;
+  }
+}
+
+/* Landscape mobile optimizations */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .app-header {
+    padding: 8px 0;
   }
   
-  .ambient-glow-2 {
-    width: 180px;
-    height: 180px;
+  .logo-circle {
+    width: 28px;
+    height: 28px;
   }
   
-  .ambient-glow-3 {
-    width: 150px;
-    height: 150px;
+  .logo-inner {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .app-title {
+    font-size: 16px;
+  }
+  
+  .main-content {
+    padding: 12px 0;
+    min-height: calc(100vh - 50px);
+  }
+  
+  .ambient-glow {
+    display: none;
+  }
+  
+  .background-particles {
+    display: none;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .logo-circle,
+  .logo-inner::before,
+  .ambient-glow-1,
+  .ambient-glow-2,
+  .ambient-glow-3,
+  .bg-particle {
+    animation: none !important;
+  }
+  
+  .background-particles {
+    display: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .app-header {
+    background: rgba(0, 0, 0, 0.8);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .logo-circle {
+    border: 2px solid var(--primary-light-gray);
   }
 }
