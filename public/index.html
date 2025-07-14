@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ka">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#1A237E" />
+    <meta name="description" content="Zen - Balance Your Fortune. თამაშების პლატფორმა Telegram Web App-ში." />
+    <meta name="keywords" content="zen, games, telegram, web app, blockchain, crypto" />
+    
+    <!-- Telegram Web App -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Zen" />
+    
+    <!-- Prevent zoom on iOS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    
+    <!-- Fonts Preload -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <title>Zen - Balance Your Fortune</title>
+    
+    <style>
+      /* Loading styles */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background: linear-gradient(135deg, #1A237E 0%, #283593 50%, #1A237E 100%);
+        color: #ECEFF1;
+        overflow-x: hidden;
+      }
+      
+      /* Initial loading animation */
+      #initial-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, #1A237E 0%, #283593 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      }
+      
+      .loader-content {
+        text-align: center;
+        color: #ECEFF1;
+      }
+      
+      .loader-logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #00BCD4, #BA68C8);
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 2s ease-in-out infinite;
+      }
+      
+      .loader-text {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      
+      .loader-subtitle {
+        font-size: 14px;
+        opacity: 0.7;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+      }
+      
+      /* Hide loader when React app loads */
+      #root:not(:empty) + #initial-loader {
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    
+    <!-- Initial loading screen -->
+    <div id="initial-loader">
+      <div class="loader-content">
+        <div class="loader-logo">
+          <span style="font-size: 24px; color: #1A237E;">Z</span>
+        </div>
+        <div class="loader-text">Zen</div>
+        <div class="loader-subtitle">Balance Your Fortune</div>
+      </div>
+    </div>
+    
+    <script>
+      // Hide initial loader when React app is ready
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loader = document.getElementById('initial-loader');
+          if (loader) {
+            loader.style.display = 'none';
+          }
+        }, 1000);
+      });
+      
+      // Prevent context menu on long press (mobile)
+      document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+      });
+      
+      // Prevent text selection
+      document.addEventListener('selectstart', (e) => {
+        e.preventDefault();
+      });
+      
+      // Prevent drag
+      document.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+      });
+    </script>
+  </body>
+</html>
