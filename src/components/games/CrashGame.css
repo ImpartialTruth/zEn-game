@@ -47,18 +47,12 @@
 }
 
 .game-content {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: clamp(16px, 4vw, 32px);
   width: 100%;
   flex: 1;
   min-height: 0;
-}
-
-@media screen and (min-width: 1024px) {
-  .game-content {
-    grid-template-columns: 2fr 1fr;
-  }
 }
 
 .game-display {
@@ -71,6 +65,10 @@
   width: 100%;
   box-sizing: border-box;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 70vh;
 }
 
 .multiplier-display {
@@ -125,13 +123,15 @@
 
 .graph-container {
   position: relative;
-  height: clamp(250px, 40vw, 450px);
+  height: clamp(350px, 50vh, 600px);
   background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2a 20%, #2a2a4a 40%, #1a1a3a 60%, #0a0a1a 100%);
   border-radius: clamp(12px, 3vw, 20px);
   overflow: hidden;
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  flex: 1;
+  margin-bottom: 20px;
 }
 
 .aviator-canvas {
@@ -387,60 +387,87 @@
 }
 
 .game-history {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
-  padding: 20px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  z-index: 10;
 }
 
 .history-title {
-  font-size: 16px;
+  font-size: 12px;
   color: var(--primary-light-gray);
-  margin: 0 0 16px 0;
+  margin: 0 0 8px 0;
 }
 
 .history-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 4px;
 }
 
 .history-item {
   background: rgba(255, 255, 255, 0.1);
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .history-multiplier {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--accent-turquoise);
   font-family: var(--font-mono);
 }
 
 .game-controls {
-  background: var(--primary-dark-gray);
-  border-radius: clamp(12px, 3vw, 20px);
-  padding: clamp(16px, 4vw, 24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: clamp(8px, 2vw, 12px);
+  padding: clamp(12px, 3vw, 16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
-  flex-direction: column;
-  gap: clamp(16px, 3vw, 24px);
-  width: 100%;
+  flex-direction: row;
+  gap: clamp(12px, 3vw, 16px);
   box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+@media screen and (max-width: 768px) {
+  .game-controls {
+    flex-direction: column;
+    gap: clamp(8px, 2vw, 12px);
+  }
 }
 
 .betting-section {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  flex-direction: row;
+  gap: 12px;
+  flex: 1;
+}
+
+@media screen and (max-width: 768px) {
+  .betting-section {
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 
 .bet-input-group,
 .auto-cashout-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
+  flex: 1;
 }
 
 .auto-cashout-header {
@@ -535,7 +562,14 @@
 .action-buttons {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  min-width: 200px;
+}
+
+@media screen and (max-width: 768px) {
+  .action-buttons {
+    min-width: auto;
+  }
 }
 
 .crash-message {
@@ -619,12 +653,7 @@
 }
 
 .game-info {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
+  display: none;
 }
 
 .info-item {

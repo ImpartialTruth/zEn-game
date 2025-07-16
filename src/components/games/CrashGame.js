@@ -231,167 +231,147 @@ const CrashGame = ({ onBack }) => {
                 </div>
               )}
             </div>
+          </div>
             
-            <div className="graph-container">
-              <canvas 
-                ref={canvasRef}
-                className="aviator-canvas"
-                width="800"
-                height="400"
-              />
-              <div className="flight-overlay">
-                <div className="sky-gradient"></div>
-                <div className="clouds">
-                  <div className="cloud cloud-1"></div>
-                  <div className="cloud cloud-2"></div>
-                  <div className="cloud cloud-3"></div>
+          <div className="graph-container">
+            <canvas 
+              ref={canvasRef}
+              className="aviator-canvas"
+              width="800"
+              height="400"
+            />
+            <div className="flight-overlay">
+              <div className="sky-gradient"></div>
+              <div className="clouds">
+                <div className="cloud cloud-1"></div>
+                <div className="cloud cloud-2"></div>
+                <div className="cloud cloud-3"></div>
+              </div>
+              <div 
+                className={`airplane ${gameState}`}
+                style={{
+                  left: `${airplanePosition.x}%`,
+                  bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`,
+                  transform: `rotate(${Math.min((airplanePosition.x - 5) * 1.5, 25)}deg)`
+                }}
+              >
+                <div className="airplane-body">
+                  <div className="airplane-wing"></div>
+                  <div className="airplane-tail"></div>
+                  <div className="airplane-propeller"></div>
                 </div>
+                <div className="airplane-trail"></div>
+              </div>
+              
+              {gameState === 'crashed' && (
                 <div 
-                  className={`airplane ${gameState}`}
+                  className="crash-explosion"
                   style={{
                     left: `${airplanePosition.x}%`,
-                    bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`,
-                    transform: `rotate(${Math.min((airplanePosition.x - 5) * 1.5, 25)}deg)`
+                    bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`
                   }}
                 >
-                  <div className="airplane-body">
-                    <div className="airplane-wing"></div>
-                    <div className="airplane-tail"></div>
-                    <div className="airplane-propeller"></div>
-                  </div>
-                  <div className="airplane-trail"></div>
+                  <div className="explosion-effect">💥</div>
+                  <div className="explosion-ring"></div>
+                  <div className="explosion-particles"></div>
                 </div>
-                
-                {gameState === 'crashed' && (
-                  <div 
-                    className="crash-explosion"
-                    style={{
-                      left: `${airplanePosition.x}%`,
-                      bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`
-                    }}
+              )}
+            </div>
+
+            <div className="game-history">
+              <h3 className="history-title">Recent Games</h3>
+              <div className="history-list">
+                {gameHistory.map((mult, index) => (
+                  <div key={index} className="history-item">
+                    <span className="history-multiplier">{mult.toFixed(2)}x</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="game-controls">
+              <div className="betting-section">
+                <div className="bet-input-group">
+                  <label htmlFor="bet-amount">Bet Amount</label>
+                  <div className="input-wrapper">
+                    <input
+                      id="bet-amount"
+                      type="number"
+                      value={betAmount}
+                      onChange={(e) => setBetAmount(e.target.value)}
+                      placeholder="Enter bet amount"
+                      min="10"
+                      max="1000"
+                      disabled={gameState === 'playing'}
+                    />
+                    <span className="currency-symbol">🪙</span>
+                  </div>
+                </div>
+
+                <div className="auto-cashout-group">
+                  <div className="auto-cashout-header">
+                    <label htmlFor="cash-out-at">Auto Cash Out At</label>
+                    <div className="auto-cashout-toggle">
+                      <input
+                        type="checkbox"
+                        id="auto-cashout-toggle"
+                        checked={autoCashOutEnabled}
+                        onChange={(e) => setAutoCashOutEnabled(e.target.checked)}
+                        disabled={gameState === 'playing'}
+                      />
+                      <label htmlFor="auto-cashout-toggle" className="toggle-label">
+                        {autoCashOutEnabled ? 'ON' : 'OFF'}
+                      </label>
+                    </div>
+                  </div>
+                  <div className="input-wrapper">
+                    <input
+                      id="cash-out-at"
+                      type="number"
+                      value={cashOutAt}
+                      onChange={(e) => setCashOutAt(e.target.value)}
+                      placeholder="2.00"
+                      min="1.01"
+                      step="0.01"
+                      disabled={gameState === 'playing' || !autoCashOutEnabled}
+                    />
+                    <span className="multiplier-symbol">x</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="action-buttons">
+                {!isPlaying ? (
+                  <button 
+                    className="bet-button"
+                    onClick={handlePlaceBet}
+                    disabled={!betAmount || gameState === 'playing'}
                   >
-                    <div className="explosion-effect">💥</div>
-                    <div className="explosion-ring"></div>
-                    <div className="explosion-particles"></div>
+                    {gameState === 'waiting' ? '🚀 Place Bet' : '🎯 Next Round'}
+                  </button>
+                ) : (
+                  <button 
+                    className="cashout-button"
+                    onClick={handleCashOut}
+                    disabled={gameState === 'crashed'}
+                  >
+                    💰 Cash Out ({(parseFloat(betAmount || 0) * multiplier).toFixed(2)} 🪙)
+                  </button>
+                )}
+                
+                {gameState === 'crashed' && !userCashedOut && isPlaying && (
+                  <div className="crash-message">
+                    ❌ Too late! The plane crashed at {multiplier.toFixed(2)}x
+                  </div>
+                )}
+                
+                {userCashedOut && winnings > 0 && (
+                  <div className="win-message">
+                    🎉 You won {winnings.toFixed(2)} 🪙 at {multiplier.toFixed(2)}x!
                   </div>
                 )}
               </div>
             </div>
-          </div>
-
-          <div className="game-history">
-            <h3 className="history-title">Recent Games</h3>
-            <div className="history-list">
-              {gameHistory.map((mult, index) => (
-                <div key={index} className="history-item">
-                  <span className="history-multiplier">{mult.toFixed(2)}x</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="game-controls">
-          <div className="betting-section">
-            <div className="bet-input-group">
-              <label htmlFor="bet-amount">Bet Amount</label>
-              <div className="input-wrapper">
-                <input
-                  id="bet-amount"
-                  type="number"
-                  value={betAmount}
-                  onChange={(e) => setBetAmount(e.target.value)}
-                  placeholder="Enter bet amount"
-                  min="10"
-                  max="1000"
-                  disabled={gameState === 'playing'}
-                />
-                <span className="currency-symbol">🪙</span>
-              </div>
-            </div>
-
-            <div className="auto-cashout-group">
-              <div className="auto-cashout-header">
-                <label htmlFor="cash-out-at">Auto Cash Out At</label>
-                <div className="auto-cashout-toggle">
-                  <input
-                    type="checkbox"
-                    id="auto-cashout-toggle"
-                    checked={autoCashOutEnabled}
-                    onChange={(e) => setAutoCashOutEnabled(e.target.checked)}
-                    disabled={gameState === 'playing'}
-                  />
-                  <label htmlFor="auto-cashout-toggle" className="toggle-label">
-                    {autoCashOutEnabled ? 'ON' : 'OFF'}
-                  </label>
-                </div>
-              </div>
-              <div className="input-wrapper">
-                <input
-                  id="cash-out-at"
-                  type="number"
-                  value={cashOutAt}
-                  onChange={(e) => setCashOutAt(e.target.value)}
-                  placeholder="2.00"
-                  min="1.01"
-                  step="0.01"
-                  disabled={gameState === 'playing' || !autoCashOutEnabled}
-                />
-                <span className="multiplier-symbol">x</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="action-buttons">
-            {!isPlaying ? (
-              <button 
-                className="bet-button"
-                onClick={handlePlaceBet}
-                disabled={!betAmount || gameState === 'playing'}
-              >
-                {gameState === 'waiting' ? '🚀 Place Bet' : '🎯 Next Round'}
-              </button>
-            ) : (
-              <button 
-                className="cashout-button"
-                onClick={handleCashOut}
-                disabled={gameState === 'crashed'}
-              >
-                💰 Cash Out ({(parseFloat(betAmount || 0) * multiplier).toFixed(2)} 🪙)
-              </button>
-            )}
-            
-            {gameState === 'crashed' && !userCashedOut && isPlaying && (
-              <div className="crash-message">
-                ❌ Too late! The plane crashed at {multiplier.toFixed(2)}x
-              </div>
-            )}
-            
-            {userCashedOut && winnings > 0 && (
-              <div className="win-message">
-                🎉 You won {winnings.toFixed(2)} 🪙 at {multiplier.toFixed(2)}x!
-              </div>
-            )}
-          </div>
-
-          <div className="game-info">
-            <div className="info-item">
-              <span className="info-label">Status:</span>
-              <span className={`info-value ${gameState}`}>
-                {gameState === 'waiting' ? 'Waiting...' : 
-                 gameState === 'playing' ? 'Flying' : 'Crashed'}
-              </span>
-            </div>
-            <div className="info-item">
-              <span className="info-label">Your Bet:</span>
-              <span className="info-value">{betAmount || '0'} 🪙</span>
-            </div>
-            {userCashedOut && winnings > 0 && (
-              <div className="info-item win-info">
-                <span className="info-label">You Won:</span>
-                <span className="info-value win-amount">{winnings.toFixed(2)} 🪙</span>
-              </div>
-            )}
           </div>
         </div>
       </div>
