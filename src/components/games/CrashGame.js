@@ -15,7 +15,7 @@ const CrashGame = ({ onBack }) => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   const [flightPath, setFlightPath] = useState([]);
-  const [airplanePosition, setAirplanePosition] = useState({ x: 50, y: 400 });
+  const [airplanePosition, setAirplanePosition] = useState({ x: 10, y: 400 });
 
   // Initialize game with 10-second countdown on first load
   useEffect(() => {
@@ -65,16 +65,20 @@ const CrashGame = ({ onBack }) => {
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
-              setAirplanePosition({ x: 50, y: 400 });
+              setAirplanePosition({ x: 10, y: 400 });
               setWinnings(0);
             }, 3000);
             
             return newMultiplier;
           }
           
-          // Update flight path
-          setFlightPath(prev => [...prev, { x: 50 + (newMultiplier - 1) * 60, y: 400 - Math.log(newMultiplier) * 80 }]);
-          setAirplanePosition({ x: 50 + (newMultiplier - 1) * 60, y: 400 - Math.log(newMultiplier) * 80 });
+          // Update flight path with balanced curve
+          const progress = (newMultiplier - 1) / 4; // Scale to 0-1 over first 5x
+          const xPos = Math.min(10 + progress * 70, 85); // Start from 10%, go to max 85%
+          const yPos = 400 - Math.pow(newMultiplier - 1, 0.7) * 100; // Smoother curve
+          
+          setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
+          setAirplanePosition({ x: xPos, y: yPos });
           
           return newMultiplier;
         });
@@ -159,8 +163,17 @@ const CrashGame = ({ onBack }) => {
       ctx.moveTo(0, height);
       ctx.lineTo(scaledPath[0].x, scaledPath[0].y);
       
+      // Create smooth curve
       for (let i = 1; i < scaledPath.length; i++) {
-        ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
+        if (i === 1) {
+          ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
+        } else {
+          const prevPoint = scaledPath[i - 1];
+          const currentPoint = scaledPath[i];
+          const controlX = prevPoint.x + (currentPoint.x - prevPoint.x) * 0.5;
+          const controlY = prevPoint.y;
+          ctx.quadraticCurveTo(controlX, controlY, currentPoint.x, currentPoint.y);
+        }
       }
       
       ctx.lineTo(scaledPath[scaledPath.length - 1].x, height);
@@ -171,7 +184,15 @@ const CrashGame = ({ onBack }) => {
       ctx.beginPath();
       ctx.moveTo(scaledPath[0].x, scaledPath[0].y);
       for (let i = 1; i < scaledPath.length; i++) {
-        ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
+        if (i === 1) {
+          ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
+        } else {
+          const prevPoint = scaledPath[i - 1];
+          const currentPoint = scaledPath[i];
+          const controlX = prevPoint.x + (currentPoint.x - prevPoint.x) * 0.5;
+          const controlY = prevPoint.y;
+          ctx.quadraticCurveTo(controlX, controlY, currentPoint.x, currentPoint.y);
+        }
       }
       ctx.stroke();
       
@@ -193,8 +214,8 @@ const CrashGame = ({ onBack }) => {
       setUserCashedOut(false);
       setWinnings(0);
       setAutoCashOutEnabled(cashOutAt && parseFloat(cashOutAt) > 1.0);
-      setFlightPath([{ x: 50, y: 400 }]);
-      setAirplanePosition({ x: 50, y: 400 });
+      setFlightPath([{ x: 10, y: 400 }]);
+      setAirplanePosition({ x: 10, y: 400 });
     }
   };
 
