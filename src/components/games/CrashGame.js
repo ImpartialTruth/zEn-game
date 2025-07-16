@@ -15,7 +15,7 @@ const CrashGame = ({ onBack }) => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   const [flightPath, setFlightPath] = useState([]);
-  const [airplanePosition, setAirplanePosition] = useState({ x: 10, y: 400 });
+  const [airplanePosition, setAirplanePosition] = useState({ x: 5, y: 400 });
 
   // Initialize game with 10-second countdown on first load
   useEffect(() => {
@@ -65,17 +65,17 @@ const CrashGame = ({ onBack }) => {
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
-              setAirplanePosition({ x: 10, y: 400 });
+              setAirplanePosition({ x: 5, y: 400 });
               setWinnings(0);
             }, 3000);
             
             return newMultiplier;
           }
           
-          // Update flight path - from bottom-left to top-right
-          const progress = (newMultiplier - 1) / 5; // Progress over first 6x
-          const xPos = 10 + progress * 80; // Start from 10%, move to 90%
-          const yPos = 400 - progress * 200; // Move up as multiplier increases
+          // Update flight path - curved ascent like real Aviator
+          const progress = Math.min((newMultiplier - 1) / 8, 1); // Progress over first 9x
+          const xPos = 5 + progress * 85; // Start from 5%, move to 90%
+          const yPos = 400 - Math.pow(progress, 0.6) * 220; // Curved ascent
           
           setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
           setAirplanePosition({ x: xPos, y: yPos });
@@ -118,12 +118,12 @@ const CrashGame = ({ onBack }) => {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
     
-    // Simple grid background
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 1;
+    // Subtle grid background
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.lineWidth = 0.5;
     
     // Horizontal lines
-    for (let y = 0; y <= height; y += 40) {
+    for (let y = 0; y <= height; y += 50) {
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(width, y);
@@ -131,31 +131,48 @@ const CrashGame = ({ onBack }) => {
     }
     
     // Vertical lines
-    for (let x = 0; x <= width; x += 40) {
+    for (let x = 0; x <= width; x += 50) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, height);
       ctx.stroke();
     }
     
-    // Draw simple flight path
+    // Draw flight path with glow effect
     if (flightPath.length > 1) {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-      ctx.lineWidth = 2;
-      
       // Scale coordinates for canvas
       const scaledPath = flightPath.map(point => ({
         x: (point.x / 100) * width,
         y: height - ((point.y - 200) / 200) * height
       }));
       
-      // Draw simple line
+      // Draw glowing line
+      ctx.strokeStyle = gameState === 'crashed' ? '#ff4444' : '#00ff88';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = gameState === 'crashed' ? '#ff4444' : '#00ff88';
+      ctx.shadowBlur = 10;
+      
+      // Draw smooth curve
       ctx.beginPath();
       ctx.moveTo(scaledPath[0].x, scaledPath[0].y);
+      
       for (let i = 1; i < scaledPath.length; i++) {
-        ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
+        if (i === 1) {
+          ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
+        } else {
+          const prevPoint = scaledPath[i - 1];
+          const currentPoint = scaledPath[i];
+          const controlX = prevPoint.x + (currentPoint.x - prevPoint.x) * 0.5;
+          const controlY = prevPoint.y;
+          ctx.quadraticCurveTo(controlX, controlY, currentPoint.x, currentPoint.y);
+        }
       }
+      
       ctx.stroke();
+      
+      // Reset shadow
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
     }
     
   }, [flightPath, multiplier, gameState]);
@@ -166,8 +183,8 @@ const CrashGame = ({ onBack }) => {
       setUserCashedOut(false);
       setWinnings(0);
       setAutoCashOutEnabled(cashOutAt && parseFloat(cashOutAt) > 1.0);
-      setFlightPath([{ x: 10, y: 400 }]);
-      setAirplanePosition({ x: 10, y: 400 });
+      setFlightPath([{ x: 5, y: 400 }]);
+      setAirplanePosition({ x: 5, y: 400 });
     }
   };
 
@@ -224,18 +241,25 @@ const CrashGame = ({ onBack }) => {
               />
               <div className="flight-overlay">
                 <div className="sky-gradient"></div>
+                <div className="clouds">
+                  <div className="cloud cloud-1"></div>
+                  <div className="cloud cloud-2"></div>
+                  <div className="cloud cloud-3"></div>
+                </div>
                 <div 
                   className={`airplane ${gameState}`}
                   style={{
                     left: `${airplanePosition.x}%`,
                     bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`,
-                    transform: `rotate(${Math.min((airplanePosition.x - 10) * 2, 30)}deg)`
+                    transform: `rotate(${Math.min((airplanePosition.x - 5) * 1.5, 25)}deg)`
                   }}
                 >
                   <div className="airplane-body">
                     <div className="airplane-wing"></div>
                     <div className="airplane-tail"></div>
+                    <div className="airplane-propeller"></div>
                   </div>
+                  <div className="airplane-trail"></div>
                 </div>
                 
                 {gameState === 'crashed' && (
