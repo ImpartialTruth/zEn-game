@@ -2,7 +2,15 @@
   "name": "zen-meditation-game",
   "version": "1.0.0",
   "description": "Zen - Balance Your Fortune. თამაშების პლატფორმა Telegram Web App-ში.",
-  "keywords": ["zen", "games", "telegram", "web-app", "react", "gaming", "blockchain"],
+  "keywords": [
+    "zen",
+    "games",
+    "telegram",
+    "web-app",
+    "react",
+    "gaming",
+    "blockchain"
+  ],
   "author": "Zen Development Team",
   "license": "MIT",
   "homepage": "https://zen-game.vercel.app",
@@ -53,5 +61,13 @@
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=8.0.0"
+  },
+  "main": "bot.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ImpartialTruth/zEn-game.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ImpartialTruth/zEn-game/issues"
   }
 }
