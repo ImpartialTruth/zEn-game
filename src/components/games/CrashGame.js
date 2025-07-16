@@ -118,12 +118,12 @@ const CrashGame = ({ onBack }) => {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
     
-    // Subtle grid background
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    // Draw grid lines
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
     ctx.lineWidth = 0.5;
     
     // Horizontal lines
-    for (let y = 0; y <= height; y += 50) {
+    for (let y = 0; y <= height; y += 40) {
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(width, y);
@@ -131,14 +131,22 @@ const CrashGame = ({ onBack }) => {
     }
     
     // Vertical lines
-    for (let x = 0; x <= width; x += 50) {
+    for (let x = 0; x <= width; x += 40) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, height);
       ctx.stroke();
     }
     
-    // Draw flight path with glow effect
+    // Draw white dots on bottom axis
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    for (let x = 40; x < width; x += 40) {
+      ctx.beginPath();
+      ctx.arc(x, height - 20, 2, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+    
+    // Draw flight path with red filled area
     if (flightPath.length > 1) {
       // Scale coordinates for canvas
       const scaledPath = flightPath.map(point => ({
@@ -146,13 +154,31 @@ const CrashGame = ({ onBack }) => {
         y: height - ((point.y - 200) / 200) * height
       }));
       
-      // Draw glowing line
-      ctx.strokeStyle = gameState === 'crashed' ? '#ff4444' : '#00ff88';
-      ctx.lineWidth = 3;
-      ctx.shadowColor = gameState === 'crashed' ? '#ff4444' : '#00ff88';
-      ctx.shadowBlur = 10;
+      // Draw filled red area under curve
+      ctx.fillStyle = 'rgba(220, 38, 38, 0.8)';
+      ctx.beginPath();
+      ctx.moveTo(0, height);
+      ctx.lineTo(scaledPath[0].x, scaledPath[0].y);
       
-      // Draw smooth curve
+      for (let i = 1; i < scaledPath.length; i++) {
+        if (i === 1) {
+          ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
+        } else {
+          const prevPoint = scaledPath[i - 1];
+          const currentPoint = scaledPath[i];
+          const controlX = prevPoint.x + (currentPoint.x - prevPoint.x) * 0.5;
+          const controlY = prevPoint.y;
+          ctx.quadraticCurveTo(controlX, controlY, currentPoint.x, currentPoint.y);
+        }
+      }
+      
+      ctx.lineTo(scaledPath[scaledPath.length - 1].x, height);
+      ctx.lineTo(0, height);
+      ctx.fill();
+      
+      // Draw curve line
+      ctx.strokeStyle = 'rgba(220, 38, 38, 1)';
+      ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(scaledPath[0].x, scaledPath[0].y);
       
@@ -169,10 +195,6 @@ const CrashGame = ({ onBack }) => {
       }
       
       ctx.stroke();
-      
-      // Reset shadow
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = 0;
     }
     
   }, [flightPath, multiplier, gameState]);
@@ -208,12 +230,67 @@ const CrashGame = ({ onBack }) => {
 
   return (
     <div className="crash-game">
-      <div className="game-header">
-        <h2 className="game-title">✈️ Aviator</h2>
-      </div>
+      <div className="game-display">
+        {/* Top row with previous multiplier results */}
+        <div className="game-history">
+          <div className="history-list">
+            {gameHistory.map((mult, index) => (
+              <div key={index} className="history-item">
+                <span className="history-multiplier">{mult.toFixed(2)}x</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-      <div className="game-content">
-        <div className="game-display">
+        {/* Full-screen graph container */}
+        <div className="graph-container">
+          <canvas 
+            ref={canvasRef}
+            className="aviator-canvas"
+            width="800"
+            height="400"
+          />
+          
+          {/* Flight overlay with airplane */}
+          <div className="flight-overlay">
+            <div className="sky-gradient"></div>
+            <div className="clouds">
+              <div className="cloud cloud-1"></div>
+              <div className="cloud cloud-2"></div>
+              <div className="cloud cloud-3"></div>
+            </div>
+            <div 
+              className={`airplane ${gameState}`}
+              style={{
+                left: `${airplanePosition.x}%`,
+                bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`,
+                transform: `rotate(${Math.min((airplanePosition.x - 5) * 1.5, 25)}deg)`
+              }}
+            >
+              <div className="airplane-body">
+                <div className="airplane-wing"></div>
+                <div className="airplane-tail"></div>
+                <div className="airplane-propeller"></div>
+              </div>
+              <div className="airplane-trail"></div>
+            </div>
+            
+            {gameState === 'crashed' && (
+              <div 
+                className="crash-explosion"
+                style={{
+                  left: `${airplanePosition.x}%`,
+                  bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`
+                }}
+              >
+                <div className="explosion-effect">💥</div>
+                <div className="explosion-ring"></div>
+                <div className="explosion-particles"></div>
+              </div>
+            )}
+          </div>
+
+          {/* Centered large multiplier display */}
           <div className="multiplier-display">
             <div className="multiplier-container">
               <div 
@@ -232,146 +309,65 @@ const CrashGame = ({ onBack }) => {
               )}
             </div>
           </div>
+
+          {/* Bottom control panel */}
+          <div className="game-controls">
+            <div className="control-tabs">
+              <div className="tab active">Bet</div>
+              <div className="tab">Auto</div>
+            </div>
             
-          <div className="graph-container">
-            <canvas 
-              ref={canvasRef}
-              className="aviator-canvas"
-              width="800"
-              height="400"
-            />
-            <div className="flight-overlay">
-              <div className="sky-gradient"></div>
-              <div className="clouds">
-                <div className="cloud cloud-1"></div>
-                <div className="cloud cloud-2"></div>
-                <div className="cloud cloud-3"></div>
-              </div>
-              <div 
-                className={`airplane ${gameState}`}
-                style={{
-                  left: `${airplanePosition.x}%`,
-                  bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`,
-                  transform: `rotate(${Math.min((airplanePosition.x - 5) * 1.5, 25)}deg)`
-                }}
-              >
-                <div className="airplane-body">
-                  <div className="airplane-wing"></div>
-                  <div className="airplane-tail"></div>
-                  <div className="airplane-propeller"></div>
+            <div className="betting-section">
+              <div className="bet-display">
+                <div className="bet-amount-display">
+                  {betAmount || '2.00'}
+                  <div className="bet-actions">
+                    <button className="bet-action-btn" onClick={() => setBetAmount(prev => Math.max(0, parseFloat(prev || 2) - 0.5).toFixed(2))}>-</button>
+                    <button className="bet-action-btn" onClick={() => setBetAmount(prev => (parseFloat(prev || 2) + 0.5).toFixed(2))}>+</button>
+                  </div>
                 </div>
-                <div className="airplane-trail"></div>
               </div>
               
-              {gameState === 'crashed' && (
-                <div 
-                  className="crash-explosion"
-                  style={{
-                    left: `${airplanePosition.x}%`,
-                    bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`
-                  }}
+              <div className="bet-quick-amounts">
+                <button className="quick-bet-btn" onClick={() => setBetAmount('5')}>5R</button>
+                <button className="quick-bet-btn" onClick={() => setBetAmount('10')}>10R</button>
+                <button className="quick-bet-btn" onClick={() => setBetAmount('20')}>20R</button>
+                <button className="quick-bet-btn" onClick={() => setBetAmount('100')}>100R</button>
+              </div>
+            </div>
+
+            <div className="action-section">
+              {!isPlaying ? (
+                <button 
+                  className="bet-button"
+                  onClick={handlePlaceBet}
+                  disabled={!betAmount || gameState === 'playing'}
                 >
-                  <div className="explosion-effect">💥</div>
-                  <div className="explosion-ring"></div>
-                  <div className="explosion-particles"></div>
-                </div>
+                  {gameState === 'waiting' ? 'Place Bet' : 'Next Round'}
+                </button>
+              ) : (
+                <button 
+                  className="cashout-button"
+                  onClick={handleCashOut}
+                  disabled={gameState === 'crashed'}
+                >
+                  <div className="cashout-text">CASH OUT</div>
+                  <div className="cashout-amount">{(parseFloat(betAmount || 0) * multiplier).toFixed(2)}R</div>
+                </button>
               )}
             </div>
-
-            <div className="game-history">
-              <h3 className="history-title">Recent Games</h3>
-              <div className="history-list">
-                {gameHistory.map((mult, index) => (
-                  <div key={index} className="history-item">
-                    <span className="history-multiplier">{mult.toFixed(2)}x</span>
-                  </div>
-                ))}
+            
+            {gameState === 'crashed' && !userCashedOut && isPlaying && (
+              <div className="crash-message">
+                ❌ Too late! The plane crashed at {multiplier.toFixed(2)}x
               </div>
-            </div>
-
-            <div className="game-controls">
-              <div className="betting-section">
-                <div className="bet-input-group">
-                  <label htmlFor="bet-amount">Bet Amount</label>
-                  <div className="input-wrapper">
-                    <input
-                      id="bet-amount"
-                      type="number"
-                      value={betAmount}
-                      onChange={(e) => setBetAmount(e.target.value)}
-                      placeholder="Enter bet amount"
-                      min="10"
-                      max="1000"
-                      disabled={gameState === 'playing'}
-                    />
-                    <span className="currency-symbol">🪙</span>
-                  </div>
-                </div>
-
-                <div className="auto-cashout-group">
-                  <div className="auto-cashout-header">
-                    <label htmlFor="cash-out-at">Auto Cash Out At</label>
-                    <div className="auto-cashout-toggle">
-                      <input
-                        type="checkbox"
-                        id="auto-cashout-toggle"
-                        checked={autoCashOutEnabled}
-                        onChange={(e) => setAutoCashOutEnabled(e.target.checked)}
-                        disabled={gameState === 'playing'}
-                      />
-                      <label htmlFor="auto-cashout-toggle" className="toggle-label">
-                        {autoCashOutEnabled ? 'ON' : 'OFF'}
-                      </label>
-                    </div>
-                  </div>
-                  <div className="input-wrapper">
-                    <input
-                      id="cash-out-at"
-                      type="number"
-                      value={cashOutAt}
-                      onChange={(e) => setCashOutAt(e.target.value)}
-                      placeholder="2.00"
-                      min="1.01"
-                      step="0.01"
-                      disabled={gameState === 'playing' || !autoCashOutEnabled}
-                    />
-                    <span className="multiplier-symbol">x</span>
-                  </div>
-                </div>
+            )}
+            
+            {userCashedOut && winnings > 0 && (
+              <div className="win-message">
+                🎉 You won {winnings.toFixed(2)} R at {multiplier.toFixed(2)}x!
               </div>
-
-              <div className="action-buttons">
-                {!isPlaying ? (
-                  <button 
-                    className="bet-button"
-                    onClick={handlePlaceBet}
-                    disabled={!betAmount || gameState === 'playing'}
-                  >
-                    {gameState === 'waiting' ? '🚀 Place Bet' : '🎯 Next Round'}
-                  </button>
-                ) : (
-                  <button 
-                    className="cashout-button"
-                    onClick={handleCashOut}
-                    disabled={gameState === 'crashed'}
-                  >
-                    💰 Cash Out ({(parseFloat(betAmount || 0) * multiplier).toFixed(2)} 🪙)
-                  </button>
-                )}
-                
-                {gameState === 'crashed' && !userCashedOut && isPlaying && (
-                  <div className="crash-message">
-                    ❌ Too late! The plane crashed at {multiplier.toFixed(2)}x
-                  </div>
-                )}
-                
-                {userCashedOut && winnings > 0 && (
-                  <div className="win-message">
-                    🎉 You won {winnings.toFixed(2)} 🪙 at {multiplier.toFixed(2)}x!
-                  </div>
-                )}
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
