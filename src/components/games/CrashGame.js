@@ -15,7 +15,7 @@ const CrashGame = ({ onBack }) => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   const [flightPath, setFlightPath] = useState([]);
-  const [airplanePosition, setAirplanePosition] = useState({ x: 5, y: 90 });
+  const [airplanePosition, setAirplanePosition] = useState({ x: 5, y: 10 });
 
   // Initialize game with 10-second countdown on first load
   useEffect(() => {
@@ -65,7 +65,7 @@ const CrashGame = ({ onBack }) => {
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
-              setAirplanePosition({ x: 5, y: 90 });
+              setAirplanePosition({ x: 5, y: 10 });
               setWinnings(0);
             }, 3000);
             
@@ -75,7 +75,7 @@ const CrashGame = ({ onBack }) => {
           // Update flight path - takeoff from low left angle
           const progress = Math.min((newMultiplier - 1) / 8, 1); // Progress over first 9x
           const xPos = 5 + progress * 85; // Start from 5% (low left), move to 90%
-          const yPos = 90 - Math.pow(progress, 0.7) * 75; // Start from low position, fly upward at angle
+          const yPos = 10 + Math.pow(progress, 0.7) * 75; // Start from low position (10), fly upward to 85
           
           setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
           setAirplanePosition({ x: xPos, y: yPos });
@@ -205,8 +205,8 @@ const CrashGame = ({ onBack }) => {
       setUserCashedOut(false);
       setWinnings(0);
       setAutoCashOutEnabled(cashOutAt && parseFloat(cashOutAt) > 1.0);
-      setFlightPath([{ x: 5, y: 90 }]);
-      setAirplanePosition({ x: 5, y: 90 });
+      setFlightPath([{ x: 5, y: 10 }]);
+      setAirplanePosition({ x: 5, y: 10 });
     }
   };
 
