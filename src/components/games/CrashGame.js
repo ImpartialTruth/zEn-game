@@ -114,13 +114,39 @@ const CrashGame = ({ onBack }) => {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
     
-    // Draw flight path
-    if (flightPath.length > 1) {
+    // Draw radial gradient background
+    const gradient = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.max(width, height)/2);
+    gradient.addColorStop(0, 'rgba(0, 0, 0, 0.9)');
+    gradient.addColorStop(0.3, 'rgba(40, 40, 40, 0.7)');
+    gradient.addColorStop(0.6, 'rgba(20, 20, 20, 0.5)');
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    
+    // Draw radial lines from center
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.lineWidth = 1;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    
+    for (let angle = 0; angle < 360; angle += 15) {
+      const radian = (angle * Math.PI) / 180;
+      const endX = centerX + Math.cos(radian) * Math.max(width, height);
+      const endY = centerY + Math.sin(radian) * Math.max(width, height);
+      
       ctx.beginPath();
-      ctx.strokeStyle = getMultiplierColor();
-      ctx.lineWidth = 4;
-      ctx.shadowColor = getMultiplierColor();
-      ctx.shadowBlur = 10;
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+    }
+    
+    // Draw flight path as red zone
+    if (flightPath.length > 1) {
+      // Create red zone fill
+      ctx.fillStyle = 'rgba(255, 60, 60, 0.6)';
+      ctx.strokeStyle = 'rgba(255, 60, 60, 0.9)';
+      ctx.lineWidth = 3;
       
       // Scale coordinates for canvas
       const scaledPath = flightPath.map(point => ({
@@ -128,35 +154,35 @@ const CrashGame = ({ onBack }) => {
         y: height - ((point.y - 200) / 200) * height
       }));
       
+      // Draw filled area under the curve
+      ctx.beginPath();
+      ctx.moveTo(0, height);
+      ctx.lineTo(scaledPath[0].x, scaledPath[0].y);
+      
+      for (let i = 1; i < scaledPath.length; i++) {
+        ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
+      }
+      
+      ctx.lineTo(scaledPath[scaledPath.length - 1].x, height);
+      ctx.lineTo(0, height);
+      ctx.fill();
+      
+      // Draw the curve line
+      ctx.beginPath();
       ctx.moveTo(scaledPath[0].x, scaledPath[0].y);
       for (let i = 1; i < scaledPath.length; i++) {
         ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
       }
       ctx.stroke();
       
+      // Add glow effect
+      ctx.shadowColor = 'rgba(255, 60, 60, 0.8)';
+      ctx.shadowBlur = 15;
+      ctx.stroke();
+      
       // Reset shadow
       ctx.shadowColor = 'transparent';
       ctx.shadowBlur = 0;
-    }
-    
-    // Draw grid
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 1;
-    
-    // Vertical grid lines
-    for (let x = 0; x <= width; x += 50) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
-      ctx.stroke();
-    }
-    
-    // Horizontal grid lines
-    for (let y = 0; y <= height; y += 50) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
     }
     
   }, [flightPath, multiplier, gameState]);

@@ -88,15 +88,13 @@
   font-size: clamp(48px, 15vw, 96px);
   font-weight: 900;
   font-family: var(--font-mono);
-  text-shadow: 0 0 20px currentColor, 0 4px 20px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 30px currentColor, 0 6px 25px rgba(0, 0, 0, 0.8);
   transition: all var(--animation-fast) var(--animation-easing);
   line-height: 1;
   word-break: break-all;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, currentColor 0%, rgba(255,255,255,0.8) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: white;
+  filter: drop-shadow(0 0 20px currentColor);
 }
 
 .multiplier-value.playing {
@@ -125,12 +123,12 @@
 .graph-container {
   position: relative;
   height: clamp(250px, 40vw, 450px);
-  background: linear-gradient(180deg, #87CEEB 0%, #E6F3FF 30%, #FFF8DC 70%, #90EE90 100%);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 20%, #2a2a2a 40%, #1a1a1a 60%, #0a0a0a 100%);
   border-radius: clamp(12px, 3vw, 20px);
   overflow: hidden;
   width: 100%;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .aviator-canvas {
@@ -158,19 +156,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, 
-    rgba(135, 206, 235, 0.8) 0%, 
-    rgba(230, 243, 255, 0.6) 30%, 
-    rgba(255, 248, 220, 0.4) 70%, 
-    rgba(144, 238, 144, 0.3) 100%);
+  background: transparent;
   border-radius: inherit;
 }
 
 .clouds {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  display: none;
 }
 
 .cloud {
