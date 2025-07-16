@@ -4,8 +4,10 @@
   margin: 0 auto;
   padding: 0 clamp(12px, 3vw, 20px);
   box-sizing: border-box;
-  min-height: 100vh;
+  height: calc(100vh - 80px);
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 @media screen and (min-width: 1200px) {
@@ -17,7 +19,7 @@
 .navigation-tabs {
   display: flex;
   gap: clamp(4px, 1vw, 8px);
-  margin-bottom: clamp(16px, 4vw, 32px);
+  margin-bottom: clamp(12px, 3vw, 16px);
   padding: clamp(6px, 1.5vw, 8px);
   background: rgba(0, 0, 0, 0.2);
   border-radius: clamp(12px, 3vw, 16px);
@@ -28,6 +30,7 @@
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  flex-shrink: 0;
 }
 
 .navigation-tabs::-webkit-scrollbar {
@@ -109,8 +112,9 @@
 
 .content-sections {
   position: relative;
-  min-height: clamp(400px, 60vh, 500px);
+  min-height: clamp(300px, 50vh, 400px);
   width: 100%;
+  flex: 1;
 }
 
 .section {
@@ -118,15 +122,12 @@
   z-index: 1;
 }
 
-.section-header {
-  text-align: center;
-  margin-bottom: clamp(16px, 4vw, 32px);
-  padding: clamp(16px, 4vw, 24px);
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: clamp(12px, 3vw, 16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.profile-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
   width: 100%;
-  box-sizing: border-box;
 }
 
 .section-title {
@@ -199,53 +200,56 @@
 @media screen and (max-width: 480px) {
   .home-page {
     padding: 0 12px;
+    height: calc(100vh - 70px);
   }
   
   .navigation-tabs {
-    flex-direction: column;
-    gap: 4px;
-    padding: 6px;
+    margin-bottom: 8px;
+    padding: 4px;
     border-radius: 8px;
   }
   
   .nav-tab {
-    min-width: 100%;
-    justify-content: flex-start;
-    padding: 12px 16px;
-    min-height: 48px;
+    padding: 8px 12px;
+    min-height: 40px;
     border-radius: 6px;
   }
   
   .tab-icon {
-    font-size: 16px;
+    font-size: 14px;
   }
   
   .tab-label {
-    font-size: 11px;
+    font-size: 10px;
   }
   
-  .section-header {
-    padding: 12px;
-    margin-bottom: 16px;
-    border-radius: 8px;
+  .content-sections {
+    min-height: calc(100vh - 140px);
+  }
+  
+  .profile-content {
+    min-height: 150px;
   }
 }
 
 @media screen and (min-width: 481px) and (max-width: 768px) {
+  .home-page {
+    height: calc(100vh - 75px);
+  }
+  
   .navigation-tabs {
-    flex-wrap: wrap;
+    margin-bottom: 12px;
     gap: 6px;
   }
   
   .nav-tab {
     flex: 1;
     min-width: calc(50% - 3px);
-    padding: 12px 14px;
+    padding: 10px 14px;
   }
   
-  .section-header {
-    padding: 20px;
-    margin-bottom: 24px;
+  .content-sections {
+    min-height: calc(100vh - 160px);
   }
 }
 

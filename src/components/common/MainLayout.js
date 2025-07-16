@@ -1,7 +1,7 @@
 import React from 'react';
 import './MainLayout.css';
 
-const MainLayout = ({ children }) => {
+const MainLayout = ({ children, userProfile, onAvatarChange, onClaimCoins }) => {
   return (
     <div className="main-layout">
       <div className="background-overlay"></div>
@@ -30,6 +30,34 @@ const MainLayout = ({ children }) => {
             </div>
             <h1 className="app-title">Zen</h1>
           </div>
+          
+          {userProfile && (
+            <div className="header-profile">
+              <div className="profile-info">
+                <div className="user-avatar">
+                  {userProfile.avatar ? (
+                    <img src={userProfile.avatar} alt="Avatar" />
+                  ) : (
+                    <div className="avatar-placeholder">🧘</div>
+                  )}
+                </div>
+                <div className="user-details">
+                  <span className="user-name">{userProfile.name}</span>
+                  <div className="coin-balance">
+                    <span className="coin-icon">🪙</span>
+                    <span className="coin-amount">{userProfile.coins}</span>
+                  </div>
+                </div>
+              </div>
+              
+              {userProfile.canClaim && (
+                <button className="claim-button" onClick={onClaimCoins}>
+                  <span className="claim-icon">✨</span>
+                  <span className="claim-text">+100</span>
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </header>
       
