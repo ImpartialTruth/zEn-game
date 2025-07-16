@@ -62,7 +62,7 @@
 }
 
 .game-display {
-  background: var(--primary-dark-gray);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
   border-radius: clamp(12px, 3vw, 20px);
   padding: clamp(16px, 4vw, 32px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -70,6 +70,7 @@
   overflow: hidden;
   width: 100%;
   box-sizing: border-box;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .multiplier-display {
@@ -78,18 +79,24 @@
 
 .multiplier-container {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   position: relative;
+  z-index: 2;
 }
 
 .multiplier-value {
-  font-size: clamp(36px, 12vw, 72px);
-  font-weight: bold;
+  font-size: clamp(48px, 15vw, 96px);
+  font-weight: 900;
   font-family: var(--font-mono);
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 20px currentColor, 0 4px 20px rgba(0, 0, 0, 0.5);
   transition: all var(--animation-fast) var(--animation-easing);
   line-height: 1;
   word-break: break-all;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, currentColor 0%, rgba(255,255,255,0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .multiplier-value.playing {
@@ -97,7 +104,8 @@
 }
 
 .multiplier-value.crashed {
-  animation: crashShake 0.5s ease-in-out;
+  animation: crashShake 0.5s ease-in-out, crashFlash 0.5s ease-in-out;
+  color: #ff6b6b !important;
 }
 
 .crashed-text {
@@ -116,45 +124,61 @@
 
 .graph-container {
   position: relative;
-  height: clamp(120px, 25vw, 200px);
-  background: rgba(0, 0, 0, 0.2);
+  height: clamp(200px, 35vw, 400px);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
   border-radius: clamp(8px, 2vw, 12px);
   overflow: hidden;
   width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
-.graph-grid {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-}
-
-.grid-line {
-  width: 1px;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.graph-line {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.graph-path {
+.crash-chart {
+  width: 100%;
   height: 100%;
-  border-radius: 2px;
-  transition: all 0.05s linear;
-  box-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+  display: block;
+}
+
+.crash-line {
+  stroke-dasharray: 2000;
+  stroke-dashoffset: 2000;
+  animation: drawLine 0.5s ease-out forwards;
+  transition: stroke 0.1s ease;
+}
+
+.crash-line.playing {
+  stroke-dashoffset: 0;
+  animation: none;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.crash-line.crashed {
+  animation: crashFlicker 0.5s ease-in-out;
+}
+
+.airplane {
+  animation: airplaneFloat 2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.airplane-body {
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+.airplane-glow {
+  animation: glowPulse 1s ease-in-out infinite alternate;
+}
+
+.crash-explosion {
+  animation: explosionBurst 0.6s ease-out;
+}
+
+.explosion-circle {
+  animation: explosionGrow 0.6s ease-out;
+}
+
+.explosion-circle-2 {
+  animation: explosionGrow 0.6s ease-out 0.1s;
 }
 
 .game-history {
@@ -371,6 +395,45 @@
   100% { box-shadow: 0 0 0 8px rgba(255, 193, 7, 0); }
 }
 
+@keyframes drawLine {
+  from {
+    stroke-dashoffset: 2000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes crashFlicker {
+  0%, 100% { opacity: 1; }
+  20% { opacity: 0.3; }
+  40% { opacity: 0.8; }
+  60% { opacity: 0.2; }
+  80% { opacity: 0.9; }
+}
+
+@keyframes airplaneFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(2deg); }
+}
+
+@keyframes glowPulse {
+  0% { opacity: 0.2; r: 6; }
+  100% { opacity: 0.6; r: 12; }
+}
+
+@keyframes explosionBurst {
+  0% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+@keyframes explosionGrow {
+  0% { opacity: 0; transform: scale(0); }
+  50% { opacity: 0.8; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2); }
+}
+
 /* Mobile First Responsive Design */
 @media screen and (max-width: 480px) {
   .crash-game {
@@ -476,7 +539,7 @@
   }
   
   .graph-container {
-    height: 80px;
+    height: 120px;
   }
   
   .game-controls {

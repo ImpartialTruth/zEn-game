@@ -92,10 +92,7 @@ const CrashGame = ({ onBack }) => {
   return (
     <div className="crash-game">
       <div className="game-header">
-        <button className="back-button" onClick={onBack}>
-          ← Back to Games
-        </button>
-        <h2 className="game-title">Crash Game</h2>
+        <h2 className="game-title">🚀 Crash Game</h2>
       </div>
 
       <div className="game-content">
@@ -119,20 +116,66 @@ const CrashGame = ({ onBack }) => {
             </div>
             
             <div className="graph-container">
-              <div className="graph-line">
-                <div 
-                  className="graph-path"
-                  style={{ 
-                    width: `${Math.min((multiplier - 1) * 20, 100)}%`,
-                    backgroundColor: getMultiplierColor()
+              <svg className="crash-chart" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
+                {/* Grid lines */}
+                <defs>
+                  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+                  </pattern>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)"/>
+                
+                {/* Crash line path */}
+                <path
+                  ref={pathRef => {
+                    if (pathRef) {
+                      const progress = Math.min((multiplier - 1) * 80, 350);
+                      const curve = Math.log(multiplier) * 30;
+                      const path = `M 20 180 Q ${progress / 2} ${180 - curve / 2} ${progress} ${180 - curve}`;
+                      pathRef.setAttribute('d', path);
+                    }
                   }}
-                ></div>
-              </div>
-              <div className="graph-grid">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="grid-line"></div>
-                ))}
-              </div>
+                  stroke={getMultiplierColor()}
+                  strokeWidth="3"
+                  fill="none"
+                  filter="url(#glow)"
+                  className={`crash-line ${gameState}`}
+                />
+                
+                {/* Airplane at the end of line */}
+                {gameState === 'playing' && (
+                  <g 
+                    transform={`translate(${Math.min((multiplier - 1) * 80 + 20, 370)}, ${180 - Math.log(multiplier) * 30})`}
+                    className="airplane"
+                  >
+                    <path
+                      d="M-8,-2 L-3,-1 L8,0 L-3,1 L-8,2 L-5,0 Z"
+                      fill={getMultiplierColor()}
+                      className="airplane-body"
+                    />
+                    <circle cx="0" cy="0" r="8" fill="rgba(255,255,255,0.2)" className="airplane-glow"/>
+                  </g>
+                )}
+                
+                {/* Crash explosion effect */}
+                {gameState === 'crashed' && (
+                  <g 
+                    transform={`translate(${Math.min((multiplier - 1) * 80 + 20, 370)}, ${180 - Math.log(multiplier) * 30})`}
+                    className="crash-explosion"
+                  >
+                    <circle cx="0" cy="0" r="15" fill="#ff6b6b" opacity="0.8" className="explosion-circle"/>
+                    <circle cx="0" cy="0" r="25" fill="#ff6b6b" opacity="0.4" className="explosion-circle-2"/>
+                    <text x="0" y="5" textAnchor="middle" fill="white" fontSize="16" fontWeight="bold">💥</text>
+                  </g>
+                )}
+              </svg>
             </div>
           </div>
 
