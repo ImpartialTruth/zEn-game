@@ -15,7 +15,7 @@ const CrashGame = ({ onBack }) => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   const [flightPath, setFlightPath] = useState([]);
-  const [airplanePosition, setAirplanePosition] = useState({ x: 5, y: 400 });
+  const [airplanePosition, setAirplanePosition] = useState({ x: 0, y: 100 });
 
   // Initialize game with 10-second countdown on first load
   useEffect(() => {
@@ -65,17 +65,17 @@ const CrashGame = ({ onBack }) => {
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
-              setAirplanePosition({ x: 5, y: 400 });
+              setAirplanePosition({ x: 0, y: 100 });
               setWinnings(0);
             }, 3000);
             
             return newMultiplier;
           }
           
-          // Update flight path - curved flight from bottom-left to top-right like real Aviator
+          // Update flight path - curved flight from bottom-left corner upward
           const progress = Math.min((newMultiplier - 1) / 8, 1); // Progress over first 9x
-          const xPos = 5 + progress * 85; // Start from 5%, move to 90%
-          const yPos = 400 - Math.pow(progress, 0.6) * 220; // Start from bottom, curve up
+          const xPos = 0 + progress * 90; // Start from 0% (left edge), move to 90%
+          const yPos = 100 - Math.pow(progress, 0.6) * 80; // Start from bottom, fly upward
           
           setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
           setAirplanePosition({ x: xPos, y: yPos });
@@ -148,10 +148,10 @@ const CrashGame = ({ onBack }) => {
     
     // Draw flight path with red filled area
     if (flightPath.length > 1) {
-      // Scale coordinates for canvas - adjusted for bottom-to-top flight
+      // Scale coordinates for canvas - adjusted for upward flight from bottom-left
       const scaledPath = flightPath.map(point => ({
         x: (point.x / 100) * width,
-        y: height - ((point.y - 200) / 200) * height
+        y: height - ((point.y) / 100) * height
       }));
       
       // Draw filled red area under curve
@@ -205,8 +205,8 @@ const CrashGame = ({ onBack }) => {
       setUserCashedOut(false);
       setWinnings(0);
       setAutoCashOutEnabled(cashOutAt && parseFloat(cashOutAt) > 1.0);
-      setFlightPath([{ x: 5, y: 400 }]);
-      setAirplanePosition({ x: 5, y: 400 });
+      setFlightPath([{ x: 0, y: 100 }]);
+      setAirplanePosition({ x: 0, y: 100 });
     }
   };
 
@@ -263,8 +263,8 @@ const CrashGame = ({ onBack }) => {
               className={`airplane ${gameState}`}
               style={{
                 left: `${airplanePosition.x}%`,
-                bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`,
-                transform: `rotate(${Math.min((airplanePosition.x - 5) * 1.5, 25)}deg)`
+                bottom: `${Math.min((airplanePosition.y) / 100 * 100, 90)}%`,
+                transform: `rotate(${Math.min(airplanePosition.x * 0.5, 25)}deg)`
               }}
             >
               <div className="airplane-body">
@@ -280,7 +280,7 @@ const CrashGame = ({ onBack }) => {
                 className="crash-explosion"
                 style={{
                   left: `${airplanePosition.x}%`,
-                  bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`
+                  bottom: `${Math.min((airplanePosition.y) / 100 * 100, 90)}%`
                 }}
               >
                 <div className="explosion-effect">💥</div>
