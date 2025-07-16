@@ -15,7 +15,7 @@ const CrashGame = ({ onBack }) => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   const [flightPath, setFlightPath] = useState([]);
-  const [airplanePosition, setAirplanePosition] = useState({ x: 0, y: 100 });
+  const [airplanePosition, setAirplanePosition] = useState({ x: 5, y: 90 });
 
   // Initialize game with 10-second countdown on first load
   useEffect(() => {
@@ -65,17 +65,17 @@ const CrashGame = ({ onBack }) => {
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
-              setAirplanePosition({ x: 0, y: 100 });
+              setAirplanePosition({ x: 5, y: 90 });
               setWinnings(0);
             }, 3000);
             
             return newMultiplier;
           }
           
-          // Update flight path - curved flight from bottom-left corner upward
+          // Update flight path - takeoff from low left angle
           const progress = Math.min((newMultiplier - 1) / 8, 1); // Progress over first 9x
-          const xPos = 0 + progress * 90; // Start from 0% (left edge), move to 90%
-          const yPos = 100 - Math.pow(progress, 0.6) * 80; // Start from bottom, fly upward
+          const xPos = 5 + progress * 85; // Start from 5% (low left), move to 90%
+          const yPos = 90 - Math.pow(progress, 0.7) * 75; // Start from low position, fly upward at angle
           
           setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
           setAirplanePosition({ x: xPos, y: yPos });
@@ -205,8 +205,8 @@ const CrashGame = ({ onBack }) => {
       setUserCashedOut(false);
       setWinnings(0);
       setAutoCashOutEnabled(cashOutAt && parseFloat(cashOutAt) > 1.0);
-      setFlightPath([{ x: 0, y: 100 }]);
-      setAirplanePosition({ x: 0, y: 100 });
+      setFlightPath([{ x: 5, y: 90 }]);
+      setAirplanePosition({ x: 5, y: 90 });
     }
   };
 
@@ -264,7 +264,7 @@ const CrashGame = ({ onBack }) => {
               style={{
                 left: `${airplanePosition.x}%`,
                 bottom: `${Math.min((airplanePosition.y) / 100 * 100, 90)}%`,
-                transform: `rotate(${Math.min(airplanePosition.x * 0.5, 25)}deg)`
+                transform: `rotate(${Math.min((airplanePosition.x - 5) * 0.8, 30)}deg)`
               }}
             >
               <div className="airplane-body">
