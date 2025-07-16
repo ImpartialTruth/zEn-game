@@ -70,7 +70,7 @@
 
 .multiplier-display {
   position: absolute;
-  top: 50%;
+  top: 25%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 5;
@@ -128,7 +128,7 @@
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 50vh;
   background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 20%, #2a2a2a 40%, #1a1a1a 60%, #0a0a0a 100%);
   border-radius: 0;
   overflow: hidden;
@@ -244,7 +244,7 @@
   height: clamp(25px, 6vw, 35px);
   transition: all 0.1s ease-out;
   transform-origin: center;
-  z-index: 5;
+  z-index: 15;
   filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.6));
 }
 
@@ -428,6 +428,7 @@
   bottom: 0;
   left: 0;
   right: 0;
+  height: 50vh;
   background: rgba(0, 0, 0, 0.95);
   border-radius: 15px 15px 0 0;
   padding: 20px;
@@ -970,24 +971,25 @@
   }
   
   .multiplier-display {
-    top: 45%;
+    top: 25%;
   }
   
   .graph-container {
-    height: 100vh;
+    height: 50vh;
     width: 100vw;
+    bottom: 50vh;
   }
   
   .aviator-canvas {
     width: 100vw;
-    height: 100vh;
+    height: 50vh;
   }
   
   .game-controls {
     padding: 16px;
     gap: 12px;
     border-radius: 12px 12px 0 0;
-    max-height: 45vh;
+    height: 50vh;
     overflow-y: auto;
   }
   
@@ -1254,12 +1256,12 @@
   }
   
   .multiplier-display {
-    top: 45%;
+    top: 25%;
     z-index: 10;
   }
   
   .game-controls {
-    max-height: 45vh;
+    height: 50vh;
     overflow-y: auto;
     position: absolute;
     bottom: 0;
@@ -1270,7 +1272,7 @@
   
   .aviator-canvas {
     width: 100vw;
-    height: 100vh;
+    height: 50vh;
     position: absolute;
     top: 0;
     left: 0;
@@ -1278,9 +1280,10 @@
   
   .graph-container {
     width: 100vw;
-    height: 100vh;
+    height: 50vh;
     position: absolute;
     top: 0;
     left: 0;
+    bottom: 50vh;
   }
 }
