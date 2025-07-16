@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import MainLayout from '../components/common/MainLayout';
 import ProfileDisplay from '../components/profile/ProfileDisplay';
-import ZenCoinBalance from '../components/profile/ZenCoinBalance';
 import DailyQuests from '../components/quests/DailyQuests';
 import Leaderboard from '../components/leaderboard/Leaderboard';
 import GamesSection from '../components/games/GamesSection';
@@ -17,6 +16,7 @@ const HomePage = () => {
   });
 
   const [activeSection, setActiveSection] = useState('games');
+  const [isInGame, setIsInGame] = useState(false);
 
   const handleAvatarChange = (newAvatar) => {
     setUserProfile(prev => ({ ...prev, avatar: newAvatar }));
@@ -33,6 +33,18 @@ const HomePage = () => {
     }
   };
 
+  const handleBackClick = () => {
+    setIsInGame(false);
+  };
+
+  const handleGameSelect = (gameId) => {
+    setIsInGame(true);
+  };
+
+  const handleGameExit = () => {
+    setIsInGame(false);
+  };
+
   const sections = [
     { id: 'games', label: 'Zen Games', icon: '🎮' },
     { id: 'quests', label: 'Daily Harmony', icon: '✨' },
@@ -45,6 +57,8 @@ const HomePage = () => {
       userProfile={userProfile}
       onAvatarChange={handleAvatarChange}
       onClaimCoins={handleClaimCoins}
+      showBackButton={isInGame}
+      onBackClick={handleBackClick}
     >
       <div className="home-page">
         <div className="navigation-tabs">
@@ -75,7 +89,10 @@ const HomePage = () => {
 
           {activeSection === 'games' && (
             <div className="section games-section fade-in">
-              <GamesSection />
+              <GamesSection 
+                onGameSelect={handleGameSelect}
+                onGameExit={handleGameExit}
+              />
             </div>
           )}
 

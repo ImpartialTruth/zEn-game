@@ -5,7 +5,7 @@ import CoinFlipGame from './CoinFlipGame';
 import LuckyWheelGame from './LuckyWheelGame';
 import './GamesSection.css';
 
-const GamesSection = () => {
+const GamesSection = ({ onGameSelect, onGameExit }) => {
   const [selectedGame, setSelectedGame] = useState(null);
 
   const games = [
@@ -43,10 +43,16 @@ const GamesSection = () => {
 
   const handleGameSelect = (gameId) => {
     setSelectedGame(gameId);
+    if (onGameSelect) {
+      onGameSelect(gameId);
+    }
   };
 
   const handleBackToSelection = () => {
     setSelectedGame(null);
+    if (onGameExit) {
+      onGameExit();
+    }
   };
 
   const renderGameComponent = () => {
