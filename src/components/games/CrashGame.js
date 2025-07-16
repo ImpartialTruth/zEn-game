@@ -17,6 +17,18 @@ const CrashGame = ({ onBack }) => {
   const [flightPath, setFlightPath] = useState([]);
   const [airplanePosition, setAirplanePosition] = useState({ x: 50, y: 400 });
 
+  // Initialize game with 10-second countdown on first load
+  useEffect(() => {
+    setCountdown(10);
+  }, []);
+
+  // Auto-start game cycle every 10 seconds
+  useEffect(() => {
+    if (gameState === 'waiting' && countdown === 0) {
+      setCountdown(10);
+    }
+  }, [gameState, countdown]);
+
   useEffect(() => {
     let interval;
     
@@ -52,7 +64,6 @@ const CrashGame = ({ onBack }) => {
             setTimeout(() => {
               setMultiplier(1.00);
               setGameState('waiting');
-              setCountdown(5);
               setFlightPath([]);
               setAirplanePosition({ x: 50, y: 400 });
               setWinnings(0);
@@ -153,7 +164,6 @@ const CrashGame = ({ onBack }) => {
   const handlePlaceBet = () => {
     if (betAmount && gameState === 'waiting') {
       setIsPlaying(true);
-      setGameState('playing');
       setUserCashedOut(false);
       setWinnings(0);
       setAutoCashOutEnabled(cashOutAt && parseFloat(cashOutAt) > 1.0);
