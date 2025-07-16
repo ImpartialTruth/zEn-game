@@ -310,66 +310,67 @@ const CrashGame = ({ onBack }) => {
             </div>
           </div>
 
-          {/* Bottom control panel */}
-          <div className="game-controls bet-section">
-            <div className="control-tabs">
-              <div className="tab active">Bet</div>
-              <div className="tab">Auto</div>
-            </div>
-            
-            <div className="betting-section">
-              <div className="bet-display">
-                <div className="bet-amount-display">
-                  {betAmount || '2.00'}
-                  <div className="bet-actions">
-                    <button className="bet-action-btn" onClick={() => setBetAmount(prev => Math.max(0, parseFloat(prev || 2) - 0.5).toFixed(2))}>-</button>
-                    <button className="bet-action-btn" onClick={() => setBetAmount(prev => (parseFloat(prev || 2) + 0.5).toFixed(2))}>+</button>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bet-quick-amounts">
-                <button className="quick-bet-btn" onClick={() => setBetAmount('5')}>5R</button>
-                <button className="quick-bet-btn" onClick={() => setBetAmount('10')}>10R</button>
-                <button className="quick-bet-btn" onClick={() => setBetAmount('20')}>20R</button>
-                <button className="quick-bet-btn" onClick={() => setBetAmount('100')}>100R</button>
+        </div>
+      </div>
+      
+      {/* Bottom control panel */}
+      <div className="game-controls bet-section">
+        <div className="control-tabs">
+          <div className="tab active">Bet</div>
+          <div className="tab">Auto</div>
+        </div>
+        
+        <div className="betting-section">
+          <div className="bet-display">
+            <div className="bet-amount-display">
+              {betAmount || '2.00'}
+              <div className="bet-actions">
+                <button className="bet-action-btn" onClick={() => setBetAmount(prev => Math.max(0, parseFloat(prev || 2) - 0.5).toFixed(2))}>-</button>
+                <button className="bet-action-btn" onClick={() => setBetAmount(prev => (parseFloat(prev || 2) + 0.5).toFixed(2))}>+</button>
               </div>
             </div>
-
-            <div className="action-section">
-              {!isPlaying ? (
-                <button 
-                  className="bet-button"
-                  onClick={handlePlaceBet}
-                  disabled={!betAmount || gameState === 'playing'}
-                >
-                  {gameState === 'waiting' ? 'Place Bet' : 'Next Round'}
-                </button>
-              ) : (
-                <button 
-                  className="cashout-button"
-                  onClick={handleCashOut}
-                  disabled={gameState === 'crashed'}
-                >
-                  <div className="cashout-text">CASH OUT</div>
-                  <div className="cashout-amount">{(parseFloat(betAmount || 0) * multiplier).toFixed(2)}R</div>
-                </button>
-              )}
-            </div>
-            
-            {gameState === 'crashed' && !userCashedOut && isPlaying && (
-              <div className="crash-message">
-                ❌ Too late! The plane crashed at {multiplier.toFixed(2)}x
-              </div>
-            )}
-            
-            {userCashedOut && winnings > 0 && (
-              <div className="win-message">
-                🎉 You won {winnings.toFixed(2)} R at {multiplier.toFixed(2)}x!
-              </div>
-            )}
+          </div>
+          
+          <div className="bet-quick-amounts">
+            <button className="quick-bet-btn" onClick={() => setBetAmount('5')}>5R</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('10')}>10R</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('20')}>20R</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('100')}>100R</button>
           </div>
         </div>
+
+        <div className="action-section">
+          {!isPlaying ? (
+            <button 
+              className="bet-button"
+              onClick={handlePlaceBet}
+              disabled={!betAmount || gameState === 'playing'}
+            >
+              {gameState === 'waiting' ? 'Place Bet' : 'Next Round'}
+            </button>
+          ) : (
+            <button 
+              className="cashout-button"
+              onClick={handleCashOut}
+              disabled={gameState === 'crashed'}
+            >
+              <div className="cashout-text">CASH OUT</div>
+              <div className="cashout-amount">{(parseFloat(betAmount || 0) * multiplier).toFixed(2)}R</div>
+            </button>
+          )}
+        </div>
+        
+        {gameState === 'crashed' && !userCashedOut && isPlaying && (
+          <div className="crash-message">
+            ❌ Too late! The plane crashed at {multiplier.toFixed(2)}x
+          </div>
+        )}
+        
+        {userCashedOut && winnings > 0 && (
+          <div className="win-message">
+            🎉 You won {winnings.toFixed(2)} R at {multiplier.toFixed(2)}x!
+          </div>
+        )}
       </div>
     </div>
   );
