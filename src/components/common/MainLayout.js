@@ -22,42 +22,45 @@ const MainLayout = ({ children, userProfile, onAvatarChange, onClaimCoins }) => 
       
       <header className="app-header">
         <div className="header-content">
-          <div className="logo-section">
-            <div className="zen-logo-mini">
-              <div className="logo-circle">
-                <div className="logo-inner"></div>
-              </div>
+          <div className="header-left">
+            <div className="brand-logo">
+              <div className="logo-icon">🧘</div>
+              <span className="brand-name">Zen</span>
             </div>
-            <h1 className="app-title">Zen</h1>
           </div>
           
-          {userProfile && (
-            <div className="header-profile">
-              <div className="profile-info">
-                <div className="user-avatar">
-                  {userProfile.avatar ? (
-                    <img src={userProfile.avatar} alt="Avatar" />
-                  ) : (
-                    <div className="avatar-placeholder">🧘</div>
-                  )}
-                </div>
-                <div className="user-details">
-                  <span className="user-name">{userProfile.name}</span>
-                  <div className="coin-balance">
-                    <span className="coin-icon">🪙</span>
-                    <span className="coin-amount">{userProfile.coins}</span>
+          <div className="header-center">
+            {userProfile && (
+              <div className="balance-display">
+                <div className="balance-icon">🪙</div>
+                <span className="balance-amount">{userProfile.coins.toLocaleString()}</span>
+              </div>
+            )}
+          </div>
+          
+          <div className="header-right">
+            {userProfile && (
+              <div className="user-actions">
+                {userProfile.canClaim && (
+                  <button className="claim-btn" onClick={onClaimCoins}>
+                    <span className="claim-icon">✨</span>
+                    <span className="claim-amount">+100</span>
+                  </button>
+                )}
+                <div className="user-profile">
+                  <div className="profile-avatar">
+                    {userProfile.avatar ? (
+                      <img src={userProfile.avatar} alt="Profile" />
+                    ) : (
+                      <div className="avatar-default">
+                        {userProfile.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-              
-              {userProfile.canClaim && (
-                <button className="claim-button" onClick={onClaimCoins}>
-                  <span className="claim-icon">✨</span>
-                  <span className="claim-text">+100</span>
-                </button>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </header>
       

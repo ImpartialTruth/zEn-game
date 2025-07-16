@@ -4,7 +4,7 @@
   margin: 0 auto;
   padding: 0 clamp(12px, 3vw, 20px);
   box-sizing: border-box;
-  height: calc(100vh - 80px);
+  height: calc(100vh - 64px);
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
@@ -200,7 +200,7 @@
 @media screen and (max-width: 480px) {
   .home-page {
     padding: 0 12px;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 56px);
   }
   
   .navigation-tabs {
@@ -234,7 +234,7 @@
 
 @media screen and (min-width: 481px) and (max-width: 768px) {
   .home-page {
-    height: calc(100vh - 75px);
+    height: calc(100vh - 60px);
   }
   
   .navigation-tabs {
