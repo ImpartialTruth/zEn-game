@@ -15,7 +15,7 @@ const CrashGame = ({ onBack }) => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   const [flightPath, setFlightPath] = useState([]);
-  const [airplanePosition, setAirplanePosition] = useState({ x: 10, y: 400 });
+  const [airplanePosition, setAirplanePosition] = useState({ x: 15, y: 380 });
 
   // Initialize game with 10-second countdown on first load
   useEffect(() => {
@@ -65,17 +65,17 @@ const CrashGame = ({ onBack }) => {
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
-              setAirplanePosition({ x: 10, y: 400 });
+              setAirplanePosition({ x: 15, y: 380 });
               setWinnings(0);
             }, 3000);
             
             return newMultiplier;
           }
           
-          // Update flight path with balanced curve
-          const progress = (newMultiplier - 1) / 4; // Scale to 0-1 over first 5x
-          const xPos = Math.min(10 + progress * 70, 85); // Start from 10%, go to max 85%
-          const yPos = 400 - Math.pow(newMultiplier - 1, 0.7) * 100; // Smoother curve
+          // Update flight path - diagonal from bottom-left to top-right
+          const progress = Math.min((newMultiplier - 1) / 3, 1); // Scale to 0-1 over first 4x
+          const xPos = 15 + progress * 65; // Start from 15%, go to 80%
+          const yPos = 380 - progress * 200; // Start from bottom, go to top
           
           setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
           setAirplanePosition({ x: xPos, y: yPos });
@@ -128,29 +128,33 @@ const CrashGame = ({ onBack }) => {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
     
-    // Draw radial lines from center
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-    ctx.lineWidth = 1;
-    const centerX = width / 2;
-    const centerY = height / 2;
-    
-    for (let angle = 0; angle < 360; angle += 15) {
-      const radian = (angle * Math.PI) / 180;
-      const endX = centerX + Math.cos(radian) * Math.max(width, height);
-      const endY = centerY + Math.sin(radian) * Math.max(width, height);
+    // Draw stars in space
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    for (let i = 0; i < 30; i++) {
+      const x = Math.random() * width;
+      const y = Math.random() * height;
+      const size = Math.random() * 2 + 1;
       
       ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(endX, endY);
-      ctx.stroke();
+      ctx.arc(x, y, size, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Add glow effect to some stars
+      if (Math.random() > 0.7) {
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+        ctx.shadowBlur = 5;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+      }
     }
     
-    // Draw flight path as red zone
+    // Draw flight path as rocket trail
     if (flightPath.length > 1) {
-      // Create red zone fill
-      ctx.fillStyle = 'rgba(255, 60, 60, 0.6)';
-      ctx.strokeStyle = 'rgba(255, 60, 60, 0.9)';
-      ctx.lineWidth = 3;
+      // Create rocket trail fill
+      ctx.fillStyle = 'rgba(255, 150, 0, 0.4)';
+      ctx.strokeStyle = 'rgba(255, 100, 0, 0.8)';
+      ctx.lineWidth = 4;
       
       // Scale coordinates for canvas
       const scaledPath = flightPath.map(point => ({
@@ -197,8 +201,8 @@ const CrashGame = ({ onBack }) => {
       ctx.stroke();
       
       // Add glow effect
-      ctx.shadowColor = 'rgba(255, 60, 60, 0.8)';
-      ctx.shadowBlur = 15;
+      ctx.shadowColor = 'rgba(255, 150, 0, 0.9)';
+      ctx.shadowBlur = 20;
       ctx.stroke();
       
       // Reset shadow
@@ -214,8 +218,8 @@ const CrashGame = ({ onBack }) => {
       setUserCashedOut(false);
       setWinnings(0);
       setAutoCashOutEnabled(cashOutAt && parseFloat(cashOutAt) > 1.0);
-      setFlightPath([{ x: 10, y: 400 }]);
-      setAirplanePosition({ x: 10, y: 400 });
+      setFlightPath([{ x: 15, y: 380 }]);
+      setAirplanePosition({ x: 15, y: 380 });
     }
   };
 
@@ -240,7 +244,7 @@ const CrashGame = ({ onBack }) => {
   return (
     <div className="crash-game">
       <div className="game-header">
-        <h2 className="game-title">✈️ Aviator</h2>
+        <h2 className="game-title">🚀 Rocket Crash</h2>
       </div>
 
       <div className="game-content">
@@ -272,33 +276,39 @@ const CrashGame = ({ onBack }) => {
               />
               <div className="flight-overlay">
                 <div className="sky-gradient"></div>
-                <div className="clouds">
-                  <div className="cloud cloud-1">☁️</div>
-                  <div className="cloud cloud-2">☁️</div>
-                  <div className="cloud cloud-3">☁️</div>
+                <div className="stars">
+                  <div className="star" style={{left: '10%', top: '20%', animationDelay: '0s'}}></div>
+                  <div className="star" style={{left: '30%', top: '40%', animationDelay: '1s'}}></div>
+                  <div className="star" style={{left: '60%', top: '10%', animationDelay: '2s'}}></div>
+                  <div className="star" style={{left: '80%', top: '60%', animationDelay: '0.5s'}}></div>
+                  <div className="star" style={{left: '90%', top: '30%', animationDelay: '1.5s'}}></div>
                 </div>
                 <div 
-                  className={`airplane ${gameState}`}
+                  className={`rocket ${gameState}`}
                   style={{
-                    left: `${Math.min(airplanePosition.x, 90)}%`,
-                    bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`,
-                    transform: `rotate(${Math.min((multiplier - 1) * 10, 45)}deg)`
+                    left: `${Math.min(airplanePosition.x, 85)}%`,
+                    bottom: `${Math.min((airplanePosition.y - 180) / 220 * 100, 85)}%`,
+                    transform: `rotate(${Math.min((multiplier - 1) * 8, 35)}deg)`
                   }}
                 >
-                  <div className="airplane-body">
-                    <div className="airplane-wing"></div>
-                    <div className="airplane-tail"></div>
-                    <div className="airplane-engine"></div>
+                  <div className="rocket-body">
+                    <div className="rocket-nose"></div>
+                    <div className="rocket-window"></div>
+                    <div className="rocket-fins">
+                      <div className="rocket-fin-left"></div>
+                      <div className="rocket-fin-right"></div>
+                    </div>
                   </div>
-                  <div className="airplane-trail"></div>
+                  <div className="rocket-flame"></div>
+                  <div className="rocket-trail"></div>
                 </div>
                 
                 {gameState === 'crashed' && (
                   <div 
                     className="crash-explosion"
                     style={{
-                      left: `${Math.min(airplanePosition.x, 90)}%`,
-                      bottom: `${Math.min((airplanePosition.y - 200) / 200 * 100, 90)}%`
+                      left: `${Math.min(airplanePosition.x, 85)}%`,
+                      bottom: `${Math.min((airplanePosition.y - 180) / 220 * 100, 85)}%`
                     }}
                   >
                     <div className="explosion-effect">💥</div>
