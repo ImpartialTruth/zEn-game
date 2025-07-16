@@ -11,6 +11,16 @@
   flex-direction: column;
 }
 
+.game-section {
+  order: 1;
+  flex: 1;
+}
+
+.bet-section {
+  order: 2;
+  flex-shrink: 0;
+}
+
 .game-header {
   display: flex;
   align-items: center;

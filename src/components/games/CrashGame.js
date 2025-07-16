@@ -230,7 +230,7 @@ const CrashGame = ({ onBack }) => {
 
   return (
     <div className="crash-game">
-      <div className="game-display">
+      <div className="game-display game-section">
         {/* Top row with previous multiplier results */}
         <div className="game-history">
           <div className="history-list">
@@ -311,7 +311,7 @@ const CrashGame = ({ onBack }) => {
           </div>
 
           {/* Bottom control panel */}
-          <div className="game-controls">
+          <div className="game-controls bet-section">
             <div className="control-tabs">
               <div className="tab active">Bet</div>
               <div className="tab">Auto</div>
