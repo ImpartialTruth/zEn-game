@@ -951,54 +951,84 @@
 /* Mobile First Responsive Design */
 @media screen and (max-width: 480px) {
   .crash-game {
-    padding: 12px;
-    min-height: calc(100vh - 24px);
-  }
-  
-  .game-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-  
-  .back-button {
-    padding: 8px 12px;
-    font-size: 12px;
-    min-height: 36px;
+    padding: 0;
+    min-height: 100vh;
+    height: 100vh;
   }
   
   .game-display {
-    padding: 12px;
-    border-radius: 8px;
+    padding: 0;
+    border-radius: 0;
+    height: 100vh;
+  }
+  
+  .multiplier-value {
+    font-size: clamp(36px, 12vw, 72px);
   }
   
   .game-controls {
-    padding: 12px;
+    padding: 16px;
     gap: 12px;
+    border-radius: 12px 12px 0 0;
   }
   
-  .betting-section {
-    gap: 12px;
+  .control-tabs {
+    margin-bottom: 12px;
   }
   
-  .action-buttons {
-    gap: 8px;
+  .tab {
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  .bet-amount-display {
+    padding: 10px 14px;
+    font-size: 16px;
+  }
+  
+  .bet-action-btn {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+  }
+  
+  .bet-quick-amounts {
+    margin-bottom: 12px;
+  }
+  
+  .quick-bet-btn {
+    padding: 6px 10px;
+    font-size: 11px;
   }
   
   .bet-button,
   .cashout-button {
-    min-height: 44px;
-    font-size: 13px;
+    min-height: 48px;
+    font-size: 14px;
+    padding: 14px 24px;
+  }
+  
+  .cashout-text {
+    font-size: 12px;
+  }
+  
+  .cashout-amount {
+    font-size: 16px;
   }
   
   .history-list {
     gap: 4px;
+    flex-wrap: wrap;
   }
   
   .history-item {
     padding: 4px 8px;
-    font-size: 12px;
+    font-size: 11px;
+  }
+  
+  .airplane {
+    width: clamp(30px, 8vw, 45px);
+    height: clamp(22px, 6vw, 32px);
   }
 }
 
@@ -1143,20 +1173,30 @@
   text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
 }
 
-/* Touch optimization */
+/* Touch optimization for mobile devices */
 @media (hover: none) and (pointer: coarse) {
   .bet-button,
   .cashout-button {
-    min-height: 48px;
+    min-height: 50px;
+    padding: 15px 25px;
+    font-size: 15px;
   }
   
-  .back-button {
+  .tab {
     min-height: 44px;
-    padding: 10px 16px;
+    padding: 12px;
   }
   
-  .input-wrapper input {
-    min-height: 48px;
+  .bet-action-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .quick-bet-btn {
+    min-height: 36px;
+    padding: 8px 12px;
+    font-size: 12px;
   }
   
   .airplane {
@@ -1164,7 +1204,39 @@
     height: clamp(25px, 7vw, 40px);
   }
   
-  .cloud {
-    font-size: clamp(25px, 6vw, 45px);
+  .history-item {
+    min-height: 28px;
+    padding: 6px 10px;
+  }
+}
+
+/* Telegram WebApp specific styles */
+@media screen and (max-width: 768px) {
+  .crash-game {
+    padding: 0;
+    background: #000;
+    overflow-x: hidden;
+  }
+  
+  .game-display {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  
+  .multiplier-display {
+    top: 45%;
+  }
+  
+  .game-controls {
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+  
+  .aviator-canvas {
+    width: 100vw;
+    height: 100vh;
   }
 }
