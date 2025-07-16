@@ -17,6 +17,7 @@ const HomePage = () => {
 
   const [activeSection, setActiveSection] = useState('games');
   const [isInGame, setIsInGame] = useState(false);
+  const [exitGameTrigger, setExitGameTrigger] = useState(false);
 
   const handleAvatarChange = (newAvatar) => {
     setUserProfile(prev => ({ ...prev, avatar: newAvatar }));
@@ -35,6 +36,9 @@ const HomePage = () => {
 
   const handleBackClick = () => {
     setIsInGame(false);
+    setExitGameTrigger(true);
+    // Reset trigger after a short delay
+    setTimeout(() => setExitGameTrigger(false), 100);
   };
 
   const handleGameSelect = (gameId) => {
@@ -43,6 +47,7 @@ const HomePage = () => {
 
   const handleGameExit = () => {
     setIsInGame(false);
+    setExitGameTrigger(false);
   };
 
   const sections = [
@@ -92,6 +97,7 @@ const HomePage = () => {
               <GamesSection 
                 onGameSelect={handleGameSelect}
                 onGameExit={handleGameExit}
+                exitGame={exitGameTrigger}
               />
             </div>
           )}

@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GAME_TYPES } from '../../utils/constants';
 import CrashGame from './CrashGame';
 import CoinFlipGame from './CoinFlipGame';
 import LuckyWheelGame from './LuckyWheelGame';
 import './GamesSection.css';
 
-const GamesSection = ({ onGameSelect, onGameExit }) => {
+const GamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
   const [selectedGame, setSelectedGame] = useState(null);
+
+  // Listen for external exit game signal
+  useEffect(() => {
+    if (exitGame) {
+      setSelectedGame(null);
+    }
+  }, [exitGame]);
 
   const games = [
     {
