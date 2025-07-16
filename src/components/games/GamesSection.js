@@ -64,8 +64,8 @@ const GamesSection = () => {
 
   if (selectedGame) {
     return (
-      <div className="games-section">
-        <div className="game-container">
+      <div className="games-section fullscreen-game">
+        <div className="game-container fullscreen">
           {renderGameComponent()}
         </div>
       </div>

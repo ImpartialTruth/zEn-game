@@ -1,11 +1,14 @@
 .lucky-wheel-game {
-  max-width: 100%;
   width: 100%;
-  margin: 0 auto;
+  height: 100vh;
+  margin: 0;
   padding: clamp(12px, 3vw, 20px);
   box-sizing: border-box;
-  min-height: 100vh;
   overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--primary-dark-gray);
+  display: flex;
+  flex-direction: column;
 }
 
 .game-header {
@@ -46,6 +49,8 @@
   grid-template-columns: 1fr;
   gap: clamp(16px, 4vw, 32px);
   width: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 @media screen and (min-width: 1024px) {
