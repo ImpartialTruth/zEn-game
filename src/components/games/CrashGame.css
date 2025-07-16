@@ -88,13 +88,16 @@
   font-size: clamp(48px, 15vw, 96px);
   font-weight: 900;
   font-family: var(--font-mono);
-  text-shadow: 0 0 30px currentColor, 0 6px 25px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 20px currentColor, 0 4px 15px rgba(0, 0, 0, 0.8);
   transition: all var(--animation-fast) var(--animation-easing);
   line-height: 1;
   word-break: break-all;
   letter-spacing: -0.02em;
-  color: white;
-  filter: drop-shadow(0 0 20px currentColor);
+  color: #ffffff;
+}
+
+.multiplier-value.playing {
+  color: #ffff00;
 }
 
 .multiplier-value.playing {
@@ -123,12 +126,12 @@
 .graph-container {
   position: relative;
   height: clamp(250px, 40vw, 450px);
-  background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3a 20%, #2a2a4a 40%, #1a1a3a 60%, #0a0a2a 100%);
+  background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2a 30%, #2a2a3a 70%, #1a1a2a 100%);
   border-radius: clamp(12px, 3vw, 20px);
   overflow: hidden;
   width: 100%;
-  border: 2px solid rgba(100, 150, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 50, 0.6), inset 0 1px 0 rgba(100, 150, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
 }
 
 .aviator-canvas {
@@ -161,20 +164,7 @@
 }
 
 .stars {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  animation: starTwinkle 3s ease-in-out infinite;
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+  display: none;
 }
 
 .cloud-1 {
@@ -209,114 +199,56 @@
   animation: crashFlicker 0.5s ease-in-out;
 }
 
-.rocket {
+.airplane {
   position: absolute;
-  width: clamp(25px, 6vw, 40px);
-  height: clamp(40px, 10vw, 60px);
+  width: clamp(30px, 7vw, 45px);
+  height: clamp(20px, 5vw, 30px);
   transition: all 0.1s ease-out;
   transform-origin: center;
   z-index: 5;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
 }
 
-.rocket.playing {
-  animation: rocketFly 1.5s ease-in-out infinite;
+.airplane.playing {
+  animation: planeFloat 2s ease-in-out infinite;
 }
 
-.rocket.crashed {
-  animation: rocketCrash 0.8s ease-in-out;
-  transform: rotate(45deg) scale(0.7) !important;
+.airplane.crashed {
+  animation: planeCrash 0.6s ease-in-out;
+  transform: rotate(45deg) scale(0.8) !important;
 }
 
-.rocket-body {
+.airplane-body {
   position: relative;
   width: 100%;
-  height: 70%;
-  background: linear-gradient(180deg, #ff4444 0%, #ff6666 30%, #ff8888 70%, #ff4444 100%);
-  border-radius: 50% 50% 20% 20%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
-}
-
-.rocket-nose {
-  position: absolute;
-  top: -10%;
-  left: 50%;
-  width: 60%;
-  height: 25%;
-  background: linear-gradient(180deg, #ffaa00 0%, #ffcc44 50%, #ffaa00 100%);
-  border-radius: 50% 50% 0 0;
-  transform: translateX(-50%);
-  box-shadow: 0 0 10px rgba(255, 170, 0, 0.6);
-}
-
-.rocket-fins {
-  position: absolute;
-  bottom: -5%;
-  left: 50%;
-  width: 120%;
-  height: 20%;
-  transform: translateX(-50%);
-}
-
-.rocket-fin-left {
-  position: absolute;
-  left: 0;
-  width: 30%;
   height: 100%;
-  background: linear-gradient(135deg, #cc3333 0%, #ff4444 100%);
-  border-radius: 0 0 0 50%;
-  transform: rotate(-15deg);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #e8e8e8 0%, #ffffff 50%, #cccccc 100%);
+  border-radius: 50% 10% 50% 10%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
-.rocket-fin-right {
-  position: absolute;
-  right: 0;
-  width: 30%;
-  height: 100%;
-  background: linear-gradient(135deg, #cc3333 0%, #ff4444 100%);
-  border-radius: 0 0 50% 0;
-  transform: rotate(15deg);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.rocket-flame {
-  position: absolute;
-  bottom: -30%;
-  left: 50%;
-  width: 80%;
-  height: 35%;
-  background: linear-gradient(180deg, #ff4444 0%, #ff6600 30%, #ffaa00 60%, #ffff00 100%);
-  border-radius: 50% 50% 50% 50%;
-  transform: translateX(-50%);
-  opacity: 0.9;
-  animation: flameFlicker 0.3s ease-in-out infinite alternate;
-  box-shadow: 0 0 15px rgba(255, 100, 0, 0.8);
-}
-
-.rocket-trail {
+.airplane-wing {
   position: absolute;
   top: 50%;
-  right: 100%;
-  width: clamp(60px, 18vw, 120px);
+  left: 10%;
+  width: 80%;
   height: 4px;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 100, 0, 0.4) 30%, rgba(255, 150, 0, 0.8) 70%, rgba(255, 200, 0, 1) 100%);
+  background: linear-gradient(90deg, #cccccc 0%, #ffffff 50%, #cccccc 100%);
   border-radius: 2px;
   transform: translateY(-50%);
-  opacity: 0.9;
-  animation: trailGlow 0.6s ease-in-out infinite alternate;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-.rocket-window {
+.airplane-tail {
   position: absolute;
-  top: 20%;
-  left: 50%;
-  width: 40%;
-  height: 25%;
-  background: linear-gradient(135deg, #87ceeb 0%, #b0e0e6 50%, #87ceeb 100%);
-  border-radius: 50%;
-  transform: translateX(-50%);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 8px rgba(135, 206, 235, 0.5);
+  top: 30%;
+  right: 0;
+  width: 12px;
+  height: 40%;
+  background: linear-gradient(135deg, #cccccc 0%, #ffffff 50%, #cccccc 100%);
+  border-radius: 0 50% 50% 0;
+  transform: translateX(40%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .crash-explosion {
@@ -689,26 +621,15 @@
   80% { opacity: 0.9; }
 }
 
-@keyframes rocketFly {
+@keyframes planeFloat {
   0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-8px) scale(1.03); }
+  50% { transform: translateY(-6px) scale(1.02); }
 }
 
-@keyframes rocketCrash {
+@keyframes planeCrash {
   0% { transform: rotate(0deg) scale(1); }
-  30% { transform: rotate(25deg) scale(1.1); }
-  60% { transform: rotate(45deg) scale(0.9); }
-  100% { transform: rotate(45deg) scale(0.7); }
-}
-
-@keyframes flameFlicker {
-  0% { opacity: 0.8; transform: translateX(-50%) scale(1); }
-  100% { opacity: 1; transform: translateX(-50%) scale(1.1); }
-}
-
-@keyframes trailGlow {
-  0% { opacity: 0.7; width: clamp(50px, 15vw, 100px); }
-  100% { opacity: 1; width: clamp(70px, 20vw, 140px); }
+  50% { transform: rotate(25deg) scale(1.1); }
+  100% { transform: rotate(45deg) scale(0.8); }
 }
 
 @keyframes starTwinkle {
