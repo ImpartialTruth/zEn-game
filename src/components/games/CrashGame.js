@@ -234,11 +234,20 @@ const CrashGame = ({ onBack }) => {
         {/* Top row with previous multiplier results */}
         <div className="game-history">
           <div className="history-list">
-            {gameHistory.map((mult, index) => (
-              <div key={index} className="history-item">
-                <span className="history-multiplier">{mult.toFixed(2)}x</span>
-              </div>
-            ))}
+            {gameHistory.map((mult, index) => {
+              const getMultiplierClass = (multiplier) => {
+                if (multiplier < 1.5) return 'low';
+                if (multiplier < 3) return 'medium';
+                if (multiplier < 10) return 'high';
+                return 'very-high';
+              };
+              
+              return (
+                <div key={index} className={`history-item ${getMultiplierClass(mult)}`}>
+                  <span className="history-multiplier">{mult.toFixed(2)}x</span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -332,10 +341,10 @@ const CrashGame = ({ onBack }) => {
           </div>
           
           <div className="bet-quick-amounts">
-            <button className="quick-bet-btn" onClick={() => setBetAmount('5')}>5R</button>
-            <button className="quick-bet-btn" onClick={() => setBetAmount('10')}>10R</button>
-            <button className="quick-bet-btn" onClick={() => setBetAmount('20')}>20R</button>
-            <button className="quick-bet-btn" onClick={() => setBetAmount('100')}>100R</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('5')}>5 🪙</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('10')}>10 🪙</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('20')}>20 🪙</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('100')}>100 🪙</button>
           </div>
         </div>
 
@@ -355,7 +364,7 @@ const CrashGame = ({ onBack }) => {
               disabled={gameState === 'crashed'}
             >
               <div className="cashout-text">CASH OUT</div>
-              <div className="cashout-amount">{(parseFloat(betAmount || 0) * multiplier).toFixed(2)}R</div>
+              <div className="cashout-amount">{(parseFloat(betAmount || 0) * multiplier).toFixed(2)} 🪙</div>
             </button>
           )}
         </div>
@@ -368,7 +377,7 @@ const CrashGame = ({ onBack }) => {
         
         {userCashedOut && winnings > 0 && (
           <div className="win-message">
-            🎉 You won {winnings.toFixed(2)} R at {multiplier.toFixed(2)}x!
+            🎉 You won {winnings.toFixed(2)} 🪙 at {multiplier.toFixed(2)}x!
           </div>
         )}
       </div>
