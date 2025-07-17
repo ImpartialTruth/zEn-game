@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import './MainLayout.css';
 
 const MainLayout = ({ children, userProfile, onAvatarChange, onClaimCoins, showBackButton, onBackClick }) => {
   const [showProfileModal, setShowProfileModal] = useState(false);
+  
+  const backgroundParticles = useMemo(() => 
+    [...Array(15)].map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      animationDelay: Math.random() * 10,
+      animationDuration: 8 + Math.random() * 4
+    })), []
+  );
   
   const handleProfileClick = () => {
     setShowProfileModal(true);
@@ -15,17 +25,17 @@ const MainLayout = ({ children, userProfile, onAvatarChange, onClaimCoins, showB
     <div className="main-layout">
       <div className="background-overlay"></div>
       <div className="background-particles">
-        {[...Array(15)].map((_, i) => (
+        {backgroundParticles.map(particle => (
           <div 
-            key={i} 
+            key={particle.id}
             className="bg-particle"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 10}s`,
-              animationDuration: `${8 + Math.random() * 4}s`
+              left: `${particle.left}%`,
+              top: `${particle.top}%`,
+              animationDelay: `${particle.animationDelay}s`,
+              animationDuration: `${particle.animationDuration}s`
             }}
-          ></div>
+          />
         ))}
       </div>
       
@@ -125,15 +135,15 @@ const MainLayout = ({ children, userProfile, onAvatarChange, onClaimCoins, showB
               <div className="profile-stats">
                 <div className="stat-item">
                   <span className="stat-label">Games Played</span>
-                  <span className="stat-value">47</span>
+                  <span className="stat-value">{userProfile?.gamesPlayed || 0}</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-label">Total Wins</span>
-                  <span className="stat-value">23</span>
+                  <span className="stat-value">{userProfile?.totalWins || 0}</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-label">Zen Rank</span>
-                  <span className="stat-value">#24</span>
+                  <span className="stat-value">#{userProfile?.rank || 'N/A'}</span>
                 </div>
               </div>
               

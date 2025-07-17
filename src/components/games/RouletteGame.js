@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import './RouletteGame.css';
 
 const RouletteGame = ({ onBack }) => {

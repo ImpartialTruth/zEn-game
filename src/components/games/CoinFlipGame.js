@@ -4,8 +4,7 @@ import './CoinFlipGame.css';
 const CoinFlipGame = ({ onBack }) => {
   const [gameState, setGameState] = useState('idle'); // idle, flipping, result
   const [betAmount, setBetAmount] = useState('');
-  const [selectedSide, setSelectedSide] = useState('');
-  const [, setResult] = useState(null);
+  const [selectedSide, setSelectedSide] = useState('');\n  const [result, setResult] = useState(null);
   const [isWin, setIsWin] = useState(false);
   const [coinRotation, setCoinRotation] = useState(0);
 

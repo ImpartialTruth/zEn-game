@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { GAME_TYPES } from '../../utils/constants';
 import CrashGame from './CrashGame';
 import CoinFlipGame from './CoinFlipGame';
@@ -10,6 +10,30 @@ import './ModernGamesSection.css';
 
 const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
   const [selectedGame, setSelectedGame] = useState(null);
+  
+  // Memoize cosmic particles to avoid recalculation on every render
+  const cosmicParticles = useMemo(() => 
+    [...Array(20)].map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      animationDelay: Math.random() * 10,
+      animationDuration: 15 + Math.random() * 10
+    })), []
+  );
+  
+  // Memoize game card particles
+  const gamesWithParticles = useMemo(() => 
+    games.map(game => ({
+      ...game,
+      particlePositions: game.particles.map((particle, i) => ({
+        particle,
+        left: 20 + (i * 25),
+        top: 15 + (i * 20),
+        animationDelay: i * 0.5
+      }))
+    })), [games]
+  );
   const [hoveredCard, setHoveredCard] = useState(null);
 
   // Listen for external exit game signal
@@ -160,15 +184,15 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
         <div className="stars-layer"></div>
         <div className="nebula-layer"></div>
         <div className="floating-particles">
-          {[...Array(20)].map((_, i) => (
+          {cosmicParticles.map(particle => (
             <div 
-              key={i} 
+              key={particle.id}
               className="cosmic-particle"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 10}s`,
-                animationDuration: `${15 + Math.random() * 10}s`
+                left: `${particle.left}%`,
+                top: `${particle.top}%`,
+                animationDelay: `${particle.animationDelay}s`,
+                animationDuration: `${particle.animationDuration}s`
               }}
             />
           ))}
@@ -199,7 +223,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       {/* Games Grid */}
       <div className="games-grid-container">
         <div className="games-grid">
-          {games.map((game, index) => (
+          {gamesWithParticles.map((game, index) => (
             <div 
               key={game.id} 
               className={`game-card ${game.status} ${hoveredCard === game.id ? 'hovered' : ''}`}
@@ -217,17 +241,17 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
               
               {/* Floating Particles */}
               <div className="card-particles">
-                {game.particles.map((particle, i) => (
+                {game.particlePositions.map((particleData, i) => (
                   <div 
                     key={i}
                     className="floating-particle"
                     style={{
-                      left: `${20 + (i * 25)}%`,
-                      top: `${15 + (i * 20)}%`,
-                      animationDelay: `${i * 0.5}s`
+                      left: `${particleData.left}%`,
+                      top: `${particleData.top}%`,
+                      animationDelay: `${particleData.animationDelay}s`
                     }}
                   >
-                    {particle}
+                    {particleData.particle}
                   </div>
                 ))}
               </div>

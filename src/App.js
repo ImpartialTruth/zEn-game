@@ -4,7 +4,6 @@ import HomePage from './pages/HomePage';
 import './styles/globals.css';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
   const [isAppReady, setIsAppReady] = useState(false);
 
   useEffect(() => {
@@ -30,11 +29,11 @@ function App() {
   }, []);
 
   const handleLoadingComplete = () => {
-    setIsLoading(false);
+    setIsAppReady(true);
   };
 
   // Show loading screen while app is initializing
-  if (isLoading || !isAppReady) {
+  if (!isAppReady) {
     return <LoadingScreen onComplete={handleLoadingComplete} />;
   }
 

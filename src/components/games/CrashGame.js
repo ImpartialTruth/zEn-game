@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import './CrashGame.css';
 
 const CrashGame = ({ onBack }) => {
@@ -14,6 +14,7 @@ const CrashGame = ({ onBack }) => {
   const [autoCashOutEnabled, setAutoCashOutEnabled] = useState(false);
   const [gameStats, setGameStats] = useState({
     totalGames: 0,
+    totalWins: 0,
     totalWinnings: 0,
     bestMultiplier: 0,
     winRate: 0
@@ -21,7 +22,18 @@ const CrashGame = ({ onBack }) => {
   const canvasRef = useRef(null);
   const [flightPath, setFlightPath] = useState([]);
   const [airplanePosition, setAirplanePosition] = useState({ x: 10, y: 10 });
+  const flyAwayIntervalRef = useRef(null);
+  const crashTimeoutRef = useRef(null);
+  const audioContextRef = useRef(null);
 
+  // Optimize position calculations
+  const calculatePosition = useCallback((multiplier) => {
+    const progress = Math.min((multiplier - 1) / 8, 1);
+    const xPos = 10 + progress * 60;
+    const yPos = 10 + Math.pow(progress, 0.5) * 65;
+    return { x: xPos, y: yPos };
+  }, []);
+  
   // Enhanced crash point generation
   const generateCrashPoint = useCallback(() => {
     const random = Math.random();
@@ -36,7 +48,10 @@ const CrashGame = ({ onBack }) => {
   // Sound system
   const playSound = useCallback((type) => {
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const audioContext = audioContextRef.current;
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
@@ -78,7 +93,8 @@ const CrashGame = ({ onBack }) => {
         totalGames: prev.totalGames + 1,
         totalWinnings: prev.totalWinnings + calculatedWinnings,
         bestMultiplier: Math.max(prev.bestMultiplier, multiplier),
-        winRate: (prev.totalGames + 1) > 0 ? (prev.totalGames + 1) / (prev.totalGames + 1) : 1
+        totalWins: prev.totalWins + 1,
+        winRate: (prev.totalGames + 1) > 0 ? (prev.totalWins + 1) / (prev.totalGames + 1) : 0
       }));
       
       // Play cash out sound
@@ -140,7 +156,7 @@ const CrashGame = ({ onBack }) => {
             setGameStats(prev => ({
               ...prev,
               totalGames: prev.totalGames + 1,
-              winRate: prev.totalGames > 0 ? (prev.totalGames - 1) / prev.totalGames : 0
+              winRate: (prev.totalGames + 1) > 0 ? prev.totalWins / (prev.totalGames + 1) : 0
             }));
             
             // Play crash sound
@@ -150,7 +166,7 @@ const CrashGame = ({ onBack }) => {
             setGameHistory(prev => [newMultiplier, ...prev.slice(0, 4)]);
             
             // Animate plane flying away quickly
-            const flyAwayAnimation = setInterval(() => {
+            flyAwayIntervalRef.current = setInterval(() => {
               setAirplanePosition(prev => ({
                 x: prev.x + 6,
                 y: prev.y + 4
@@ -158,8 +174,11 @@ const CrashGame = ({ onBack }) => {
             }, 40);
             
             // Stop animation and start new game after delay
-            setTimeout(() => {
-              clearInterval(flyAwayAnimation);
+            crashTimeoutRef.current = setTimeout(() => {
+              if (flyAwayIntervalRef.current) {
+                clearInterval(flyAwayIntervalRef.current);
+                flyAwayIntervalRef.current = null;
+              }
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
@@ -177,7 +196,10 @@ const CrashGame = ({ onBack }) => {
           const xPos = 10 + progress * 60; // 10% to 70% (wider center area)
           const yPos = 10 + Math.pow(progress, 0.5) * 65; // 10% to 75% with smoother curve
           
-          setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
+          setFlightPath(prev => {
+            const newPath = [...prev, { x: xPos, y: yPos }];
+            return newPath.length > 100 ? newPath.slice(-100) : newPath;
+          });
           setAirplanePosition({ x: xPos, y: yPos });
           
           return newMultiplier;
@@ -185,7 +207,21 @@ const CrashGame = ({ onBack }) => {
       }, 100);
     }
     
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (flyAwayIntervalRef.current) {
+        clearInterval(flyAwayIntervalRef.current);
+        flyAwayIntervalRef.current = null;
+      }
+      if (crashTimeoutRef.current) {
+        clearTimeout(crashTimeoutRef.current);
+        crashTimeoutRef.current = null;
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+    };
   }, [gameState, autoCashOutEnabled, cashOutAt, isPlaying, userCashedOut, generateCrashPoint, playSound, handleCashOut]);
 
   // Canvas drawing effect - simple dashed line
@@ -231,6 +267,8 @@ const CrashGame = ({ onBack }) => {
         x: (point.x / 100) * width,
         y: height - ((point.y) / 100) * height
       }));
+      
+      if (scaledPath.length === 0) return;
       
       ctx.moveTo(scaledPath[0].x, scaledPath[0].y);
       for (let i = 1; i < scaledPath.length; i++) {

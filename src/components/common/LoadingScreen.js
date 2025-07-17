@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './LoadingScreen.css';
 
 const LoadingScreen = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+  
+  const particles = useMemo(() => 
+    [...Array(20)].map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      animationDelay: Math.random() * 3,
+      animationDuration: 3 + Math.random() * 2
+    })), []
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -49,16 +58,16 @@ const LoadingScreen = ({ onComplete }) => {
       </div>
       
       <div className="loading-particles">
-        {[...Array(20)].map((_, i) => (
+        {particles.map(particle => (
           <div 
-            key={i} 
+            key={particle.id}
             className="particle"
             style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${3 + Math.random() * 2}s`
+              left: `${particle.left}%`,
+              animationDelay: `${particle.animationDelay}s`,
+              animationDuration: `${particle.animationDuration}s`
             }}
-          ></div>
+          />
         ))}
       </div>
     </div>

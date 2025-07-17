@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './MinesGame.css';
 
 const MinesGame = ({ onBack }) => {
@@ -12,17 +12,28 @@ const MinesGame = ({ onBack }) => {
   const [winnings, setWinnings] = useState(0);
   const [gameHistory, setGameHistory] = useState([]);
   const [safeClicks, setSafeClicks] = useState(0);
-  const [isAutoMode, setIsAutoMode] = useState(false);
   const [gameStats, setGameStats] = useState({
     totalGames: 0,
+    totalWins: 0,
     totalWinnings: 0,
     bestMultiplier: 0,
     winRate: 0
   });
+  const audioContextRef = useRef(null);
 
   const GRID_SIZE = 25; // 5x5 grid
   const MAX_MINES = 20;
   const MIN_MINES = 1;
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+    };
+  }, []);
 
   // Calculate multiplier based on mines count and safe clicks
   const calculateMultiplier = useCallback((mines, clicks) => {
@@ -93,7 +104,7 @@ const MinesGame = ({ onBack }) => {
       setGameStats(prev => ({
         ...prev,
         totalGames: prev.totalGames + 1,
-        winRate: prev.totalGames > 0 ? (prev.totalGames - 1) / prev.totalGames : 0
+        winRate: (prev.totalGames + 1) > 0 ? prev.totalWins / (prev.totalGames + 1) : 0
       }));
       
       // Add to history
@@ -133,7 +144,8 @@ const MinesGame = ({ onBack }) => {
           totalGames: prev.totalGames + 1,
           totalWinnings: prev.totalWinnings + currentWinnings,
           bestMultiplier: Math.max(prev.bestMultiplier, newMultiplier),
-          winRate: (prev.totalGames + 1) > 0 ? (prev.totalGames + 1) / (prev.totalGames + 1) : 1
+          totalWins: prev.totalWins + 1,
+          winRate: (prev.totalGames + 1) > 0 ? (prev.totalWins + 1) / (prev.totalGames + 1) : 0
         }));
         
         // Add to history
@@ -163,7 +175,8 @@ const MinesGame = ({ onBack }) => {
       totalGames: prev.totalGames + 1,
       totalWinnings: prev.totalWinnings + winnings,
       bestMultiplier: Math.max(prev.bestMultiplier, currentMultiplier),
-      winRate: (prev.totalGames + 1) > 0 ? (prev.totalGames + 1) / (prev.totalGames + 1) : 1
+      totalWins: prev.totalWins + 1,
+      winRate: (prev.totalGames + 1) > 0 ? (prev.totalWins + 1) / (prev.totalGames + 1) : 0
     }));
     
     // Add to history
@@ -182,7 +195,10 @@ const MinesGame = ({ onBack }) => {
   // Sound system
   const playSound = useCallback((type) => {
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const audioContext = audioContextRef.current;
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
