@@ -92,7 +92,7 @@ const HomePage = () => {
               <ModernGamesSection 
                 onGameSelect={handleGameSelect}
                 onGameExit={handleGameExit}
-                exitGame={exitGameTrigger}
+                exitGame={!isInGame}
               />
             </div>
           )}
