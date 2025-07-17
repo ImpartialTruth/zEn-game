@@ -1,0 +1,629 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --mines-primary: #1A237E;
+  --mines-dark: #0D1B2A;
+  --mines-gradient: linear-gradient(135deg, #0D1B2A 0%, #1A237E 50%, #0D1B2A 100%);
+  
+  --gem-color: #00BCD4;
+  --gem-glow: rgba(0, 188, 212, 0.4);
+  --mine-color: #FF5722;
+  --mine-glow: rgba(255, 87, 34, 0.4);
+  --safe-color: #4CAF50;
+  
+  --tile-size: min(60px, 12vw);
+  --grid-gap: 4px;
+}
+
+.mines-game {
+  width: 100vw;
+  height: 100vh;
+  background: var(--mines-gradient);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Header */
+.mines-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.game-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+}
+
+.title-icon {
+  font-size: 24px;
+  animation: gemPulse 2s ease-in-out infinite;
+}
+
+.game-title h2 {
+  color: white;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
+.multiplier-display {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Roboto Mono', monospace;
+  color: var(--gem-color);
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* Game History */
+.game-history {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px;
+  overflow-x: auto;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.history-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  min-width: 50px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+}
+
+.history-item.won {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: var(--safe-color);
+  color: var(--safe-color);
+}
+
+.history-item.lost {
+  background: rgba(255, 87, 34, 0.2);
+  border-color: var(--mine-color);
+  color: var(--mine-color);
+}
+
+.history-item.perfect {
+  background: var(--gem-glow);
+  border-color: var(--gem-color);
+  color: var(--gem-color);
+  animation: perfectGlow 1s ease-in-out infinite alternate;
+}
+
+.history-multiplier {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.history-mines {
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+/* Game Container */
+.game-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  position: relative;
+}
+
+.mines-grid {
+  display: grid;
+  grid-template-columns: repeat(5, var(--tile-size));
+  grid-template-rows: repeat(5, var(--tile-size));
+  gap: var(--grid-gap);
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Mine Tiles */
+.mine-tile {
+  width: var(--tile-size);
+  height: var(--tile-size);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transform-style: preserve-3d;
+}
+
+.mine-tile:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.mine-tile:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.tile-content {
+  position: relative;
+  z-index: 2;
+  font-size: 24px;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.tile-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mine-tile:hover .tile-glow {
+  opacity: 1;
+}
+
+/* Revealed States */
+.mine-tile.revealed {
+  cursor: default;
+  pointer-events: none;
+}
+
+.mine-tile.revealed .tile-content {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.mine-tile.safe {
+  background: linear-gradient(135deg, var(--safe-color), #45a049);
+  border-color: var(--safe-color);
+  box-shadow: 0 0 20px var(--gem-glow);
+  animation: safeReveal 0.6s ease-out;
+}
+
+.mine-tile.mine,
+.mine-tile.show-mine {
+  background: linear-gradient(135deg, var(--mine-color), #d84315);
+  border-color: var(--mine-color);
+  box-shadow: 0 0 20px var(--mine-glow);
+  animation: mineExplode 0.8s ease-out;
+}
+
+.gem-icon {
+  color: var(--gem-color);
+  filter: drop-shadow(0 0 8px var(--gem-glow));
+  animation: gemSparkle 1s ease-in-out infinite;
+}
+
+.mine-icon {
+  color: var(--mine-color);
+  filter: drop-shadow(0 0 8px var(--mine-glow));
+  animation: mineShake 0.5s ease-in-out;
+}
+
+/* Game Controls */
+.game-controls {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(15px);
+  border-radius: 20px 20px 0 0;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: none;
+}
+
+.control-section {
+  margin-bottom: 16px;
+}
+
+.control-section label {
+  display: block;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.bet-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.bet-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 12px 40px 12px 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Roboto Mono', monospace;
+  transition: all 0.3s ease;
+}
+
+.bet-input:focus {
+  outline: none;
+  border-color: var(--gem-color);
+  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2);
+}
+
+.currency {
+  position: absolute;
+  right: 12px;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.mines-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px 16px;
+}
+
+.mines-btn {
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mines-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.mines-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mines-count {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  font-family: 'Roboto Mono', monospace;
+  min-width: 30px;
+  text-align: center;
+}
+
+.start-btn,
+.cashout-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gem-color), #00ACC1);
+  border: none;
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 16px;
+}
+
+.start-btn:hover,
+.cashout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+}
+
+.start-btn:active,
+.cashout-btn:active {
+  transform: translateY(0);
+}
+
+.cashout-btn {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  animation: cashoutPulse 2s ease-in-out infinite;
+}
+
+.cashout-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  animation: none;
+}
+
+.playing-controls {
+  text-align: center;
+}
+
+.current-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.game-result {
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+
+.win-message {
+  background: rgba(76, 175, 80, 0.2);
+  border: 2px solid var(--safe-color);
+  color: var(--safe-color);
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  animation: winPulse 1s ease-in-out infinite alternate;
+}
+
+.lose-message {
+  background: rgba(255, 87, 34, 0.2);
+  border: 2px solid var(--mine-color);
+  color: var(--mine-color);
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  animation: loseShake 0.5s ease-in-out;
+}
+
+.result-icon {
+  font-size: 24px;
+}
+
+/* Game Stats */
+.game-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* Animations */
+@keyframes gemPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes gemSparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(5deg); }
+  75% { transform: scale(1.1) rotate(-5deg); }
+}
+
+@keyframes mineShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+@keyframes safeReveal {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes mineExplode {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes perfectGlow {
+  0% { box-shadow: 0 0 5px var(--gem-glow); }
+  100% { box-shadow: 0 0 20px var(--gem-glow); }
+}
+
+@keyframes cashoutPulse {
+  0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+  100% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+}
+
+@keyframes winPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.02); }
+}
+
+@keyframes loseShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Mobile Optimizations */
+@media screen and (max-width: 480px) {
+  :root {
+    --tile-size: min(55px, 15vw);
+    --grid-gap: 3px;
+  }
+  
+  .mines-header {
+    padding: 8px 12px;
+  }
+  
+  .game-title h2 {
+    font-size: 18px;
+  }
+  
+  .multiplier-display {
+    font-size: 16px;
+  }
+  
+  .mines-grid {
+    padding: 12px;
+  }
+  
+  .game-controls {
+    padding: 12px;
+  }
+  
+  .bet-input {
+    padding: 10px 35px 10px 12px;
+    font-size: 14px;
+  }
+  
+  .start-btn,
+  .cashout-btn {
+    padding: 14px;
+    font-size: 15px;
+  }
+  
+  .game-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+}
+
+@media screen and (max-height: 600px) {
+  .game-container {
+    padding: 8px;
+  }
+  
+  .mines-grid {
+    padding: 8px;
+  }
+  
+  .game-controls {
+    padding: 8px;
+  }
+}
+
+/* Touch optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .mine-tile {
+    transform: none;
+  }
+  
+  .mine-tile:hover {
+    transform: none;
+  }
+  
+  .mine-tile:active {
+    transform: scale(0.95);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+  }
+  
+  .mines-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .start-btn,
+  .cashout-btn {
+    min-height: 50px;
+  }
+}

@@ -3,6 +3,7 @@ import { GAME_TYPES } from '../../utils/constants';
 import CrashGame from './CrashGame';
 import CoinFlipGame from './CoinFlipGame';
 import LuckyWheelGame from './LuckyWheelGame';
+import MinesGame from './MinesGame';
 import './GamesSection.css';
 
 const GamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
@@ -45,6 +46,16 @@ const GamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       minBet: 20,
       maxBet: 200,
       status: 'active'
+    },
+    {
+      id: GAME_TYPES.MINES,
+      name: 'Mines',
+      description: 'Reveal gems while avoiding hidden mines',
+      icon: '💎',
+      gradient: 'linear-gradient(135deg, #00BCD4, #1A237E)',
+      minBet: 5,
+      maxBet: 1000,
+      status: 'active'
     }
   ];
 
@@ -70,6 +81,8 @@ const GamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
         return <CoinFlipGame onBack={handleBackToSelection} />;
       case GAME_TYPES.LUCKY_WHEEL:
         return <LuckyWheelGame onBack={handleBackToSelection} />;
+      case GAME_TYPES.MINES:
+        return <MinesGame onBack={handleBackToSelection} />;
       default:
         return null;
     }

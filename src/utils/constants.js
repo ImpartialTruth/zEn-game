@@ -22,7 +22,8 @@ export const FONTS = {
 export const GAME_TYPES = {
   CRASH: 'crash',
   COIN_FLIP: 'coinFlip',
-  LUCKY_WHEEL: 'luckyWheel'
+  LUCKY_WHEEL: 'luckyWheel',
+  MINES: 'mines'
 };
 
 export const QUEST_STATUS = {

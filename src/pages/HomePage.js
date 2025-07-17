@@ -3,7 +3,7 @@ import MainLayout from '../components/common/MainLayout';
 import ProfileDisplay from '../components/profile/ProfileDisplay';
 import DailyQuests from '../components/quests/DailyQuests';
 import Leaderboard from '../components/leaderboard/Leaderboard';
-import GamesSection from '../components/games/GamesSection';
+import ModernGamesSection from '../components/games/ModernGamesSection';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -94,7 +94,7 @@ const HomePage = () => {
 
           {activeSection === 'games' && (
             <div className="section games-section fade-in">
-              <GamesSection 
+              <ModernGamesSection 
                 onGameSelect={handleGameSelect}
                 onGameExit={handleGameExit}
                 exitGame={exitGameTrigger}
