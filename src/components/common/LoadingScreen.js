@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import './LoadingScreen.css';
+import cosmicBg from '../../assets/images/backgrounds/cosmic-background.jpg';
 
 const LoadingScreen = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
@@ -35,7 +36,7 @@ const LoadingScreen = ({ onComplete }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="loading-screen">
+    <div className="loading-screen" style={{backgroundImage: `url(${cosmicBg})`}}>
       <div className="loading-content">
         <div className="zen-logo">
           <div className="zen-circle">

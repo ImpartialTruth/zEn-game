@@ -4,8 +4,10 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: url('../../assets/images/backgrounds/cosmic-background.jpg') center/cover no-repeat,
-              linear-gradient(135deg, var(--primary-deep-blue) 0%, #283593 100%);
+  background: linear-gradient(135deg, var(--primary-deep-blue) 0%, #283593 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
