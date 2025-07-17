@@ -135,13 +135,14 @@
   position: absolute;
   top: 50%;
   right: 100%;
-  width: 40px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent 0%, rgba(0, 188, 212, 0.4) 30%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 1) 100%);
-  border-radius: 1px;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 188, 212, 0.3) 20%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 255, 255, 0.9) 80%, rgba(255, 255, 255, 1) 100%);
+  border-radius: 2px;
   transform: translateY(-50%);
-  opacity: 0.9;
-  animation: trailFlow 0.8s ease-in-out infinite alternate;
+  opacity: 0.8;
+  animation: trailFlow 1s ease-in-out infinite alternate;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
 }
 
 .multiplier-display {
@@ -517,8 +518,8 @@
 }
 
 @keyframes trailFlow {
-  0% { opacity: 0.6; width: 25px; }
-  100% { opacity: 1; width: 40px; }
+  0% { opacity: 0.5; width: 45px; transform: translateY(-50%) scaleX(0.8); }
+  100% { opacity: 0.9; width: 60px; transform: translateY(-50%) scaleX(1.2); }
 }
 
 @keyframes multiplierPulse {

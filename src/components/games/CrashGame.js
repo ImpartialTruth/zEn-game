@@ -20,7 +20,7 @@ const CrashGame = ({ onBack }) => {
   });
   const canvasRef = useRef(null);
   const [flightPath, setFlightPath] = useState([]);
-  const [airplanePosition, setAirplanePosition] = useState({ x: 15, y: 15 });
+  const [airplanePosition, setAirplanePosition] = useState({ x: 10, y: 10 });
 
   // Enhanced crash point generation
   const generateCrashPoint = useCallback(() => {
@@ -163,7 +163,7 @@ const CrashGame = ({ onBack }) => {
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
-              setAirplanePosition({ x: 15, y: 15 });
+              setAirplanePosition({ x: 10, y: 10 });
               setWinnings(0);
               setCountdown(10);
               setUserCashedOut(false);
@@ -172,10 +172,10 @@ const CrashGame = ({ onBack }) => {
             return newMultiplier;
           }
           
-          // Update flight path - airplane moves from left-center to center-right
+          // Update flight path - airplane moves from left-center to center-right with natural curve
           const progress = Math.min((newMultiplier - 1) / 8, 1);
-          const xPos = 15 + progress * 50; // 15% to 65% (wider center area)
-          const yPos = 15 + Math.pow(progress, 0.6) * 60; // 15% to 75%
+          const xPos = 10 + progress * 60; // 10% to 70% (wider center area)
+          const yPos = 10 + Math.pow(progress, 0.5) * 65; // 10% to 75% with smoother curve
           
           setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
           setAirplanePosition({ x: xPos, y: yPos });
@@ -248,8 +248,8 @@ const CrashGame = ({ onBack }) => {
       setIsPlaying(true);
       setUserCashedOut(false);
       setWinnings(0);
-      setFlightPath([{ x: 15, y: 15 }]);
-      setAirplanePosition({ x: 15, y: 15 });
+      setFlightPath([{ x: 10, y: 10 }]);
+      setAirplanePosition({ x: 10, y: 10 });
     }
   };
 
@@ -305,7 +305,7 @@ const CrashGame = ({ onBack }) => {
             style={{
               left: `${airplanePosition.x}%`,
               bottom: `${airplanePosition.y}%`,
-              transform: `rotate(${Math.min((airplanePosition.x - 15) * 1.5, 45)}deg) scale(2.2)`,
+              transform: `rotate(${Math.min((airplanePosition.x - 10) * 1.2, 40)}deg) scale(2.2)`,
               transition: gameState === 'crashed' ? 'all 0.3s ease-out' : 'none'
             }}
           >
