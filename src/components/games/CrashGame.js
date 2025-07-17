@@ -20,7 +20,7 @@ const CrashGame = ({ onBack }) => {
   });
   const canvasRef = useRef(null);
   const [flightPath, setFlightPath] = useState([]);
-  const [airplanePosition, setAirplanePosition] = useState({ x: 20, y: 20 });
+  const [airplanePosition, setAirplanePosition] = useState({ x: 15, y: 15 });
 
   // Enhanced crash point generation
   const generateCrashPoint = useCallback(() => {
@@ -61,6 +61,32 @@ const CrashGame = ({ onBack }) => {
       console.log('Sound play failed:', error);
     }
   }, []);
+
+  // Cash out handler
+  const handleCashOut = useCallback(() => {
+    if (isPlaying && gameState === 'playing' && !userCashedOut) {
+      setIsPlaying(false);
+      setUserCashedOut(true);
+      
+      // Calculate winnings
+      const calculatedWinnings = parseFloat(betAmount || 0) * multiplier;
+      setWinnings(calculatedWinnings);
+      
+      // Update stats
+      setGameStats(prev => ({
+        ...prev,
+        totalGames: prev.totalGames + 1,
+        totalWinnings: prev.totalWinnings + calculatedWinnings,
+        bestMultiplier: Math.max(prev.bestMultiplier, multiplier),
+        winRate: (prev.totalGames + 1) > 0 ? (prev.totalGames + 1) / (prev.totalGames + 1) : 1
+      }));
+      
+      // Play cash out sound
+      playSound('cashout');
+      
+      console.log(`Cashed out at ${multiplier.toFixed(2)}x for ${calculatedWinnings.toFixed(2)} coins`);
+    }
+  }, [isPlaying, gameState, userCashedOut, betAmount, multiplier, playSound]);
 
   // Countdown timer
   useEffect(() => {
@@ -137,7 +163,7 @@ const CrashGame = ({ onBack }) => {
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
-              setAirplanePosition({ x: 20, y: 20 });
+              setAirplanePosition({ x: 15, y: 15 });
               setWinnings(0);
               setCountdown(10);
               setUserCashedOut(false);
@@ -148,8 +174,8 @@ const CrashGame = ({ onBack }) => {
           
           // Update flight path - airplane moves from left-center to center-right
           const progress = Math.min((newMultiplier - 1) / 8, 1);
-          const xPos = 20 + progress * 40; // 20% to 60% (center area)
-          const yPos = 20 + Math.pow(progress, 0.6) * 50; // 20% to 70%
+          const xPos = 15 + progress * 50; // 15% to 65% (wider center area)
+          const yPos = 15 + Math.pow(progress, 0.6) * 60; // 15% to 75%
           
           setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
           setAirplanePosition({ x: xPos, y: yPos });
@@ -160,7 +186,7 @@ const CrashGame = ({ onBack }) => {
     }
     
     return () => clearInterval(interval);
-  }, [gameState, autoCashOutEnabled, cashOutAt, isPlaying, userCashedOut, generateCrashPoint, playSound]);
+  }, [gameState, autoCashOutEnabled, cashOutAt, isPlaying, userCashedOut, generateCrashPoint, playSound, handleCashOut]);
 
   // Canvas drawing effect - simple dashed line
   useEffect(() => {
@@ -218,39 +244,14 @@ const CrashGame = ({ onBack }) => {
   }, [flightPath]);
 
   const handlePlaceBet = () => {
-    if (betAmount && parseFloat(betAmount) > 0 && gameState === 'waiting' && countdown === 0) {
+    if (betAmount && parseFloat(betAmount) > 0 && gameState === 'waiting') {
       setIsPlaying(true);
       setUserCashedOut(false);
       setWinnings(0);
-      setFlightPath([{ x: 20, y: 20 }]);
-      setAirplanePosition({ x: 20, y: 20 });
+      setFlightPath([{ x: 15, y: 15 }]);
+      setAirplanePosition({ x: 15, y: 15 });
     }
   };
-
-  const handleCashOut = useCallback(() => {
-    if (isPlaying && gameState === 'playing' && !userCashedOut) {
-      setIsPlaying(false);
-      setUserCashedOut(true);
-      
-      // Calculate winnings
-      const calculatedWinnings = parseFloat(betAmount || 0) * multiplier;
-      setWinnings(calculatedWinnings);
-      
-      // Update stats
-      setGameStats(prev => ({
-        ...prev,
-        totalGames: prev.totalGames + 1,
-        totalWinnings: prev.totalWinnings + calculatedWinnings,
-        bestMultiplier: Math.max(prev.bestMultiplier, multiplier),
-        winRate: (prev.totalGames + 1) > 0 ? (prev.totalGames + 1) / (prev.totalGames + 1) : 1
-      }));
-      
-      // Play cash out sound
-      playSound('cashout');
-      
-      console.log(`Cashed out at ${multiplier.toFixed(2)}x for ${calculatedWinnings.toFixed(2)} coins`);
-    }
-  }, [isPlaying, gameState, userCashedOut, betAmount, multiplier, playSound]);
 
   const getMultiplierColor = () => {
     if (gameState === 'crashed') return '#ff6b6b';
@@ -304,7 +305,7 @@ const CrashGame = ({ onBack }) => {
             style={{
               left: `${airplanePosition.x}%`,
               bottom: `${airplanePosition.y}%`,
-              transform: `rotate(${Math.min((airplanePosition.x - 20) * 0.8, 20)}deg)`,
+              transform: `rotate(${Math.min((airplanePosition.x - 15) * 1.5, 45)}deg) scale(2.2)`,
               transition: gameState === 'crashed' ? 'all 0.3s ease-out' : 'none'
             }}
           >
@@ -406,7 +407,7 @@ const CrashGame = ({ onBack }) => {
             <button 
               className="main-action-btn bet-btn-main"
               onClick={handlePlaceBet}
-              disabled={!betAmount || parseFloat(betAmount) < 1 || gameState !== 'waiting' || countdown > 0}
+              disabled={!betAmount || parseFloat(betAmount) < 1 || gameState !== 'waiting'}
             >
               {gameState === 'waiting' ? (countdown > 0 ? `Wait ${countdown}s` : 'Place Bet') : 'Next Round'}
             </button>
