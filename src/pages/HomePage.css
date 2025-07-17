@@ -8,6 +8,8 @@
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  opacity: 1;
+  visibility: visible;
 }
 
 @media screen and (min-width: 1200px) {

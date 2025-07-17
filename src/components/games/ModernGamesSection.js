@@ -215,8 +215,8 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
 
   return (
     <div className="modern-games-section">
-      {/* Background Effects */}
-      <div className="cosmic-background">
+      {/* Background Effects - Removed cosmic-background for now */}
+      {/* <div className="cosmic-background">
         <div className="stars-layer"></div>
         <div className="nebula-layer"></div>
         <div className="floating-particles">
@@ -233,7 +233,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
             />
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Header */}
       <div className="modern-header">

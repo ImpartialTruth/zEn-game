@@ -30,17 +30,18 @@
 }
 
 .modern-games-section {
-  min-height: 100vh;
-  width: 100vw;
-  background: var(--cosmic-primary);
+  min-height: auto;
+  width: 100%;
+  background: transparent;
   position: relative;
   overflow-x: hidden;
   font-family: 'Inter', sans-serif;
+  padding: 20px 0;
 }
 
 /* Cosmic Background Effects */
 .cosmic-background {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
