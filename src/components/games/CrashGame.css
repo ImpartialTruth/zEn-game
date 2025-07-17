@@ -112,7 +112,7 @@
 }
 
 .multiplier-value.playing {
-  animation: multiplierPulse 0.5s ease-in-out infinite alternate;
+  animation: multiplierPulse 0.5s ease-in-out infinite alternate, multiplierGlow 1s ease-in-out infinite;
 }
 
 .multiplier-value.crashed {
@@ -140,7 +140,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 20%, #2a2a2a 40%, #1a1a1a 60%, #0a0a0a 100%);
+  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a2a 20%, #2a1a3a 40%, #1a2a3a 60%, #0a0a1a 100%);
   border-radius: 0;
   overflow: hidden;
   width: 100%;
@@ -174,8 +174,9 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: transparent;
+  background: radial-gradient(ellipse at center, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 50%, transparent 100%);
   border-radius: inherit;
+  animation: auroraShift 8s ease-in-out infinite;
 }
 
 .clouds {
@@ -188,49 +189,118 @@
 
 .cloud {
   position: absolute;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 50px;
-  opacity: 0.6;
-  animation: cloudDrift 60s linear infinite;
+  font-size: clamp(16px, 4vw, 24px);
+  opacity: 0.4;
+  animation: cloudDrift 80s linear infinite;
+  filter: blur(0.5px);
 }
 
 .cloud-1 {
-  width: 80px;
-  height: 30px;
-  top: 20%;
+  top: 15%;
   left: -10%;
   animation-delay: 0s;
 }
 
 .cloud-2 {
-  width: 60px;
-  height: 25px;
-  top: 40%;
+  top: 35%;
   left: -15%;
   animation-delay: -20s;
 }
 
 .cloud-3 {
-  width: 70px;
-  height: 28px;
-  top: 70%;
+  top: 55%;
   left: -12%;
   animation-delay: -40s;
 }
 
-.cloud-1 {
-  top: 20%;
+.cloud-4 {
+  top: 75%;
+  left: -8%;
+  animation-delay: -60s;
+}
+
+.stars {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  font-size: clamp(8px, 2vw, 12px);
+  animation: starTwinkle 3s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+.star-1 {
+  top: 10%;
+  left: 20%;
   animation-delay: 0s;
 }
 
-.cloud-2 {
-  top: 40%;
-  animation-delay: -7s;
+.star-2 {
+  top: 25%;
+  left: 70%;
+  animation-delay: -1s;
 }
 
-.cloud-3 {
+.star-3 {
   top: 60%;
-  animation-delay: -14s;
+  left: 15%;
+  animation-delay: -2s;
+}
+
+.star-4 {
+  top: 80%;
+  left: 60%;
+  animation-delay: -0.5s;
+}
+
+.star-5 {
+  top: 40%;
+  left: 90%;
+  animation-delay: -1.5s;
+}
+
+.particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  font-size: clamp(6px, 1.5vw, 10px);
+  animation: particleFloat 4s ease-in-out infinite;
+  opacity: 0.3;
+}
+
+.particle-1 {
+  top: 30%;
+  left: 40%;
+  animation-delay: 0s;
+}
+
+.particle-2 {
+  top: 70%;
+  left: 80%;
+  animation-delay: -1s;
+}
+
+.particle-3 {
+  top: 50%;
+  left: 10%;
+  animation-delay: -2s;
+}
+
+.particle-4 {
+  top: 20%;
+  left: 90%;
+  animation-delay: -3s;
 }
 
 .crash-line {
@@ -252,12 +322,22 @@
 
 .airplane {
   position: absolute;
-  width: clamp(35px, 8vw, 50px);
-  height: clamp(25px, 6vw, 35px);
+  width: clamp(40px, 10vw, 60px);
+  height: clamp(30px, 8vw, 45px);
   transition: all 0.1s ease-out;
   transform-origin: center;
   z-index: 15;
-  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.8));
+}
+
+.airplane-emoji {
+  font-size: clamp(32px, 8vw, 48px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: planeFloat 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
 }
 
 .airplane.playing {
@@ -273,9 +353,10 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #cc2222 0%, #ff4444 50%, #cc2222 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 30%, #f87171 70%, #dc2626 100%);
   border-radius: 60% 8% 60% 8%;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), inset 0 1px 3px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .airplane-wing {
@@ -283,11 +364,12 @@
   top: 50%;
   left: 8%;
   width: 85%;
-  height: 5px;
-  background: linear-gradient(90deg, #cc2222 0%, #ff4444 50%, #cc2222 100%);
+  height: 6px;
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 30%, #f87171 70%, #dc2626 100%);
   border-radius: 3px;
   transform: translateY(-50%);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .airplane-wing::before {
@@ -330,13 +412,14 @@
   position: absolute;
   top: 50%;
   right: 100%;
-  width: clamp(40px, 12vw, 80px);
-  height: 2px;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 30%, rgba(255, 255, 255, 0.8) 100%);
-  border-radius: 1px;
+  width: clamp(60px, 15vw, 100px);
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(220, 38, 38, 0.3) 20%, rgba(255, 255, 255, 0.6) 60%, rgba(255, 255, 255, 0.9) 100%);
+  border-radius: 2px;
   transform: translateY(-50%);
-  opacity: 0.7;
+  opacity: 0.8;
   animation: trailFlow 1s ease-in-out infinite alternate;
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
 }
 
 .crash-explosion {
@@ -403,13 +486,15 @@
 
 .game-history {
   position: absolute;
-  top: 5px;
-  left: 5px;
-  right: 5px;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   gap: 4px;
-  z-index: 10;
+  z-index: 100;
   justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 0;
 }
 
 .history-title {
@@ -424,12 +509,13 @@
 }
 
 .history-item {
-  padding: 2px 6px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(5px);
-  min-width: 30px;
+  min-width: 40px;
   text-align: center;
+  font-weight: 800;
 }
 
 .history-item.low {
@@ -453,8 +539,8 @@
 }
 
 .history-multiplier {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 900;
   font-family: var(--font-mono);
 }
 
@@ -789,7 +875,7 @@
   font-size: clamp(14px, 3.5vw, 16px);
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--animation-medium) var(--animation-easing);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
   min-height: 48px;
@@ -797,6 +883,7 @@
   box-sizing: border-box;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  transform: scale(1);
 }
 
 .bet-button {
@@ -805,8 +892,9 @@
 }
 
 .bet-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(0, 188, 212, 0.5);
+  animation: buttonBounce 0.3s ease-out;
 }
 
 .bet-button:disabled {
@@ -845,8 +933,9 @@
 }
 
 .cashout-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 140, 0, 0.6);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(255, 140, 0, 0.7);
+  animation: cashoutBounce 0.3s ease-out;
 }
 
 .game-info {
@@ -949,6 +1038,35 @@
 @keyframes starTwinkle {
   0%, 100% { opacity: 0.3; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes particleFloat {
+  0%, 100% { opacity: 0.3; transform: translateY(0px) scale(1); }
+  50% { opacity: 0.8; transform: translateY(-10px) scale(1.1); }
+}
+
+@keyframes auroraShift {
+  0% { background: radial-gradient(ellipse at center, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 50%, transparent 100%); }
+  33% { background: radial-gradient(ellipse at center, rgba(0, 191, 255, 0.1) 0%, rgba(30, 144, 255, 0.1) 50%, transparent 100%); }
+  66% { background: radial-gradient(ellipse at center, rgba(255, 20, 147, 0.1) 0%, rgba(255, 105, 180, 0.1) 50%, transparent 100%); }
+  100% { background: radial-gradient(ellipse at center, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 50%, transparent 100%); }
+}
+
+@keyframes multiplierGlow {
+  0%, 100% { text-shadow: 0 0 20px currentColor, 0 4px 15px rgba(0, 0, 0, 0.8); }
+  50% { text-shadow: 0 0 30px currentColor, 0 0 40px currentColor, 0 4px 15px rgba(0, 0, 0, 0.8); }
+}
+
+@keyframes buttonBounce {
+  0% { transform: translateY(-3px) scale(1.02); }
+  50% { transform: translateY(-5px) scale(1.03); }
+  100% { transform: translateY(-3px) scale(1.02); }
+}
+
+@keyframes cashoutBounce {
+  0% { transform: translateY(-3px) scale(1.05); }
+  50% { transform: translateY(-6px) scale(1.08); }
+  100% { transform: translateY(-3px) scale(1.05); }
 }
 
 @keyframes glowPulse {

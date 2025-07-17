@@ -57,6 +57,10 @@ const CrashGame = ({ onBack }) => {
             setIsPlaying(false);
             setUserCashedOut(false);
             
+            // Play crash sound
+            const crashAudio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmswBCqPzvnEeScGIGHL9+CWUQwMXbL3+a1kEgxQ');
+            crashAudio.play().catch(() => {});
+            
             // Add to history
             setGameHistory(prev => [newMultiplier, ...prev.slice(0, 4)]);
             
@@ -217,6 +221,11 @@ const CrashGame = ({ onBack }) => {
       // Calculate winnings
       const calculatedWinnings = parseFloat(betAmount) * multiplier;
       setWinnings(calculatedWinnings);
+      
+      // Play cash out sound
+      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmswBCqPzvnEeScGIGHL9+CWUQwMXbL3+a1kEgxQ');
+      audio.play().catch(() => {});
+      
       console.log(`Cashed out at ${multiplier.toFixed(2)}x for ${calculatedWinnings.toFixed(2)} coins`);
     }
   };
@@ -263,10 +272,24 @@ const CrashGame = ({ onBack }) => {
           {/* Flight overlay with airplane */}
           <div className="flight-overlay">
             <div className="sky-gradient"></div>
+            <div className="stars">
+              <div className="star star-1">⭐</div>
+              <div className="star star-2">✨</div>
+              <div className="star star-3">⭐</div>
+              <div className="star star-4">✨</div>
+              <div className="star star-5">⭐</div>
+            </div>
             <div className="clouds">
-              <div className="cloud cloud-1"></div>
-              <div className="cloud cloud-2"></div>
-              <div className="cloud cloud-3"></div>
+              <div className="cloud cloud-1">☁️</div>
+              <div className="cloud cloud-2">☁️</div>
+              <div className="cloud cloud-3">☁️</div>
+              <div className="cloud cloud-4">☁️</div>
+            </div>
+            <div className="particles">
+              <div className="particle particle-1">✨</div>
+              <div className="particle particle-2">💫</div>
+              <div className="particle particle-3">⭐</div>
+              <div className="particle particle-4">✨</div>
             </div>
             <div 
               className={`airplane ${gameState}`}
@@ -276,11 +299,7 @@ const CrashGame = ({ onBack }) => {
                 transform: `rotate(${Math.min((airplanePosition.x - 5) * 0.8, 30)}deg)`
               }}
             >
-              <div className="airplane-body">
-                <div className="airplane-wing"></div>
-                <div className="airplane-tail"></div>
-                <div className="airplane-propeller"></div>
-              </div>
+              <div className="airplane-emoji">✈️</div>
               <div className="airplane-trail"></div>
             </div>
             
