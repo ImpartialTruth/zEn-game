@@ -322,22 +322,22 @@
 
 .airplane {
   position: absolute;
-  width: clamp(40px, 10vw, 60px);
-  height: clamp(30px, 8vw, 45px);
+  width: clamp(32px, 8vw, 48px);
+  height: clamp(24px, 6vw, 36px);
   transition: all 0.1s ease-out;
   transform-origin: center;
   z-index: 15;
-  filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
 }
 
 .airplane-emoji {
-  font-size: clamp(32px, 8vw, 48px);
+  font-size: clamp(24px, 6vw, 36px);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   animation: planeFloat 2s ease-in-out infinite;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
 }
 
 .airplane.playing {
@@ -412,14 +412,14 @@
   position: absolute;
   top: 50%;
   right: 100%;
-  width: clamp(60px, 15vw, 100px);
-  height: 3px;
-  background: linear-gradient(90deg, transparent 0%, rgba(220, 38, 38, 0.3) 20%, rgba(255, 255, 255, 0.6) 60%, rgba(255, 255, 255, 0.9) 100%);
-  border-radius: 2px;
+  width: clamp(40px, 12vw, 80px);
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(220, 38, 38, 0.4) 30%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 1) 100%);
+  border-radius: 1px;
   transform: translateY(-50%);
-  opacity: 0.8;
-  animation: trailFlow 1s ease-in-out infinite alternate;
-  box-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
+  opacity: 0.9;
+  animation: trailFlow 0.8s ease-in-out infinite alternate;
+  box-shadow: 0 0 6px rgba(220, 38, 38, 0.3);
 }
 
 .crash-message-overlay {
@@ -921,8 +921,10 @@
 }
 
 .bet-button:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
+  background: linear-gradient(135deg, rgba(0, 188, 212, 0.4), rgba(186, 104, 200, 0.4));
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .cashout-button {
@@ -1054,8 +1056,8 @@
 }
 
 @keyframes trailFlow {
-  0% { opacity: 0.5; width: clamp(30px, 10vw, 60px); }
-  100% { opacity: 0.9; width: clamp(50px, 15vw, 100px); }
+  0% { opacity: 0.6; width: clamp(25px, 8vw, 50px); }
+  100% { opacity: 1; width: clamp(40px, 12vw, 80px); }
 }
 
 @keyframes starTwinkle {

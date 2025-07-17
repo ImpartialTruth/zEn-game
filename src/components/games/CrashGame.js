@@ -124,13 +124,13 @@ const CrashGame = ({ onBack }) => {
             // Add to history
             setGameHistory(prev => [newMultiplier, ...prev.slice(0, 4)]);
             
-            // Animate plane flying away
+            // Animate plane flying away quickly
             const flyAwayAnimation = setInterval(() => {
               setAirplanePosition(prev => ({
-                x: prev.x + 5,
-                y: prev.y + 2
+                x: prev.x + 8,
+                y: prev.y + 6
               }));
-            }, 50);
+            }, 30);
             
             // Stop animation and start new game after delay
             setTimeout(() => {
@@ -142,12 +142,12 @@ const CrashGame = ({ onBack }) => {
               setWinnings(0);
               setCountdown(10);
               setUserCashedOut(false);
-            }, 2000);
+            }, 1500);
             
             return newMultiplier;
           }
           
-          // Update flight path
+          // Update flight path - airplane should follow the red line exactly
           const progress = Math.min((newMultiplier - 1) / 8, 1);
           const xPos = 5 + progress * 85;
           const yPos = 10 + Math.pow(progress, 0.7) * 75;
@@ -332,25 +332,15 @@ const CrashGame = ({ onBack }) => {
               className={`airplane ${gameState}`}
               style={{
                 left: `${airplanePosition.x}%`,
-                bottom: `${Math.min((airplanePosition.y) / 100 * 100, 90)}%`,
-                transform: `rotate(${Math.min((airplanePosition.x - 5) * 0.8, 30)}deg)`
+                bottom: `${airplanePosition.y}%`,
+                transform: `rotate(${Math.min((airplanePosition.x - 5) * 0.5, 25)}deg)`,
+                transition: gameState === 'crashed' ? 'all 0.5s ease-out' : 'none'
               }}
             >
               <div className="airplane-emoji">✈️</div>
               <div className="airplane-trail"></div>
             </div>
             
-            {gameState === 'crashed' && (
-              <div 
-                className="crash-message-overlay"
-                style={{
-                  left: `${Math.min(airplanePosition.x, 80)}%`,
-                  bottom: `${Math.min((airplanePosition.y) / 100 * 100, 80)}%`
-                }}
-              >
-                <div className="crash-text-overlay">CRASHED!</div>
-              </div>
-            )}
           </div>
 
           {/* Centered large multiplier display */}
