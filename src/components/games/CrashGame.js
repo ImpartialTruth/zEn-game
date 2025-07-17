@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './CrashGame.css';
 
 const CrashGame = ({ onBack }) => {
   const [gameState, setGameState] = useState('waiting'); // waiting, playing, crashed
   const [multiplier, setMultiplier] = useState(1.00);
-  const [betAmount, setBetAmount] = useState('');
+  const [betAmount, setBetAmount] = useState('10');
   const [isPlaying, setIsPlaying] = useState(false);
   const [cashOutAt, setCashOutAt] = useState('');
   const [gameHistory, setGameHistory] = useState([2.34, 1.56, 8.92, 1.23, 5.67]);
@@ -12,10 +12,62 @@ const CrashGame = ({ onBack }) => {
   const [userCashedOut, setUserCashedOut] = useState(false);
   const [winnings, setWinnings] = useState(0);
   const [autoCashOutEnabled, setAutoCashOutEnabled] = useState(false);
+  const [gameStats, setGameStats] = useState({
+    totalGames: 0,
+    totalWinnings: 0,
+    bestMultiplier: 0,
+    winRate: 0
+  });
+  const [crashPoint, setCrashPoint] = useState(null);
+  const [gameStartTime, setGameStartTime] = useState(null);
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   const [flightPath, setFlightPath] = useState([]);
   const [airplanePosition, setAirplanePosition] = useState({ x: 5, y: 10 });
+
+  // Enhanced crash point generation
+  const generateCrashPoint = useCallback(() => {
+    const houseEdge = 0.01; // 1% house edge
+    const random = Math.random();
+    
+    // Use inverse exponential distribution for more realistic crashes
+    const crashPoint = Math.floor((99 / (1 - random)) * (1 - houseEdge)) / 100;
+    
+    // Ensure minimum 1.01x and maximum 1000x
+    return Math.max(1.01, Math.min(crashPoint, 1000));
+  }, []);
+
+  // Enhanced multiplier calculation
+  const calculateMultiplier = useCallback((timeElapsed) => {
+    const baseGrowthRate = 0.01;
+    const accelerationFactor = Math.pow(timeElapsed / 10000, 1.5);
+    return 1 + (timeElapsed * baseGrowthRate) * (1 + accelerationFactor * 0.1);
+  }, []);
+
+  // Sound system
+  const playSound = useCallback((type) => {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    const sounds = {
+      cashout: { frequency: 800, duration: 0.3 },
+      crash: { frequency: 200, duration: 0.5 },
+      tick: { frequency: 1000, duration: 0.1 }
+    };
+    
+    const sound = sounds[type];
+    if (sound) {
+      oscillator.frequency.setValueAtTime(sound.frequency, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + sound.duration);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + sound.duration);
+    }
+  }, []);
 
   // Initialize game with 10-second countdown on first load
   useEffect(() => {
@@ -32,65 +84,74 @@ const CrashGame = ({ onBack }) => {
   useEffect(() => {
     let interval;
     
-    if (gameState === 'playing') {
+    if (gameState === 'playing' && gameStartTime && crashPoint) {
       interval = setInterval(() => {
-        setMultiplier(prev => {
-          const newMultiplier = prev + 0.005 + (prev - 1) * 0.001;
+        const currentTime = Date.now();
+        const timeElapsed = currentTime - gameStartTime;
+        const newMultiplier = calculateMultiplier(timeElapsed);
+        
+        setMultiplier(newMultiplier);
+        
+        // Auto cash out logic - Fixed
+        if (autoCashOutEnabled && 
+            cashOutAt && 
+            parseFloat(cashOutAt) <= newMultiplier && 
+            isPlaying && 
+            !userCashedOut) {
+          handleCashOut();
+          return;
+        }
+        
+        // Check if crash point reached
+        if (newMultiplier >= crashPoint) {
+          setGameState('crashed');
+          setIsPlaying(false);
           
-          // Auto cash out logic
-          if (autoCashOutEnabled && cashOutAt && parseFloat(cashOutAt) <= newMultiplier && isPlaying) {
-            handleCashOut();
-            return newMultiplier;
-          }
+          // Update stats
+          setGameStats(prev => ({
+            ...prev,
+            totalGames: prev.totalGames + 1,
+            winRate: prev.totalGames > 0 ? (prev.totalGames - 1) / prev.totalGames : 0
+          }));
           
-          // Enhanced crash logic - more realistic
-          const crashChance = Math.random();
-          let crashProbability = 0.001;
+          // Play crash sound
+          playSound('crash');
           
-          if (newMultiplier > 1.5) crashProbability += 0.0008;
-          if (newMultiplier > 2.0) crashProbability += 0.002;
-          if (newMultiplier > 5.0) crashProbability += 0.005;
-          if (newMultiplier > 10.0) crashProbability += 0.01;
+          // Add to history
+          setGameHistory(prev => [newMultiplier, ...prev.slice(0, 4)]);
           
-          if (crashChance < crashProbability) {
-            setGameState('crashed');
-            setIsPlaying(false);
-            setUserCashedOut(false);
-            
-            // Play crash sound
-            const crashAudio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmswBCqPzvnEeScGIGHL9+CWUQwMXbL3+a1kEgxQ');
-            crashAudio.play().catch(() => {});
-            
-            // Add to history
-            setGameHistory(prev => [newMultiplier, ...prev.slice(0, 4)]);
-            
-            // Start new game after delay
-            setTimeout(() => {
-              setMultiplier(1.00);
-              setGameState('waiting');
-              setFlightPath([]);
-              setAirplanePosition({ x: 5, y: 10 });
-              setWinnings(0);
-            }, 3000);
-            
-            return newMultiplier;
-          }
+          // Start new game after delay
+          setTimeout(() => {
+            setMultiplier(1.00);
+            setGameState('waiting');
+            setFlightPath([]);
+            setAirplanePosition({ x: 5, y: 10 });
+            setWinnings(0);
+            setCrashPoint(null);
+            setGameStartTime(null);
+            setCountdown(10);
+          }, 3000);
           
-          // Update flight path - takeoff from low left angle
-          const progress = Math.min((newMultiplier - 1) / 8, 1); // Progress over first 9x
-          const xPos = 5 + progress * 85; // Start from 5% (low left), move to 90%
-          const yPos = 10 + Math.pow(progress, 0.7) * 75; // Start from low position (10), fly upward to 85
-          
-          setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
-          setAirplanePosition({ x: xPos, y: yPos });
-          
-          return newMultiplier;
-        });
-      }, 100);
+          return;
+        }
+        
+        // Update flight path - enhanced animation
+        const progress = Math.min((newMultiplier - 1) / 8, 1);
+        const xPos = 5 + progress * 85;
+        const yPos = 10 + Math.pow(progress, 0.6) * 70;
+        
+        setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
+        setAirplanePosition({ x: xPos, y: yPos });
+        
+        // Play tick sound occasionally
+        if (Math.random() < 0.1) {
+          playSound('tick');
+        }
+      }, 50); // Increased frequency for smoother animation
     }
     
     return () => clearInterval(interval);
-  }, [gameState, autoCashOutEnabled, cashOutAt, isPlaying]);
+  }, [gameState, autoCashOutEnabled, cashOutAt, isPlaying, userCashedOut, crashPoint, gameStartTime, calculateMultiplier, playSound]);
 
   useEffect(() => {
     let countdownInterval;
@@ -204,31 +265,47 @@ const CrashGame = ({ onBack }) => {
   }, [flightPath, multiplier, gameState]);
 
   const handlePlaceBet = () => {
-    if (betAmount && gameState === 'waiting') {
+    if (betAmount && parseFloat(betAmount) > 0 && gameState === 'waiting') {
       setIsPlaying(true);
       setUserCashedOut(false);
       setWinnings(0);
       setAutoCashOutEnabled(cashOutAt && parseFloat(cashOutAt) > 1.0);
       setFlightPath([{ x: 5, y: 10 }]);
       setAirplanePosition({ x: 5, y: 10 });
+      
+      // Generate crash point for this round
+      const newCrashPoint = generateCrashPoint();
+      setCrashPoint(newCrashPoint);
+      setGameStartTime(Date.now());
+      
+      console.log(`Game started - Crash point: ${newCrashPoint.toFixed(2)}x`);
     }
   };
 
-  const handleCashOut = () => {
-    if (isPlaying && gameState === 'playing') {
+  const handleCashOut = useCallback(() => {
+    if (isPlaying && gameState === 'playing' && !userCashedOut) {
       setIsPlaying(false);
       setUserCashedOut(true);
+      
       // Calculate winnings
-      const calculatedWinnings = parseFloat(betAmount) * multiplier;
+      const calculatedWinnings = parseFloat(betAmount || 0) * multiplier;
       setWinnings(calculatedWinnings);
       
+      // Update stats
+      setGameStats(prev => ({
+        ...prev,
+        totalGames: prev.totalGames + 1,
+        totalWinnings: prev.totalWinnings + calculatedWinnings,
+        bestMultiplier: Math.max(prev.bestMultiplier, multiplier),
+        winRate: (prev.totalGames + 1) > 0 ? (prev.totalGames + 1) / (prev.totalGames + 1) : 1
+      }));
+      
       // Play cash out sound
-      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmswBCqPzvnEeScGIGHL9+CWUQwMXbL3+a1kEgxQ');
-      audio.play().catch(() => {});
+      playSound('cashout');
       
       console.log(`Cashed out at ${multiplier.toFixed(2)}x for ${calculatedWinnings.toFixed(2)} coins`);
     }
-  };
+  }, [isPlaying, gameState, userCashedOut, betAmount, multiplier, playSound]);
 
   const getMultiplierColor = () => {
     if (gameState === 'crashed') return '#ff6b6b';
@@ -351,19 +428,62 @@ const CrashGame = ({ onBack }) => {
         <div className="betting-section">
           <div className="bet-display">
             <div className="bet-amount-display">
-              {betAmount || '2.00'}
+              {betAmount || '10'}
               <div className="bet-actions">
-                <button className="bet-action-btn" onClick={() => setBetAmount(prev => Math.max(0, parseFloat(prev || 2) - 0.5).toFixed(2))}>-</button>
-                <button className="bet-action-btn" onClick={() => setBetAmount(prev => (parseFloat(prev || 2) + 0.5).toFixed(2))}>+</button>
+                <button 
+                  className="bet-action-btn" 
+                  onClick={() => setBetAmount(prev => Math.max(1, parseFloat(prev || 10) - 1).toString())}
+                  disabled={gameState === 'playing'}
+                >-</button>
+                <button 
+                  className="bet-action-btn" 
+                  onClick={() => setBetAmount(prev => Math.min(1000, parseFloat(prev || 10) + 1).toString())}
+                  disabled={gameState === 'playing'}
+                >+</button>
               </div>
             </div>
           </div>
           
+          <div className="auto-cashout-section">
+            <div className="auto-cashout-header">
+              <label>Auto Cash Out</label>
+              <div className="auto-cashout-toggle">
+                <input 
+                  type="checkbox" 
+                  id="autoCashOut" 
+                  checked={autoCashOutEnabled}
+                  onChange={(e) => setAutoCashOutEnabled(e.target.checked)}
+                  disabled={gameState === 'playing'}
+                />
+                <label htmlFor="autoCashOut" className="toggle-label">
+                  {autoCashOutEnabled ? 'ON' : 'OFF'}
+                </label>
+              </div>
+            </div>
+            {autoCashOutEnabled && (
+              <div className="auto-cashout-input">
+                <input
+                  type="number"
+                  placeholder="2.00"
+                  value={cashOutAt}
+                  onChange={(e) => setCashOutAt(e.target.value)}
+                  disabled={gameState === 'playing'}
+                  min="1.01"
+                  max="1000"
+                  step="0.01"
+                  className="cashout-input"
+                />
+                <span className="multiplier-symbol">x</span>
+              </div>
+            )}
+          </div>
+          
           <div className="bet-quick-amounts">
-            <button className="quick-bet-btn" onClick={() => setBetAmount('5')}>5 🪙</button>
-            <button className="quick-bet-btn" onClick={() => setBetAmount('10')}>10 🪙</button>
-            <button className="quick-bet-btn" onClick={() => setBetAmount('20')}>20 🪙</button>
-            <button className="quick-bet-btn" onClick={() => setBetAmount('100')}>100 🪙</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('5')} disabled={gameState === 'playing'}>5 🪙</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('10')} disabled={gameState === 'playing'}>10 🪙</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('25')} disabled={gameState === 'playing'}>25 🪙</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('50')} disabled={gameState === 'playing'}>50 🪙</button>
+            <button className="quick-bet-btn" onClick={() => setBetAmount('100')} disabled={gameState === 'playing'}>100 🪙</button>
           </div>
         </div>
 
@@ -388,9 +508,9 @@ const CrashGame = ({ onBack }) => {
           )}
         </div>
         
-        {gameState === 'crashed' && !userCashedOut && isPlaying && (
+        {gameState === 'crashed' && !userCashedOut && (
           <div className="crash-message">
-            ❌ Too late! The plane crashed at {multiplier.toFixed(2)}x
+            ❌ Crashed at {multiplier.toFixed(2)}x! Better luck next time.
           </div>
         )}
         
@@ -399,6 +519,24 @@ const CrashGame = ({ onBack }) => {
             🎉 You won {winnings.toFixed(2)} 🪙 at {multiplier.toFixed(2)}x!
           </div>
         )}
+        
+        {/* Game Statistics */}
+        <div className="game-stats">
+          <div className="stats-row">
+            <div className="stat-item">
+              <span className="stat-label">Games:</span>
+              <span className="stat-value">{gameStats.totalGames}</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Best:</span>
+              <span className="stat-value">{gameStats.bestMultiplier.toFixed(2)}x</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Total Won:</span>
+              <span className="stat-value">{gameStats.totalWinnings.toFixed(0)} 🪙</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

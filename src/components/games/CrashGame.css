@@ -72,7 +72,7 @@
   border: none;
   position: relative;
   width: 100%;
-  height: 50vh;
+  height: 60vh;
   box-sizing: border-box;
   box-shadow: none;
   overflow: hidden;
@@ -547,7 +547,7 @@
 .game-controls {
   position: relative;
   width: 100%;
-  height: 50vh;
+  height: 40vh;
   background: rgba(0, 0, 0, 0.95);
   border-radius: 15px 15px 0 0;
   padding: 16px;
@@ -559,6 +559,7 @@
   box-sizing: border-box;
   backdrop-filter: blur(10px);
   z-index: 10;
+  overflow-y: auto;
 }
 
 .control-tabs {
@@ -606,14 +607,17 @@
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  padding: 12px 16px;
+  padding: 16px 20px;
   color: white;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   font-family: var(--font-mono);
+  min-height: 56px;
+  box-sizing: border-box;
 }
 
 .bet-actions {
@@ -622,19 +626,21 @@
 }
 
 .bet-action-btn {
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.1);
   color: white;
-  border-radius: 50%;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .bet-action-btn:hover {
@@ -643,21 +649,26 @@
 
 .bet-quick-amounts {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .quick-bet-btn {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #888;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-height: 44px;
+  min-width: 50px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .quick-bet-btn:hover {
@@ -869,16 +880,16 @@
 
 .bet-button,
 .cashout-button {
-  padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 24px);
+  padding: 16px 24px;
   border: none;
-  border-radius: clamp(8px, 2vw, 12px);
-  font-size: clamp(14px, 3.5vw, 16px);
+  border-radius: 12px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
-  min-height: 48px;
+  min-height: 56px;
   width: 100%;
   box-sizing: border-box;
   touch-action: manipulation;
@@ -1098,6 +1109,123 @@
   100% { transform: translate(40px, -40px) scale(0.5); opacity: 0; }
 }
 
+/* Auto Cash Out Section */
+.auto-cashout-section {
+  margin-bottom: 12px;
+}
+
+.auto-cashout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.auto-cashout-header label {
+  font-size: 14px;
+  color: var(--primary-medium-gray);
+  font-weight: 500;
+}
+
+.auto-cashout-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auto-cashout-toggle input[type="checkbox"] {
+  display: none;
+}
+
+.toggle-label {
+  padding: 6px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 40px;
+  text-align: center;
+  color: var(--primary-medium-gray);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auto-cashout-toggle input[type="checkbox"]:checked + .toggle-label {
+  background: var(--accent-turquoise);
+  border-color: var(--accent-turquoise);
+  color: white;
+}
+
+.auto-cashout-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cashout-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--primary-light-gray);
+  padding: 12px 40px 12px 16px;
+  border-radius: 8px;
+  font-family: var(--font-primary);
+  font-size: 16px;
+  transition: all var(--animation-fast) var(--animation-easing);
+  min-height: 48px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.cashout-input:focus {
+  outline: none;
+  border-color: var(--accent-turquoise);
+  box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.2);
+}
+
+/* Game Statistics */
+.game-stats {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--primary-medium-gray);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary-light-gray);
+  font-family: var(--font-mono);
+}
+
 /* Mobile First Responsive Design */
 @media screen and (max-width: 480px) {
   .crash-game {
@@ -1114,18 +1242,18 @@
   .game-display {
     padding: 0;
     border-radius: 0;
-    height: 50vh;
+    height: 60vh;
     width: 100vw;
     flex: 1;
   }
   
   .multiplier-value {
-    font-size: clamp(32px, 12vw, 64px);
+    font-size: clamp(40px, 15vw, 80px);
     font-weight: 900;
   }
   
   .multiplier-display {
-    top: 40%;
+    top: 45%;
   }
   
   .graph-container {
@@ -1139,74 +1267,97 @@
   }
   
   .game-controls {
-    padding: 12px;
-    gap: 8px;
-    border-radius: 12px 12px 0 0;
-    height: 50vh;
+    padding: 16px;
+    gap: 12px;
+    border-radius: 16px 16px 0 0;
+    height: 40vh;
     overflow-y: auto;
     flex-shrink: 0;
   }
   
   .control-tabs {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
   
   .tab {
-    padding: 8px;
-    font-size: 12px;
-    min-height: 36px;
+    padding: 12px;
+    font-size: 14px;
+    min-height: 48px;
   }
   
   .bet-amount-display {
-    padding: 8px 12px;
-    font-size: 14px;
+    padding: 16px 20px;
+    font-size: 18px;
+    min-height: 60px;
   }
   
   .bet-action-btn {
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
   }
   
   .bet-quick-amounts {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    gap: 8px;
   }
   
   .quick-bet-btn {
-    padding: 6px 8px;
-    font-size: 10px;
-    min-height: 28px;
+    padding: 12px 16px;
+    font-size: 12px;
+    min-height: 48px;
+    min-width: 60px;
   }
   
   .bet-button,
   .cashout-button {
-    min-height: 44px;
-    font-size: 14px;
-    padding: 12px 16px;
+    min-height: 56px;
+    font-size: 16px;
+    padding: 16px 24px;
   }
   
   .cashout-text {
-    font-size: 12px;
+    font-size: 14px;
   }
   
   .cashout-amount {
-    font-size: 16px;
+    font-size: 18px;
   }
   
   .history-list {
-    gap: 4px;
+    gap: 6px;
     flex-wrap: wrap;
   }
   
   .history-item {
-    padding: 4px 8px;
-    font-size: 10px;
-    min-height: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 28px;
   }
   
   .airplane {
-    width: clamp(25px, 8vw, 40px);
-    height: clamp(18px, 6vw, 28px);
+    width: clamp(30px, 10vw, 50px);
+    height: clamp(22px, 8vw, 35px);
+  }
+  
+  .toggle-label {
+    min-height: 40px;
+    padding: 8px 20px;
+    font-size: 14px;
+  }
+  
+  .cashout-input {
+    min-height: 52px;
+    font-size: 16px;
+    padding: 16px 40px 16px 16px;
+  }
+  
+  .auto-cashout-header {
+    margin-bottom: 12px;
+  }
+  
+  .auto-cashout-header label {
+    font-size: 16px;
   }
 }
 
@@ -1355,36 +1506,49 @@
 @media (hover: none) and (pointer: coarse) {
   .bet-button,
   .cashout-button {
-    min-height: 50px;
-    padding: 15px 25px;
-    font-size: 15px;
+    min-height: 56px;
+    padding: 18px 28px;
+    font-size: 16px;
   }
   
   .tab {
-    min-height: 44px;
-    padding: 12px;
+    min-height: 48px;
+    padding: 14px;
   }
   
   .bet-action-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
   }
   
   .quick-bet-btn {
-    min-height: 36px;
-    padding: 8px 12px;
-    font-size: 12px;
+    min-height: 48px;
+    padding: 12px 16px;
+    font-size: 14px;
+    min-width: 64px;
   }
   
   .airplane {
-    width: clamp(35px, 10vw, 55px);
-    height: clamp(25px, 7vw, 40px);
+    width: clamp(40px, 12vw, 60px);
+    height: clamp(30px, 9vw, 45px);
   }
   
   .history-item {
-    min-height: 28px;
-    padding: 6px 10px;
+    min-height: 32px;
+    padding: 8px 12px;
+  }
+  
+  .toggle-label {
+    min-height: 44px;
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+  
+  .cashout-input {
+    min-height: 56px;
+    font-size: 18px;
+    padding: 18px 44px 18px 18px;
   }
 }
 
@@ -1405,18 +1569,18 @@
   
   .game-display {
     width: 100vw;
-    height: 50vh;
+    height: 60vh;
     position: relative;
     flex: 1;
   }
   
   .multiplier-display {
-    top: 40%;
+    top: 45%;
     z-index: 10;
   }
   
   .game-controls {
-    height: 50vh;
+    height: 40vh;
     overflow-y: auto;
     position: relative;
     width: 100%;
@@ -1438,5 +1602,17 @@
     position: absolute;
     top: 0;
     left: 0;
+  }
+  
+  .bet-display {
+    margin-bottom: 20px;
+  }
+  
+  .betting-section {
+    gap: 16px;
+  }
+  
+  .auto-cashout-section {
+    margin-bottom: 16px;
   }
 }
