@@ -8,6 +8,14 @@ import RouletteGame from './RouletteGame';
 import DiceGame from './DiceGame';
 import './ModernGamesSection.css';
 
+// Import game images
+import crashGameImg from '../../assets/images/games/crash-game.jpg';
+import coinFlipImg from '../../assets/images/games/coin-flip.jpg';
+import luckyWheelImg from '../../assets/images/games/lucky-wheel.jpg';
+import minesGameImg from '../../assets/images/games/mines-game.jpg';
+import rouletteImg from '../../assets/images/games/roulette-game.jpg';
+import diceGameImg from '../../assets/images/games/dice-game.jpg';
+
 const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
   const [selectedGame, setSelectedGame] = useState(null);
   
@@ -50,7 +58,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Fly high and cash out before the crash',
       icon: '🚀',
       secondaryIcon: '⭐',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      background: `url(${crashGameImg}) center/cover no-repeat`,
       cardGradient: 'linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9))',
       minBet: 10,
       maxBet: 1000,
@@ -64,7 +72,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Classic casino roulette experience',
       icon: '🎯',
       secondaryIcon: '🪙',
-      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      background: `url(${rouletteImg}) center/cover no-repeat`,
       cardGradient: 'linear-gradient(135deg, rgba(240, 147, 251, 0.9), rgba(245, 87, 108, 0.9))',
       minBet: 5,
       maxBet: 500,
@@ -92,7 +100,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Reveal gems while avoiding mines',
       icon: '💎',
       secondaryIcon: '💣',
-      background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      background: `url(${minesGameImg}) center/cover no-repeat`,
       cardGradient: 'linear-gradient(135deg, rgba(79, 172, 254, 0.9), rgba(0, 242, 254, 0.9))',
       minBet: 5,
       maxBet: 1000,
@@ -106,13 +114,41 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Predict the dice roll outcome',
       icon: '🎲',
       secondaryIcon: '📊',
-      background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      background: `url(${diceGameImg}) center/cover no-repeat`,
       cardGradient: 'linear-gradient(135deg, rgba(250, 112, 154, 0.9), rgba(254, 225, 64, 0.9))',
       minBet: 1,
       maxBet: 100,
       status: 'active',
       multiplier: '99x',
       particles: ['🎯', '🔥', '⚡']
+    },
+    {
+      id: GAME_TYPES.COIN_FLIP,
+      name: 'COIN FLIP',
+      description: 'Heads or tails - classic coin flip',
+      icon: '🪙',
+      secondaryIcon: '🎆',
+      background: `url(${coinFlipImg}) center/cover no-repeat`,
+      cardGradient: 'linear-gradient(135deg, rgba(255, 193, 7, 0.9), rgba(255, 152, 0, 0.9))',
+      minBet: 1,
+      maxBet: 1000,
+      status: 'active',
+      multiplier: '2x',
+      particles: ['🪙', '✨', '🎆']
+    },
+    {
+      id: GAME_TYPES.LUCKY_WHEEL,
+      name: 'LUCKY WHEEL',
+      description: 'Spin the wheel of fortune',
+      icon: '🎰',
+      secondaryIcon: '🍀',
+      background: `url(${luckyWheelImg}) center/cover no-repeat`,
+      cardGradient: 'linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(139, 195, 74, 0.9))',
+      minBet: 5,
+      maxBet: 500,
+      status: 'active',
+      multiplier: '10x',
+      particles: ['🍀', '🎆', '✨']
     },
     {
       id: 'towers',

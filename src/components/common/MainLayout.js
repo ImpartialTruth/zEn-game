@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import './MainLayout.css';
+import zenLogo from '../../assets/images/zen-logo.jpg';
+import cosmicBg from '../../assets/images/backgrounds/cosmic-background.jpg';
 
 const MainLayout = ({ children, userProfile, onAvatarChange, onClaimCoins, showBackButton, onBackClick }) => {
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -49,8 +51,7 @@ const MainLayout = ({ children, userProfile, onAvatarChange, onClaimCoins, showB
               </button>
             ) : (
               <div className="brand-logo">
-                <div className="logo-icon">🧘</div>
-                <span className="brand-name">Zen</span>
+                <img src={zenLogo} alt="Zen Casino" className="logo-image" />
               </div>
             )}
           </div>
