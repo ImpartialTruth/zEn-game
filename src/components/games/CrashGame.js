@@ -19,9 +19,8 @@ const CrashGame = ({ onBack }) => {
     winRate: 0
   });
   const canvasRef = useRef(null);
-  const animationRef = useRef(null);
   const [flightPath, setFlightPath] = useState([]);
-  const [airplanePosition, setAirplanePosition] = useState({ x: 5, y: 10 });
+  const [airplanePosition, setAirplanePosition] = useState({ x: 20, y: 20 });
 
   // Enhanced crash point generation
   const generateCrashPoint = useCallback(() => {
@@ -127,10 +126,10 @@ const CrashGame = ({ onBack }) => {
             // Animate plane flying away quickly
             const flyAwayAnimation = setInterval(() => {
               setAirplanePosition(prev => ({
-                x: prev.x + 8,
-                y: prev.y + 6
+                x: prev.x + 6,
+                y: prev.y + 4
               }));
-            }, 30);
+            }, 40);
             
             // Stop animation and start new game after delay
             setTimeout(() => {
@@ -138,7 +137,7 @@ const CrashGame = ({ onBack }) => {
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
-              setAirplanePosition({ x: 5, y: 10 });
+              setAirplanePosition({ x: 20, y: 20 });
               setWinnings(0);
               setCountdown(10);
               setUserCashedOut(false);
@@ -147,10 +146,10 @@ const CrashGame = ({ onBack }) => {
             return newMultiplier;
           }
           
-          // Update flight path - airplane should follow the red line exactly
+          // Update flight path - airplane moves from left-center to center-right
           const progress = Math.min((newMultiplier - 1) / 8, 1);
-          const xPos = 5 + progress * 85;
-          const yPos = 10 + Math.pow(progress, 0.7) * 75;
+          const xPos = 20 + progress * 40; // 20% to 60% (center area)
+          const yPos = 20 + Math.pow(progress, 0.6) * 50; // 20% to 70%
           
           setFlightPath(prev => [...prev, { x: xPos, y: yPos }]);
           setAirplanePosition({ x: xPos, y: yPos });
@@ -163,7 +162,7 @@ const CrashGame = ({ onBack }) => {
     return () => clearInterval(interval);
   }, [gameState, autoCashOutEnabled, cashOutAt, isPlaying, userCashedOut, generateCrashPoint, playSound]);
 
-  // Canvas drawing effect
+  // Canvas drawing effect - simple dashed line
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -175,58 +174,45 @@ const CrashGame = ({ onBack }) => {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
     
-    // Draw grid lines
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-    ctx.lineWidth = 0.5;
+    // Draw simple grid
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
     
-    // Horizontal lines
-    for (let y = 0; y <= height; y += 40) {
+    // Few horizontal lines
+    for (let y = height * 0.2; y <= height * 0.8; y += height * 0.2) {
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(width, y);
       ctx.stroke();
     }
     
-    // Vertical lines
-    for (let x = 0; x <= width; x += 40) {
+    // Few vertical lines
+    for (let x = width * 0.2; x <= width * 0.8; x += width * 0.2) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, height);
       ctx.stroke();
     }
     
-    // Draw flight path with red filled area
+    // Draw simple dashed line path
     if (flightPath.length > 1) {
+      ctx.setLineDash([8, 4]);
+      ctx.strokeStyle = '#00BCD4';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      
       const scaledPath = flightPath.map(point => ({
         x: (point.x / 100) * width,
         y: height - ((point.y) / 100) * height
       }));
       
-      // Draw filled red area under curve
-      ctx.fillStyle = 'rgba(220, 38, 38, 0.8)';
-      ctx.beginPath();
-      ctx.moveTo(0, height);
-      ctx.lineTo(scaledPath[0].x, scaledPath[0].y);
-      
-      for (let i = 1; i < scaledPath.length; i++) {
-        ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
-      }
-      
-      ctx.lineTo(scaledPath[scaledPath.length - 1].x, height);
-      ctx.lineTo(0, height);
-      ctx.fill();
-      
-      // Draw curve line
-      ctx.strokeStyle = 'rgba(220, 38, 38, 1)';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
       ctx.moveTo(scaledPath[0].x, scaledPath[0].y);
-      
       for (let i = 1; i < scaledPath.length; i++) {
         ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
       }
       
       ctx.stroke();
+      ctx.setLineDash([]);
     }
     
   }, [flightPath]);
@@ -236,8 +222,8 @@ const CrashGame = ({ onBack }) => {
       setIsPlaying(true);
       setUserCashedOut(false);
       setWinnings(0);
-      setFlightPath([{ x: 5, y: 10 }]);
-      setAirplanePosition({ x: 5, y: 10 });
+      setFlightPath([{ x: 20, y: 20 }]);
+      setAirplanePosition({ x: 20, y: 20 });
     }
   };
 
@@ -282,8 +268,8 @@ const CrashGame = ({ onBack }) => {
 
   return (
     <div className="crash-game">
-      <div className="game-display game-section">
-        {/* Top row with previous multiplier results */}
+      <div className="game-display">
+        {/* Game history */}
         <div className="game-history">
           <div className="history-list">
             {gameHistory.map((mult, index) => {
@@ -303,47 +289,30 @@ const CrashGame = ({ onBack }) => {
           </div>
         </div>
 
-        {/* Full-screen graph container */}
+        {/* Graph container */}
         <div className="graph-container">
           <canvas 
             ref={canvasRef}
-            className="aviator-canvas"
+            className="game-canvas"
             width="800"
             height="400"
           />
           
-          {/* Flight overlay with airplane */}
-          <div className="flight-overlay">
-            <div className="sky-gradient"></div>
-            <div className="stars">
-              <div className="star star-1">⭐</div>
-              <div className="star star-2">✨</div>
-              <div className="star star-3">⭐</div>
-              <div className="star star-4">✨</div>
-              <div className="star star-5">⭐</div>
-            </div>
-            <div className="clouds">
-              <div className="cloud cloud-1">☁️</div>
-              <div className="cloud cloud-2">☁️</div>
-              <div className="cloud cloud-3">☁️</div>
-              <div className="cloud cloud-4">☁️</div>
-            </div>
-            <div 
-              className={`airplane ${gameState}`}
-              style={{
-                left: `${airplanePosition.x}%`,
-                bottom: `${airplanePosition.y}%`,
-                transform: `rotate(${Math.min((airplanePosition.x - 5) * 0.5, 25)}deg)`,
-                transition: gameState === 'crashed' ? 'all 0.5s ease-out' : 'none'
-              }}
-            >
-              <div className="airplane-emoji">✈️</div>
-              <div className="airplane-trail"></div>
-            </div>
-            
+          {/* Airplane */}
+          <div 
+            className={`airplane ${gameState}`}
+            style={{
+              left: `${airplanePosition.x}%`,
+              bottom: `${airplanePosition.y}%`,
+              transform: `rotate(${Math.min((airplanePosition.x - 20) * 0.8, 20)}deg)`,
+              transition: gameState === 'crashed' ? 'all 0.3s ease-out' : 'none'
+            }}
+          >
+            <div className="airplane-emoji">✈️</div>
+            <div className="airplane-trail"></div>
           </div>
 
-          {/* Centered large multiplier display */}
+          {/* Multiplier display */}
           <div className="multiplier-display">
             <div className="multiplier-container">
               <div 
@@ -362,83 +331,80 @@ const CrashGame = ({ onBack }) => {
               )}
             </div>
           </div>
-
         </div>
       </div>
       
-      {/* Bottom control panel */}
-      <div className="game-controls bet-section">
-        <div className="control-tabs">
-          <div className="tab active">Bet</div>
-          <div className="tab">Auto</div>
-        </div>
-        
-        <div className="betting-section">
-          <div className="bet-display">
+      {/* Compact betting controls */}
+      <div className="betting-controls">
+        {/* Bet amount section */}
+        <div className="bet-section">
+          <div className="bet-amount-container">
             <div className="bet-amount-display">
-              {betAmount} 🪙
+              <span className="bet-label">Bet:</span>
+              <span className="bet-value">{betAmount} 🪙</span>
               <div className="bet-actions">
                 <button 
-                  className="bet-action-btn" 
-                  onClick={() => handleBetChange(Math.max(1, parseFloat(betAmount) - 1).toString())}
+                  className="bet-btn minus"
+                  onClick={() => handleBetChange(Math.max(1, parseFloat(betAmount) - 5).toString())}
                   disabled={gameState === 'playing'}
                 >-</button>
                 <button 
-                  className="bet-action-btn" 
-                  onClick={() => handleBetChange(Math.min(1000, parseFloat(betAmount) + 1).toString())}
+                  className="bet-btn plus"
+                  onClick={() => handleBetChange(Math.min(1000, parseFloat(betAmount) + 5).toString())}
                   disabled={gameState === 'playing'}
                 >+</button>
               </div>
             </div>
           </div>
           
-          <div className="auto-cashout-section">
-            <div className="auto-cashout-header">
-              <label>Auto Cash Out</label>
-              <div className="auto-cashout-toggle">
-                <input 
-                  type="checkbox" 
-                  id="autoCashOut" 
-                  checked={autoCashOutEnabled}
-                  onChange={(e) => setAutoCashOutEnabled(e.target.checked)}
-                  disabled={gameState === 'playing'}
-                />
-                <label htmlFor="autoCashOut" className="toggle-label">
-                  {autoCashOutEnabled ? 'ON' : 'OFF'}
-                </label>
-              </div>
-            </div>
-            {autoCashOutEnabled && (
-              <div className="auto-cashout-input">
-                <input
-                  type="number"
-                  placeholder="2.00"
-                  value={cashOutAt}
-                  onChange={(e) => setCashOutAt(e.target.value)}
-                  disabled={gameState === 'playing'}
-                  min="1.01"
-                  max="1000"
-                  step="0.01"
-                  className="cashout-input"
-                />
-                <span className="multiplier-symbol">x</span>
-              </div>
-            )}
-          </div>
-          
-          <div className="bet-quick-amounts">
-            <button className="quick-bet-btn" onClick={() => handleBetChange('5')} disabled={gameState === 'playing'}>5 🪙</button>
-            <button className="quick-bet-btn" onClick={() => handleBetChange('10')} disabled={gameState === 'playing'}>10 🪙</button>
-            <button className="quick-bet-btn" onClick={() => handleBetChange('25')} disabled={gameState === 'playing'}>25 🪙</button>
-            <button className="quick-bet-btn" onClick={() => handleBetChange('50')} disabled={gameState === 'playing'}>50 🪙</button>
-            <button className="quick-bet-btn" onClick={() => handleBetChange('100')} disabled={gameState === 'playing'}>100 🪙</button>
+          {/* Quick amounts */}
+          <div className="quick-amounts">
+            <button className="quick-btn" onClick={() => handleBetChange('10')} disabled={gameState === 'playing'}>10</button>
+            <button className="quick-btn" onClick={() => handleBetChange('50')} disabled={gameState === 'playing'}>50</button>
+            <button className="quick-btn" onClick={() => handleBetChange('100')} disabled={gameState === 'playing'}>100</button>
           </div>
         </div>
 
+        {/* Auto cash out */}
+        <div className="auto-section">
+          <div className="auto-header">
+            <label>Auto Cash Out</label>
+            <div className="auto-toggle">
+              <input 
+                type="checkbox" 
+                id="autoCashOut" 
+                checked={autoCashOutEnabled}
+                onChange={(e) => setAutoCashOutEnabled(e.target.checked)}
+                disabled={gameState === 'playing'}
+              />
+              <label htmlFor="autoCashOut" className="toggle-btn">
+                {autoCashOutEnabled ? 'ON' : 'OFF'}
+              </label>
+            </div>
+          </div>
+          {autoCashOutEnabled && (
+            <div className="auto-input-container">
+              <input
+                type="number"
+                placeholder="2.00"
+                value={cashOutAt}
+                onChange={(e) => setCashOutAt(e.target.value)}
+                disabled={gameState === 'playing'}
+                min="1.01"
+                max="1000"
+                step="0.01"
+                className="auto-input"
+              />
+              <span className="auto-suffix">x</span>
+            </div>
+          )}
+        </div>
+
+        {/* Main action button */}
         <div className="action-section">
           {!isPlaying ? (
             <button 
-              className="bet-button"
+              className="main-action-btn bet-btn-main"
               onClick={handlePlaceBet}
               disabled={!betAmount || parseFloat(betAmount) < 1 || gameState !== 'waiting' || countdown > 0}
             >
@@ -446,7 +412,7 @@ const CrashGame = ({ onBack }) => {
             </button>
           ) : (
             <button 
-              className="cashout-button"
+              className="main-action-btn cashout-btn-main"
               onClick={handleCashOut}
               disabled={gameState === 'crashed' || userCashedOut}
             >
@@ -456,33 +422,32 @@ const CrashGame = ({ onBack }) => {
           )}
         </div>
         
+        {/* Messages */}
         {gameState === 'crashed' && !userCashedOut && (
-          <div className="crash-message">
-            ❌ Crashed at {multiplier.toFixed(2)}x! Better luck next time.
+          <div className="message crash-msg">
+            ❌ Crashed at {multiplier.toFixed(2)}x!
           </div>
         )}
         
         {userCashedOut && winnings > 0 && (
-          <div className="win-message">
-            🎉 You won {winnings.toFixed(2)} 🪙 at {multiplier.toFixed(2)}x!
+          <div className="message win-msg">
+            🎉 Won {winnings.toFixed(2)} 🪙 at {multiplier.toFixed(2)}x!
           </div>
         )}
         
-        {/* Game Statistics */}
-        <div className="game-stats">
-          <div className="stats-row">
-            <div className="stat-item">
-              <span className="stat-label">Games:</span>
-              <span className="stat-value">{gameStats.totalGames}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Best:</span>
-              <span className="stat-value">{gameStats.bestMultiplier.toFixed(2)}x</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Total Won:</span>
-              <span className="stat-value">{gameStats.totalWinnings.toFixed(0)} 🪙</span>
-            </div>
+        {/* Compact stats */}
+        <div className="stats">
+          <div className="stat">
+            <span className="stat-label">Games:</span>
+            <span className="stat-value">{gameStats.totalGames}</span>
+          </div>
+          <div className="stat">
+            <span className="stat-label">Best:</span>
+            <span className="stat-value">{gameStats.bestMultiplier.toFixed(2)}x</span>
+          </div>
+          <div className="stat">
+            <span className="stat-label">Won:</span>
+            <span className="stat-value">{gameStats.totalWinnings.toFixed(0)} 🪙</span>
           </div>
         </div>
       </div>
