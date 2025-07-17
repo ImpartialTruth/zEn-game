@@ -24,7 +24,7 @@ const MainLayout = ({ children, userProfile, onAvatarChange, onClaimCoins, showB
     setShowProfileModal(false);
   };
   return (
-    <div className="main-layout" style={{backgroundImage: `url(${cosmicBg})`}}>
+    <div className="main-layout">
       <div className="background-overlay"></div>
       <div className="background-particles">
         {backgroundParticles.map(particle => (

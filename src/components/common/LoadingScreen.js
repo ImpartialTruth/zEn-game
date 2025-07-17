@@ -36,7 +36,7 @@ const LoadingScreen = ({ onComplete }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="loading-screen" style={{backgroundImage: `url(${cosmicBg})`}}>
+    <div className="loading-screen">
       <div className="loading-content">
         <div className="zen-logo">
           <div className="zen-circle">
