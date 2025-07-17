@@ -124,8 +124,17 @@ const CrashGame = ({ onBack }) => {
             // Add to history
             setGameHistory(prev => [newMultiplier, ...prev.slice(0, 4)]);
             
-            // Start new game after delay
+            // Animate plane flying away
+            const flyAwayAnimation = setInterval(() => {
+              setAirplanePosition(prev => ({
+                x: prev.x + 5,
+                y: prev.y + 2
+              }));
+            }, 50);
+            
+            // Stop animation and start new game after delay
             setTimeout(() => {
+              clearInterval(flyAwayAnimation);
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
@@ -133,7 +142,7 @@ const CrashGame = ({ onBack }) => {
               setWinnings(0);
               setCountdown(10);
               setUserCashedOut(false);
-            }, 3000);
+            }, 2000);
             
             return newMultiplier;
           }
@@ -223,7 +232,7 @@ const CrashGame = ({ onBack }) => {
   }, [flightPath]);
 
   const handlePlaceBet = () => {
-    if (betAmount && parseFloat(betAmount) > 0 && gameState === 'waiting') {
+    if (betAmount && parseFloat(betAmount) > 0 && gameState === 'waiting' && countdown === 0) {
       setIsPlaying(true);
       setUserCashedOut(false);
       setWinnings(0);
@@ -333,14 +342,13 @@ const CrashGame = ({ onBack }) => {
             
             {gameState === 'crashed' && (
               <div 
-                className="crash-explosion"
+                className="crash-message-overlay"
                 style={{
-                  left: `${airplanePosition.x}%`,
-                  bottom: `${Math.min((airplanePosition.y) / 100 * 100, 90)}%`
+                  left: `${Math.min(airplanePosition.x, 80)}%`,
+                  bottom: `${Math.min((airplanePosition.y) / 100 * 100, 80)}%`
                 }}
               >
-                <div className="explosion-effect">💥</div>
-                <div className="explosion-ring"></div>
+                <div className="crash-text-overlay">CRASHED!</div>
               </div>
             )}
           </div>
@@ -442,7 +450,7 @@ const CrashGame = ({ onBack }) => {
             <button 
               className="bet-button"
               onClick={handlePlaceBet}
-              disabled={!betAmount || gameState === 'playing' || countdown > 0}
+              disabled={!betAmount || parseFloat(betAmount) < 1 || gameState !== 'waiting' || countdown > 0}
             >
               {gameState === 'waiting' ? (countdown > 0 ? `Wait ${countdown}s` : 'Place Bet') : 'Next Round'}
             </button>

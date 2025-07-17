@@ -422,13 +422,22 @@
   box-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
 }
 
-.crash-explosion {
+.crash-message-overlay {
   position: absolute;
-  width: clamp(60px, 15vw, 100px);
-  height: clamp(60px, 15vw, 100px);
   transform: translate(-50%, -50%);
   z-index: 10;
-  animation: explosionBurst 0.8s ease-out;
+  animation: fadeInOut 2s ease-out;
+}
+
+.crash-text-overlay {
+  background: rgba(255, 107, 107, 0.9);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 2px solid #ff6b6b;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
 }
 
 .explosion-effect {
@@ -550,22 +559,23 @@
   height: 40vh;
   background: rgba(0, 0, 0, 0.95);
   border-radius: 15px 15px 0 0;
-  padding: 16px;
+  padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   box-sizing: border-box;
   backdrop-filter: blur(10px);
   z-index: 10;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .control-tabs {
   display: flex;
   gap: 0;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .tab {
@@ -600,23 +610,23 @@
 .bet-display {
   display: flex;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .bet-amount-display {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  padding: 16px 20px;
+  padding: 12px 16px;
   color: white;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   font-family: var(--font-mono);
-  min-height: 56px;
+  min-height: 48px;
   box-sizing: border-box;
 }
 
@@ -626,14 +636,14 @@
 }
 
 .bet-action-btn {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.1);
   color: white;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -649,24 +659,25 @@
 
 .bet-quick-amounts {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .quick-bet-btn {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #888;
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-height: 44px;
-  min-width: 50px;
+  min-height: 36px;
+  min-width: 45px;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
@@ -679,6 +690,7 @@
 .action-section {
   display: flex;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .betting-section {
@@ -880,16 +892,16 @@
 
 .bet-button,
 .cashout-button {
-  padding: 16px 24px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
-  min-height: 56px;
+  min-height: 48px;
   width: 100%;
   box-sizing: border-box;
   touch-action: manipulation;
@@ -1085,10 +1097,11 @@
   100% { opacity: 0.6; r: 12; }
 }
 
-@keyframes explosionBurst {
-  0% { opacity: 0; transform: scale(0); }
-  30% { opacity: 1; transform: scale(1.2); }
-  100% { opacity: 0; transform: scale(2); }
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
 }
 
 @keyframes explosionSpin {
@@ -1111,7 +1124,8 @@
 
 /* Auto Cash Out Section */
 .auto-cashout-section {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .auto-cashout-header {
@@ -1138,18 +1152,18 @@
 }
 
 .toggle-label {
-  padding: 6px 16px;
+  padding: 4px 12px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  font-size: 12px;
+  border-radius: 16px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 40px;
+  min-width: 32px;
   text-align: center;
   color: var(--primary-medium-gray);
-  min-height: 32px;
+  min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1172,12 +1186,12 @@
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--primary-light-gray);
-  padding: 12px 40px 12px 16px;
-  border-radius: 8px;
+  padding: 8px 32px 8px 12px;
+  border-radius: 6px;
   font-family: var(--font-primary);
-  font-size: 16px;
+  font-size: 14px;
   transition: all var(--animation-fast) var(--animation-easing);
-  min-height: 48px;
+  min-height: 36px;
   box-sizing: border-box;
   width: 100%;
 }
@@ -1193,8 +1207,9 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  padding: 12px;
-  margin-top: 8px;
+  padding: 8px;
+  margin-top: 4px;
+  flex-shrink: 0;
 }
 
 .stats-row {
@@ -1267,16 +1282,16 @@
   }
   
   .game-controls {
-    padding: 16px;
-    gap: 12px;
+    padding: 10px;
+    gap: 6px;
     border-radius: 16px 16px 0 0;
     height: 40vh;
-    overflow-y: auto;
+    overflow: hidden;
     flex-shrink: 0;
   }
   
   .control-tabs {
-    margin-bottom: 16px;
+    margin-bottom: 8px;
   }
   
   .tab {
@@ -1286,34 +1301,34 @@
   }
   
   .bet-amount-display {
-    padding: 16px 20px;
-    font-size: 18px;
-    min-height: 60px;
+    padding: 12px 16px;
+    font-size: 16px;
+    min-height: 48px;
   }
   
   .bet-action-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
   }
   
   .bet-quick-amounts {
-    margin-bottom: 12px;
-    gap: 8px;
+    margin-bottom: 6px;
+    gap: 4px;
   }
   
   .quick-bet-btn {
-    padding: 12px 16px;
-    font-size: 12px;
-    min-height: 48px;
-    min-width: 60px;
+    padding: 8px 12px;
+    font-size: 11px;
+    min-height: 40px;
+    min-width: 50px;
   }
   
   .bet-button,
   .cashout-button {
-    min-height: 56px;
-    font-size: 16px;
-    padding: 16px 24px;
+    min-height: 48px;
+    font-size: 14px;
+    padding: 12px 20px;
   }
   
   .cashout-text {
@@ -1341,23 +1356,23 @@
   }
   
   .toggle-label {
-    min-height: 40px;
-    padding: 8px 20px;
-    font-size: 14px;
+    min-height: 32px;
+    padding: 6px 16px;
+    font-size: 12px;
   }
   
   .cashout-input {
-    min-height: 52px;
-    font-size: 16px;
-    padding: 16px 40px 16px 16px;
+    min-height: 40px;
+    font-size: 14px;
+    padding: 10px 32px 10px 12px;
   }
   
   .auto-cashout-header {
-    margin-bottom: 12px;
+    margin-bottom: 6px;
   }
   
   .auto-cashout-header label {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
 
@@ -1581,11 +1596,12 @@
   
   .game-controls {
     height: 40vh;
-    overflow-y: auto;
+    overflow: hidden;
     position: relative;
     width: 100%;
     z-index: 20;
     flex-shrink: 0;
+    padding: 8px;
   }
   
   .aviator-canvas {
