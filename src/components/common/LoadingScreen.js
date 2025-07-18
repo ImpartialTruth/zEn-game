@@ -38,7 +38,16 @@ const LoadingScreen = ({ onComplete }) => {
     <div className="loading-screen">
       <div className="loading-content">
         <div className="zen-logo">
-          <div className="zen-circle">
+          <img 
+            src="/assets/images/zen-logo.jpg" 
+            alt="Zen Logo" 
+            className="zen-logo-image"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
+          />
+          <div className="zen-circle" style={{display: 'none'}}>
             <div className="zen-inner-circle"></div>
           </div>
         </div>

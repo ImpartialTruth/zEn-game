@@ -54,7 +54,16 @@ const MainLayout = ({ children, userProfile, onAvatarChange, onClaimCoins, showB
             ) : (
               <div className="modern-brand">
                 <div className="brand-container">
-                  <div className="brand-icon">🎮</div>
+                  <img 
+                    src="/assets/images/zen-logo.jpg" 
+                    alt="Zen Logo" 
+                    className="brand-logo-image"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                  <div className="brand-icon" style={{display: 'none'}}>🎮</div>
                   <div className="brand-info">
                     <span className="brand-title">ZEN</span>
                     <span className="brand-subtitle">Casino</span>

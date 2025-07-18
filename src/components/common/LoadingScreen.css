@@ -40,6 +40,14 @@
   justify-content: center;
 }
 
+.zen-logo-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 8px 32px rgba(0, 188, 212, 0.4);
+}
+
 .zen-circle {
   width: 80px;
   height: 80px;

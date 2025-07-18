@@ -54,6 +54,15 @@
   transform: translateY(-1px);
 }
 
+.brand-logo-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 16px rgba(0, 188, 212, 0.4);
+  animation: brandIconFloat 3s ease-in-out infinite;
+}
+
 .brand-icon {
   font-size: 24px;
   animation: brandIconFloat 3s ease-in-out infinite;
