@@ -1,45 +1,17 @@
 {
   "name": "zen-meditation-game",
   "version": "1.0.0",
-  "description": "Zen - Balance Your Fortune. თამაშების პლატფორმა Telegram Web App-ში.",
-  "keywords": [
-    "zen",
-    "games",
-    "telegram",
-    "web-app",
-    "react",
-    "gaming",
-    "blockchain"
-  ],
-  "author": "Zen Development Team",
-  "license": "MIT",
-  "homepage": "https://zen-game.vercel.app",
   "private": true,
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-scripts": "^5.0.1",
-    "web-vitals": "^4.2.3"
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "analyze": "npm run build && npx serve -s build",
-    "deploy": "npm run build && echo 'Build completed successfully!'",
-    "lint": "eslint src --ext .js,.jsx --fix",
-    "format": "prettier --write src/**/*.{js,jsx,css}"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "rules": {
-      "no-unused-vars": "warn",
-      "no-console": "off"
-    }
+    "eject": "react-scripts eject"
   },
   "browserslist": {
     "production": [
@@ -52,22 +24,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "eslint": "^8.57.0",
-    "prettier": "^3.3.3"
-  },
-  "proxy": "http://localhost:3001",
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
-  },
-  "main": "bot.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ImpartialTruth/zEn-game.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ImpartialTruth/zEn-game/issues"
   }
 }
