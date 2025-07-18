@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import './LoadingScreen.css';
-import cosmicBg from '../../assets/images/backgrounds/cosmic-background.jpg';
 
 const LoadingScreen = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);

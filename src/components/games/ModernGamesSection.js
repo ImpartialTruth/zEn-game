@@ -6,24 +6,47 @@ import LuckyWheelGame from './LuckyWheelGame';
 import MinesGame from './MinesGame';
 import RouletteGame from './RouletteGame';
 import DiceGame from './DiceGame';
+import ErrorBoundary from '../common/ErrorBoundary';
 import './ModernGamesSection.css';
 
-// Import game images with error handling
-const loadGameImage = (imagePath) => {
-  try {
-    return require(`../../assets/images/games/${imagePath}`);
-  } catch (error) {
-    console.warn(`Game image not found: ${imagePath}`);
-    return null;
+// Define fallback gradients for each game type
+const gameAssets = {
+  crash: {
+    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    icon: '🚀',
+    colors: ['#667eea', '#764ba2']
+  },
+  roulette: {
+    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    icon: '🎯', 
+    colors: ['#f093fb', '#f5576c']
+  },
+  plinko: {
+    gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+    icon: '⚪',
+    colors: ['#a8edea', '#fed6e3']
+  },
+  mines: {
+    gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    icon: '💎',
+    colors: ['#4facfe', '#00f2fe']
+  },
+  dice: {
+    gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    icon: '🎲',
+    colors: ['#fa709a', '#fee140']
+  },
+  coinFlip: {
+    gradient: 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)',
+    icon: '🪙',
+    colors: ['#feca57', '#ff9ff3']
+  },
+  luckyWheel: {
+    gradient: 'linear-gradient(135deg, #48dbfb 0%, #0abde3 100%)',
+    icon: '🎰',
+    colors: ['#48dbfb', '#0abde3']
   }
 };
-
-const crashGameImg = loadGameImage('crash-game.jpg');
-const coinFlipImg = loadGameImage('coin-flip.jpg');
-const luckyWheelImg = loadGameImage('lucky-wheel.jpg');
-const minesGameImg = loadGameImage('mines-game.jpg');
-const rouletteImg = loadGameImage('roulette-game.jpg');
-const diceGameImg = loadGameImage('dice-game.jpg');
 
 const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
   const [selectedGame, setSelectedGame] = useState(null);
@@ -55,7 +78,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Fly high and cash out before the crash',
       icon: '🚀',
       secondaryIcon: '⭐',
-      background: crashGameImg ? `url(${crashGameImg}) center/cover no-repeat` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      background: gameAssets.crash.gradient,
       cardGradient: 'linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9))',
       minBet: 10,
       maxBet: 1000,
@@ -69,7 +92,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Classic casino roulette experience',
       icon: '🎯',
       secondaryIcon: '🪙',
-      background: rouletteImg ? `url(${rouletteImg}) center/cover no-repeat` : 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      background: gameAssets.roulette.gradient,
       cardGradient: 'linear-gradient(135deg, rgba(240, 147, 251, 0.9), rgba(245, 87, 108, 0.9))',
       minBet: 5,
       maxBet: 500,
@@ -83,7 +106,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Drop balls and win big multipliers',
       icon: '⚪',
       secondaryIcon: '🌟',
-      background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+      background: gameAssets.plinko.gradient,
       cardGradient: 'linear-gradient(135deg, rgba(168, 237, 234, 0.9), rgba(254, 214, 227, 0.9))',
       minBet: 20,
       maxBet: 200,
@@ -97,7 +120,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Reveal gems while avoiding mines',
       icon: '💎',
       secondaryIcon: '💣',
-      background: minesGameImg ? `url(${minesGameImg}) center/cover no-repeat` : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      background: gameAssets.mines.gradient,
       cardGradient: 'linear-gradient(135deg, rgba(79, 172, 254, 0.9), rgba(0, 242, 254, 0.9))',
       minBet: 5,
       maxBet: 1000,
@@ -111,7 +134,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Predict the dice roll outcome',
       icon: '🎲',
       secondaryIcon: '📊',
-      background: diceGameImg ? `url(${diceGameImg}) center/cover no-repeat` : 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      background: gameAssets.dice.gradient,
       cardGradient: 'linear-gradient(135deg, rgba(250, 112, 154, 0.9), rgba(254, 225, 64, 0.9))',
       minBet: 1,
       maxBet: 100,
@@ -125,7 +148,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Heads or tails - classic coin flip',
       icon: '🪙',
       secondaryIcon: '🎆',
-      background: coinFlipImg ? `url(${coinFlipImg}) center/cover no-repeat` : 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)',
+      background: gameAssets.coinFlip.gradient,
       cardGradient: 'linear-gradient(135deg, rgba(255, 193, 7, 0.9), rgba(255, 152, 0, 0.9))',
       minBet: 1,
       maxBet: 1000,
@@ -139,7 +162,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Spin the wheel of fortune',
       icon: '🎰',
       secondaryIcon: '🍀',
-      background: luckyWheelImg ? `url(${luckyWheelImg}) center/cover no-repeat` : 'linear-gradient(135deg, #48dbfb 0%, #0abde3 100%)',
+      background: gameAssets.luckyWheel.gradient,
       cardGradient: 'linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(139, 195, 74, 0.9))',
       minBet: 5,
       maxBet: 500,
@@ -217,7 +240,9 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
     return (
       <div className="modern-games-section fullscreen-game">
         <div className="game-container fullscreen">
-          {renderGameComponent()}
+          <ErrorBoundary onBack={handleBackToSelection}>
+            {renderGameComponent()}
+          </ErrorBoundary>
         </div>
       </div>
     );
@@ -245,26 +270,6 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
         </div>
       </div> */}
 
-      {/* Header */}
-      <div className="modern-header">
-        <div className="header-content">
-          <div className="brand-section">
-            <div className="brand-icon">🎮</div>
-            <h1 className="brand-title">ZEN GAMES</h1>
-            <p className="brand-subtitle">Next Generation Casino</p>
-          </div>
-          
-          <div className="user-stats">
-            <div className="balance-card">
-              <div className="balance-icon">💰</div>
-              <div className="balance-info">
-                <span className="balance-label">Balance</span>
-                <span className="balance-amount">12,450 🪙</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Games Grid */}
       <div className="games-grid-container">

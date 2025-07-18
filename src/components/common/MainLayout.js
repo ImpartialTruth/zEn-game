@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import './MainLayout.css';
 import './ModernHeader.css';
-import zenLogo from '../../assets/images/zen-logo.jpg';
-import cosmicBg from '../../assets/images/backgrounds/cosmic-background.jpg';
 
 const MainLayout = ({ children, userProfile, onAvatarChange, onClaimCoins, showBackButton, onBackClick }) => {
   const [showProfileModal, setShowProfileModal] = useState(false);
