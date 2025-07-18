@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import './MainLayout.css';
+import './ModernHeader.css';
 import zenLogo from '../../assets/images/zen-logo.jpg';
 import cosmicBg from '../../assets/images/backgrounds/cosmic-background.jpg';
 
@@ -41,52 +42,95 @@ const MainLayout = ({ children, userProfile, onAvatarChange, onClaimCoins, showB
         ))}
       </div>
       
-      <header className="app-header">
-        <div className="header-content">
-          <div className="header-left">
+      <header className="modern-app-header">
+        <div className="modern-header-content">
+          {/* Left Section */}
+          <div className="header-left-section">
             {showBackButton ? (
-              <button className="back-button" onClick={onBackClick}>
-                <span className="back-icon">←</span>
-                <span className="back-text">Back</span>
+              <button className="modern-back-button" onClick={onBackClick}>
+                <div className="back-button-content">
+                  <span className="back-icon">←</span>
+                  <span className="back-text">Back</span>
+                </div>
               </button>
             ) : (
-              <div className="brand-logo">
-                <img src={zenLogo} alt="Zen Casino" className="logo-image" />
-              </div>
-            )}
-          </div>
-          
-          <div className="header-center">
-            {userProfile && (
-              <div className="balance-display">
-                <div className="balance-icon">🪙</div>
-                <span className="balance-amount">{userProfile.coins.toLocaleString()}</span>
-              </div>
-            )}
-          </div>
-          
-          <div className="header-right">
-            {userProfile && (
-              <div className="user-actions">
-                {userProfile.canClaim && (
-                  <button className="claim-btn" onClick={onClaimCoins}>
-                    <span className="claim-icon">✨</span>
-                    <span className="claim-amount">+100</span>
-                  </button>
-                )}
-                <div className="user-profile">
-                  <div className="profile-avatar" onClick={handleProfileClick}>
-                    {userProfile.avatar ? (
-                      <img src={userProfile.avatar} alt="Profile" />
-                    ) : (
-                      <div className="avatar-default">
-                        {userProfile.name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
+              <div className="modern-brand">
+                <div className="brand-container">
+                  <div className="brand-icon">🎮</div>
+                  <div className="brand-info">
+                    <span className="brand-title">ZEN</span>
+                    <span className="brand-subtitle">Casino</span>
                   </div>
                 </div>
               </div>
             )}
+          </div>
+          
+          {/* Center Section - Balance */}
+          <div className="header-center-section">
+            {userProfile && (
+              <div className="modern-balance-card">
+                <div className="balance-content">
+                  <div className="balance-icon-modern">💰</div>
+                  <div className="balance-info">
+                    <span className="balance-label">Balance</span>
+                    <span className="balance-amount-modern">{userProfile.coins.toLocaleString()}</span>
+                  </div>
+                </div>
+                <div className="balance-glow"></div>
+              </div>
+            )}
+          </div>
+          
+          {/* Right Section - User Actions */}
+          <div className="header-right-section">
+            {userProfile && (
+              <div className="modern-user-actions">
+                {userProfile.canClaim && (
+                  <button className="modern-claim-btn" onClick={onClaimCoins}>
+                    <div className="claim-content">
+                      <span className="claim-icon-modern">✨</span>
+                      <span className="claim-text">+100</span>
+                    </div>
+                    <div className="claim-pulse"></div>
+                  </button>
+                )}
+                
+                <div className="modern-user-profile" onClick={handleProfileClick}>
+                  <div className="profile-avatar-modern">
+                    {userProfile.avatar ? (
+                      <img src={userProfile.avatar} alt="Profile" className="avatar-image" />
+                    ) : (
+                      <div className="avatar-default-modern">
+                        <span className="avatar-letter">{userProfile.name.charAt(0).toUpperCase()}</span>
+                      </div>
+                    )}
+                    <div className="profile-status-dot"></div>
+                  </div>
+                  <div className="profile-info-preview">
+                    <span className="profile-name-preview">{userProfile.name.split(' ')[0]}</span>
+                    <span className="profile-level">Lvl 1</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        {/* Header Effects */}
+        <div className="header-background-effects">
+          <div className="header-gradient"></div>
+          <div className="header-particles">
+            {[...Array(8)].map((_, i) => (
+              <div 
+                key={i}
+                className="header-particle"
+                style={{
+                  left: `${10 + i * 10}%`,
+                  animationDelay: `${i * 0.3}s`
+                }}
+              />
+            ))}
           </div>
         </div>
       </header>
