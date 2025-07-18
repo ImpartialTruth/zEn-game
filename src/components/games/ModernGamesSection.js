@@ -30,18 +30,6 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
     })), []
   );
   
-  // Memoize game card particles
-  const gamesWithParticles = useMemo(() => 
-    games.map(game => ({
-      ...game,
-      particlePositions: game.particles.map((particle, i) => ({
-        particle,
-        left: 20 + (i * 25),
-        top: 15 + (i * 20),
-        animationDelay: i * 0.5
-      }))
-    })), [games]
-  );
   const [hoveredCard, setHoveredCard] = useState(null);
 
   // Listen for external exit game signal
@@ -165,6 +153,19 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       particles: ['🏰', '👑', '💫']
     }
   ];
+
+  // Memoize game card particles - now that games is defined
+  const gamesWithParticles = useMemo(() => 
+    games.map(game => ({
+      ...game,
+      particlePositions: game.particles.map((particle, i) => ({
+        particle,
+        left: 20 + (i * 25),
+        top: 15 + (i * 20),
+        animationDelay: i * 0.5
+      }))
+    })), []
+  );
 
   const handleGameSelect = (gameId) => {
     const game = games.find(g => g.id === gameId);
