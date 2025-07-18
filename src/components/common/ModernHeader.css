@@ -96,7 +96,7 @@
 .modern-back-button {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: url('../../assets/images/ui/buttons.jpg') center/cover no-repeat;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   padding: 10px 16px;
@@ -220,7 +220,7 @@
 
 .modern-claim-btn {
   position: relative;
-  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  background: url('../../assets/images/ui/buttons.jpg') center/cover no-repeat;
   border: none;
   border-radius: 16px;
   padding: 10px 16px;
@@ -489,6 +489,7 @@
   .modern-header-content {
     gap: 8px;
     padding: 0 12px;
+    background: url('../../assets/images/ui/mobile-elements.png') center/cover no-repeat;
   }
   
   .modern-balance-card {

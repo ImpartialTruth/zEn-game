@@ -1,7 +1,7 @@
 .main-layout {
   min-height: 100vh;
   width: 100%;
-  background: linear-gradient(135deg, var(--primary-deep-blue) 0%, #283593 50%, #1A237E 100%);
+  background: url('../../assets/images/backgrounds/cosmic-background.jpg') center/cover no-repeat;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

@@ -9,7 +9,7 @@
   justify-content: space-between;
   margin-bottom: 24px;
   padding: 20px 24px;
-  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 171, 64, 0.1) 100%);
+  background: url('../../assets/images/ui/leaderboard.png') center/cover no-repeat;
   border-radius: 16px;
   border: 1px solid rgba(255, 193, 7, 0.2);
 }
