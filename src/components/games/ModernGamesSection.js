@@ -8,13 +8,22 @@ import RouletteGame from './RouletteGame';
 import DiceGame from './DiceGame';
 import './ModernGamesSection.css';
 
-// Import game images
-import crashGameImg from '../../assets/images/games/crash-game.jpg';
-import coinFlipImg from '../../assets/images/games/coin-flip.jpg';
-import luckyWheelImg from '../../assets/images/games/lucky-wheel.jpg';
-import minesGameImg from '../../assets/images/games/mines-game.jpg';
-import rouletteImg from '../../assets/images/games/roulette-game.jpg';
-import diceGameImg from '../../assets/images/games/dice-game.jpg';
+// Import game images with error handling
+const loadGameImage = (imagePath) => {
+  try {
+    return require(`../../assets/images/games/${imagePath}`);
+  } catch (error) {
+    console.warn(`Game image not found: ${imagePath}`);
+    return null;
+  }
+};
+
+const crashGameImg = loadGameImage('crash-game.jpg');
+const coinFlipImg = loadGameImage('coin-flip.jpg');
+const luckyWheelImg = loadGameImage('lucky-wheel.jpg');
+const minesGameImg = loadGameImage('mines-game.jpg');
+const rouletteImg = loadGameImage('roulette-game.jpg');
+const diceGameImg = loadGameImage('dice-game.jpg');
 
 const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
   const [selectedGame, setSelectedGame] = useState(null);
@@ -46,7 +55,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Fly high and cash out before the crash',
       icon: '🚀',
       secondaryIcon: '⭐',
-      background: `url(${crashGameImg}) center/cover no-repeat`,
+      background: crashGameImg ? `url(${crashGameImg}) center/cover no-repeat` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       cardGradient: 'linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9))',
       minBet: 10,
       maxBet: 1000,
@@ -60,7 +69,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Classic casino roulette experience',
       icon: '🎯',
       secondaryIcon: '🪙',
-      background: `url(${rouletteImg}) center/cover no-repeat`,
+      background: rouletteImg ? `url(${rouletteImg}) center/cover no-repeat` : 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
       cardGradient: 'linear-gradient(135deg, rgba(240, 147, 251, 0.9), rgba(245, 87, 108, 0.9))',
       minBet: 5,
       maxBet: 500,
@@ -88,7 +97,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Reveal gems while avoiding mines',
       icon: '💎',
       secondaryIcon: '💣',
-      background: `url(${minesGameImg}) center/cover no-repeat`,
+      background: minesGameImg ? `url(${minesGameImg}) center/cover no-repeat` : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
       cardGradient: 'linear-gradient(135deg, rgba(79, 172, 254, 0.9), rgba(0, 242, 254, 0.9))',
       minBet: 5,
       maxBet: 1000,
@@ -102,7 +111,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Predict the dice roll outcome',
       icon: '🎲',
       secondaryIcon: '📊',
-      background: `url(${diceGameImg}) center/cover no-repeat`,
+      background: diceGameImg ? `url(${diceGameImg}) center/cover no-repeat` : 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
       cardGradient: 'linear-gradient(135deg, rgba(250, 112, 154, 0.9), rgba(254, 225, 64, 0.9))',
       minBet: 1,
       maxBet: 100,
@@ -116,7 +125,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Heads or tails - classic coin flip',
       icon: '🪙',
       secondaryIcon: '🎆',
-      background: `url(${coinFlipImg}) center/cover no-repeat`,
+      background: coinFlipImg ? `url(${coinFlipImg}) center/cover no-repeat` : 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)',
       cardGradient: 'linear-gradient(135deg, rgba(255, 193, 7, 0.9), rgba(255, 152, 0, 0.9))',
       minBet: 1,
       maxBet: 1000,
@@ -130,7 +139,7 @@ const ModernGamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
       description: 'Spin the wheel of fortune',
       icon: '🎰',
       secondaryIcon: '🍀',
-      background: `url(${luckyWheelImg}) center/cover no-repeat`,
+      background: luckyWheelImg ? `url(${luckyWheelImg}) center/cover no-repeat` : 'linear-gradient(135deg, #48dbfb 0%, #0abde3 100%)',
       cardGradient: 'linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(139, 195, 74, 0.9))',
       minBet: 5,
       maxBet: 500,
