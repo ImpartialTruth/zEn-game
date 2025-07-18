@@ -104,6 +104,8 @@
   transition: all 0.3s ease;
   color: white;
   font-family: 'Inter', sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .modern-back-button:hover {
@@ -229,6 +231,8 @@
   transition: all 0.3s ease;
   color: white;
   font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .modern-claim-btn:hover {
@@ -489,6 +493,10 @@
   .modern-header-content {
     gap: 8px;
     padding: 0 12px;
+  }
+  
+  .modern-claim-btn,
+  .modern-back-button {
     background: url('../../assets/images/ui/mobile-elements.png') center/cover no-repeat;
   }
   
