@@ -1,56 +1,90 @@
+/* ZEN CASINO - 3D LUCKY WHEEL */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --primary-bg: #0a0a0a;
+  --card-bg: #1a1a1a;
+  --accent-gold: #ffd700;
+  --accent-blue: #00d4ff;
+  --accent-purple: #9d4edd;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --border-radius: 16px;
+  --shadow-game: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .lucky-wheel-game {
-  width: 100%;
+  width: 100vw;
   height: 100vh;
-  margin: 0;
-  padding: clamp(12px, 3vw, 20px);
-  box-sizing: border-box;
-  overflow-x: hidden;
-  overflow-y: auto;
-  background: var(--primary-dark-gray);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-family: 'Inter', sans-serif;
 }
 
 .game-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 32px;
-  padding-bottom: 20px;
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 100;
 }
 
 .back-button {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--primary-light-gray);
-  padding: 8px 16px;
-  border-radius: 8px;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all var(--animation-fast) var(--animation-easing);
-  font-family: var(--font-primary);
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
 }
 
 .back-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--accent-turquoise);
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 .game-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--primary-light-gray);
+  color: var(--text-primary);
   margin: 0;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-size: 24px;
+  font-weight: 700;
+  font-family: 'Orbitron', monospace;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.balance-display {
+  background: rgba(255, 215, 0, 0.1);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  border-radius: 12px;
+  padding: 8px 16px;
+  color: var(--accent-gold);
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  font-size: 16px;
 }
 
 .game-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: clamp(16px, 4vw, 32px);
-  width: 100%;
   flex: 1;
-  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+  padding: 20px 24px;
+  overflow: hidden;
 }
 
 @media screen and (min-width: 1024px) {
@@ -59,111 +93,135 @@
   }
 }
 
+/* 3D Wheel Display */
 .wheel-display {
-  background: var(--primary-dark-gray);
-  border-radius: clamp(12px, 3vw, 20px);
-  padding: clamp(20px, 5vw, 40px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
-  width: 100%;
-  box-sizing: border-box;
+  background: rgba(139, 69, 19, 0.1);
+  border-radius: 20px;
+  border: 3px solid var(--accent-gold);
+  padding: 40px;
+  perspective: 2000px;
+  transform-style: preserve-3d;
 }
 
 .wheel-container {
   position: relative;
-  width: clamp(200px, 40vw, 300px);
-  height: clamp(200px, 40vw, 300px);
-  margin-bottom: clamp(16px, 4vw, 32px);
+  width: 320px;
+  height: 320px;
+  margin-bottom: 40px;
   flex-shrink: 0;
+  transform-style: preserve-3d;
+  perspective: 1500px;
 }
 
 .wheel-pointer {
   position: absolute;
-  top: -10px;
+  top: -20px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 20;
+  filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.5));
 }
 
 .pointer-triangle {
   width: 0;
   height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-top: 30px solid var(--accent-gold);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-top: 36px solid var(--accent-gold);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+  animation: pointerPulse 2s ease-in-out infinite;
 }
 
+/* 3D Wheel */
 .wheel {
   width: 100%;
   height: 100%;
   border-radius: 50%;
   position: relative;
-  border: 4px solid var(--accent-gold);
-  box-shadow: 0 0 30px rgba(255, 193, 7, 0.4);
+  border: 8px solid var(--accent-gold);
+  box-shadow: 
+    0 0 40px rgba(255, 215, 0, 0.6),
+    inset 0 0 30px rgba(0, 0, 0, 0.4),
+    0 8px 32px rgba(0, 0, 0, 0.5);
   transition: transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-style: preserve-3d;
+  background: 
+    radial-gradient(circle at center, var(--accent-gold) 0%, #b8860b 30%, rgba(139, 69, 19, 0.8) 70%, #654321 100%);
 }
 
 .wheel.spinning {
   transition: transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+/* 3D Wheel Sections */
 .wheel-section {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%);
+  clip-path: polygon(50% 50%, 50% 0%, 92.68% 7.32%, 92.68% 92.68%, 50% 50%);
   transform-origin: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
 }
 
 .section-content {
   position: absolute;
-  top: 20%;
-  left: 60%;
-  transform: translateX(-50%);
+  top: 25%;
+  left: 65%;
+  transform: translateX(-50%) translateZ(5px);
   color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(255, 255, 255, 0.3);
+  transform-style: preserve-3d;
 }
 
 .section-label {
-  font-size: clamp(10px, 2.5vw, 16px);
-  font-weight: bold;
-  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 800;
+  font-family: 'Orbitron', monospace;
   line-height: 1;
+  letter-spacing: 1px;
 }
 
 .wheel-center {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: clamp(40px, 8vw, 60px);
-  height: clamp(40px, 8vw, 60px);
+  transform: translate(-50%, -50%) translateZ(10px);
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-secondary));
-  border: clamp(2px, 0.5vw, 3px) solid var(--primary-deep-blue);
+  background: 
+    radial-gradient(circle at 30% 30%, var(--accent-gold), #b8860b, #8b7355);
+  border: 4px solid #2c2c2c;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 5;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 15;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    inset 0 2px 6px rgba(255, 255, 255, 0.3);
+  transform-style: preserve-3d;
 }
 
 .center-logo {
-  font-size: clamp(16px, 4vw, 24px);
-  color: var(--primary-deep-blue);
+  font-size: 24px;
+  color: #2c2c2c;
   line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  animation: centerSpin 4s linear infinite;
 }
 
 .result-display {
@@ -208,13 +266,15 @@
 }
 
 .game-controls {
-  background: var(--primary-dark-gray);
-  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: var(--border-radius);
   padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
   gap: 24px;
+  overflow-y: auto;
 }
 
 .betting-section {
@@ -244,19 +304,20 @@
 .input-wrapper input {
   flex: 1;
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--primary-light-gray);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
   padding: 12px 40px 12px 16px;
-  border-radius: 8px;
-  font-family: var(--font-primary);
+  border-radius: 12px;
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
   font-size: 16px;
-  transition: all var(--animation-fast) var(--animation-easing);
+  transition: var(--transition);
 }
 
 .input-wrapper input:focus {
   outline: none;
-  border-color: var(--accent-turquoise);
-  box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.2);
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
 }
 
 .input-wrapper input:disabled {
@@ -353,13 +414,17 @@
 }
 
 .spin-button {
-  background: linear-gradient(135deg, var(--accent-turquoise), var(--accent-lavender));
-  color: var(--primary-light-gray);
+  background: linear-gradient(135deg, var(--accent-gold), #b8860b);
+  border: 2px solid var(--accent-gold);
+  color: #000;
+  font-family: 'Orbitron', monospace;
+  text-transform: uppercase;
 }
 
 .spin-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #fff700, var(--accent-gold));
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
 }
 
 .spin-button:disabled {
@@ -373,13 +438,17 @@
 }
 
 .play-again-button {
-  background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-secondary));
-  color: var(--primary-deep-blue);
+  background: linear-gradient(135deg, var(--accent-blue), #0099cc);
+  border: 2px solid var(--accent-blue);
+  color: white;
+  font-family: 'Orbitron', monospace;
+  text-transform: uppercase;
 }
 
 .play-again-button:hover {
+  background: linear-gradient(135deg, #00aaff, var(--accent-blue));
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
 }
 
 .spin-icon {
@@ -475,9 +544,32 @@
   color: var(--accent-gold);
 }
 
+/* 3D Animations */
+@keyframes pointerPulse {
+  0%, 100% { 
+    transform: translateX(-50%) scale(1);
+    filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.5));
+  }
+  50% { 
+    transform: translateX(-50%) scale(1.1);
+    filter: drop-shadow(0 6px 12px rgba(255, 215, 0, 0.8));
+  }
+}
+
+@keyframes centerSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @keyframes resultAppear {
-  0% { opacity: 0; transform: scale(0.8) translateY(20px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0% { 
+    opacity: 0; 
+    transform: scale(0.5) translateY(30px) rotateY(180deg);
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) translateY(0) rotateY(0deg);
+  }
 }
 
 @keyframes spinningPulse {

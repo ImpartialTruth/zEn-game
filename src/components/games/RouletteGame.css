@@ -103,6 +103,8 @@
   border-radius: 20px;
   border: 3px solid var(--roulette-wood);
   padding: 40px;
+  perspective: 1500px;
+  transform-style: preserve-3d;
 }
 
 .wheel-wrapper {
@@ -110,6 +112,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transform-style: preserve-3d;
+  transform: rotateX(10deg);
 }
 
 .wheel-pointer {
@@ -136,19 +140,11 @@
     0 0 40px rgba(255, 215, 0, 0.6),
     inset 0 0 30px rgba(0, 0, 0, 0.4),
     0 8px 32px rgba(0, 0, 0, 0.5);
-  transition: transform 3s cubic-bezier(0.25, 0.1, 0.25, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.roulette-wheel.spinning {
-  animation: wheelSpin 3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-}
-
-@keyframes wheelSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(1800deg); }
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 .wheel-number {
@@ -177,6 +173,96 @@
 
 .wheel-number.green {
   background: linear-gradient(135deg, var(--roulette-green), #0a5a0a);
+}
+
+.wheel-number.winner {
+  animation: winnerPulse 1s ease-in-out infinite;
+  z-index: 10;
+  transform: scale(1.2);
+}
+
+@keyframes winnerPulse {
+  0%, 100% { 
+    box-shadow: 
+      0 0 10px rgba(255, 215, 0, 0.8),
+      0 0 20px rgba(255, 215, 0, 0.6),
+      0 0 30px rgba(255, 215, 0, 0.4);
+  }
+  50% { 
+    box-shadow: 
+      0 0 20px rgba(255, 215, 0, 1),
+      0 0 30px rgba(255, 215, 0, 0.8),
+      0 0 40px rgba(255, 215, 0, 0.6);
+  }
+}
+
+/* 3D Ball Track and Ball */
+.ball-track {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+
+.roulette-ball {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform-origin: 50% 140px;
+  width: 16px;
+  height: 16px;
+  transform: translateX(-50%);
+  z-index: 15;
+}
+
+.ball-sphere {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: 
+    radial-gradient(circle at 30% 30%, #ffffff, #e0e0e0, #c0c0c0, #a0a0a0);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.6),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.3),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.8);
+  animation: ballBounce 0.5s ease-in-out infinite alternate;
+  transform-style: preserve-3d;
+}
+
+.roulette-ball.spinning .ball-sphere {
+  animation: ballBounce 0.1s ease-in-out infinite alternate, ballGlow 0.3s ease-in-out infinite alternate;
+}
+
+/* Ball Animations */
+@keyframes ballBounce {
+  0% { 
+    transform: translateZ(0px) scale(1);
+  }
+  100% { 
+    transform: translateZ(4px) scale(1.1);
+  }
+}
+
+@keyframes ballGlow {
+  0% { 
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.6),
+      inset -2px -2px 4px rgba(0, 0, 0, 0.3),
+      inset 2px 2px 4px rgba(255, 255, 255, 0.8),
+      0 0 8px rgba(255, 255, 255, 0.5);
+  }
+  100% { 
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.8),
+      inset -2px -2px 4px rgba(0, 0, 0, 0.3),
+      inset 2px 2px 4px rgba(255, 255, 255, 0.8),
+      0 0 16px rgba(255, 255, 255, 0.8);
+  }
 }
 
 /* Winning Display */

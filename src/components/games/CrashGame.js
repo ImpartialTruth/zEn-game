@@ -182,7 +182,7 @@ const CrashGame = ({ onBack }) => {
               setMultiplier(1.00);
               setGameState('waiting');
               setFlightPath([]);
-              setAirplanePosition({ x: 10, y: 10 });
+              setAirplanePosition({ x: 10, y: 10, banking: 0, climb: 0 });
               setWinnings(0);
               setCountdown(10);
               setUserCashedOut(false);
@@ -191,16 +191,20 @@ const CrashGame = ({ onBack }) => {
             return newMultiplier;
           }
           
-          // Update flight path - airplane moves from left-center to center-right with natural curve
+          // Update 3D flight path with banking and climbing
           const progress = Math.min((newMultiplier - 1) / 8, 1);
           const xPos = 10 + progress * 60; // 10% to 70% (wider center area)
           const yPos = 10 + Math.pow(progress, 0.5) * 65; // 10% to 75% with smoother curve
           
+          // Calculate banking angle based on horizontal movement
+          const bankingAngle = Math.sin(progress * Math.PI * 2) * 15; // Banking left/right
+          const climbAngle = Math.min(progress * 20, 15); // Gradual climb angle
+          
           setFlightPath(prev => {
-            const newPath = [...prev, { x: xPos, y: yPos }];
+            const newPath = [...prev, { x: xPos, y: yPos, banking: bankingAngle, climb: climbAngle }];
             return newPath.length > 100 ? newPath.slice(-100) : newPath;
           });
-          setAirplanePosition({ x: xPos, y: yPos });
+          setAirplanePosition({ x: xPos, y: yPos, banking: bankingAngle, climb: climbAngle });
           
           return newMultiplier;
         });
@@ -286,8 +290,8 @@ const CrashGame = ({ onBack }) => {
       setIsPlaying(true);
       setUserCashedOut(false);
       setWinnings(0);
-      setFlightPath([{ x: 10, y: 10 }]);
-      setAirplanePosition({ x: 10, y: 10 });
+      setFlightPath([{ x: 10, y: 10, banking: 0, climb: 0 }]);
+      setAirplanePosition({ x: 10, y: 10, banking: 0, climb: 0 });
     }
   };
 
@@ -337,18 +341,29 @@ const CrashGame = ({ onBack }) => {
             height="400"
           />
           
-          {/* Airplane */}
+          {/* 3D Airplane */}
           <div 
             className={`airplane ${gameState}`}
             style={{
               left: `${airplanePosition.x}%`,
               bottom: `${airplanePosition.y}%`,
-              transform: `rotate(${Math.min((airplanePosition.x - 10) * 1.2, 40)}deg) scale(2.2)`,
+              transform: `rotate(${Math.min((airplanePosition.x - 10) * 1.2, 40)}deg) scale(1.5)`,
               transition: gameState === 'crashed' ? 'all 0.3s ease-out' : 'none'
             }}
           >
-            <div className="airplane-emoji">✈️</div>
-            <div className="airplane-trail"></div>
+            <div 
+              className="airplane-3d"
+              style={{
+                transform: `rotateX(${airplanePosition.climb || 0}deg) rotateZ(${airplanePosition.banking || 0}deg)`
+              }}
+            >
+              <div className="airplane-body"></div>
+              <div className="airplane-wings"></div>
+              <div className="airplane-tail"></div>
+              <div className="airplane-fin"></div>
+              <div className="airplane-propeller"></div>
+              <div className="airplane-trail"></div>
+            </div>
           </div>
 
           {/* Multiplier display */}

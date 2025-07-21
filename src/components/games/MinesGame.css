@@ -1,15 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap');
+/* ZEN CASINO - 3D MINES GAME */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-  --mines-primary: #1A237E;
-  --mines-dark: #0D1B2A;
-  --mines-gradient: linear-gradient(135deg, #0D1B2A 0%, #1A237E 50%, #0D1B2A 100%);
+  --primary-bg: #0a0a0a;
+  --card-bg: #1a1a1a;
+  --accent-gold: #ffd700;
+  --accent-blue: #00d4ff;
+  --accent-purple: #9d4edd;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --border-radius: 16px;
+  --shadow-game: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
-  --gem-color: #00BCD4;
-  --gem-glow: rgba(0, 188, 212, 0.4);
-  --mine-color: #FF5722;
-  --mine-glow: rgba(255, 87, 34, 0.4);
-  --safe-color: #4CAF50;
+  --gem-color: var(--accent-gold);
+  --gem-glow: rgba(255, 215, 0, 0.4);
+  --mine-color: #ff4444;
+  --mine-glow: rgba(255, 68, 68, 0.4);
+  --safe-color: var(--accent-blue);
   
   --tile-size: min(60px, 12vw);
   --grid-gap: 4px;
@@ -18,14 +26,14 @@
 .mines-game {
   width: 100vw;
   height: 100vh;
-  background: var(--mines-gradient);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   position: fixed;
   top: 0;
   left: 0;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 /* Header */
@@ -33,24 +41,26 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 100;
 }
 
 .back-button {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 .back-button:hover {
@@ -72,19 +82,23 @@
 }
 
 .game-title h2 {
-  color: white;
+  color: var(--text-primary);
   margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  font-family: 'Orbitron', monospace;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
 }
 
 .multiplier-display {
-  font-size: 18px;
-  font-weight: 700;
-  font-family: 'Roboto Mono', monospace;
-  color: var(--gem-color);
-  text-shadow: 0 0 10px currentColor;
+  background: rgba(255, 215, 0, 0.1);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  border-radius: 12px;
+  padding: 8px 16px;
+  color: var(--accent-gold);
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  font-size: 16px;
 }
 
 /* Game History */
@@ -148,55 +162,74 @@
   position: relative;
 }
 
+/* 3D Mines Grid */
 .mines-grid {
   display: grid;
   grid-template-columns: repeat(5, var(--tile-size));
   grid-template-rows: repeat(5, var(--tile-size));
   gap: var(--grid-gap);
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  background: rgba(139, 69, 19, 0.1);
+  border-radius: 20px;
+  border: 3px solid var(--accent-gold);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-game);
+  perspective: 1500px;
+  transform-style: preserve-3d;
+  transform: rotateX(5deg);
 }
 
-/* Mine Tiles */
+/* 3D Mine Tiles */
 .mine-tile {
   width: var(--tile-size);
   height: var(--tile-size);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: 
+    linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.15) 0%, 
+      rgba(255, 255, 255, 0.1) 50%, 
+      rgba(255, 255, 255, 0.05) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
   user-select: none;
   transform-style: preserve-3d;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 
 .mine-tile:hover {
-  transform: translateY(-2px) scale(1.05);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-4px) translateZ(5px) scale(1.05);
+  background: 
+    linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.25) 0%, 
+      rgba(255, 255, 255, 0.15) 50%, 
+      rgba(255, 255, 255, 0.1) 100%);
+  border-color: var(--accent-gold);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.4),
+    0 0 15px rgba(255, 215, 0, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.3);
 }
 
 .mine-tile:active {
-  transform: translateY(0) scale(0.95);
+  transform: translateY(-1px) translateZ(2px) scale(0.95);
 }
 
 .tile-content {
   position: relative;
   z-index: 2;
-  font-size: 24px;
+  font-size: 28px;
   opacity: 0;
-  transform: scale(0);
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform: scale(0) rotateY(180deg);
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform-style: preserve-3d;
 }
 
 .tile-glow {
@@ -205,9 +238,14 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  background: 
+    radial-gradient(circle, 
+      rgba(255, 215, 0, 0.2) 0%, 
+      rgba(255, 255, 255, 0.1) 30%, 
+      transparent 70%);
   opacity: 0;
   transition: opacity 0.3s ease;
+  transform: translateZ(-1px);
 }
 
 .mine-tile:hover .tile-glow {
@@ -222,43 +260,65 @@
 
 .mine-tile.revealed .tile-content {
   opacity: 1;
-  transform: scale(1);
+  transform: scale(1) rotateY(0deg);
 }
 
 .mine-tile.safe {
-  background: linear-gradient(135deg, var(--safe-color), #45a049);
+  background: 
+    linear-gradient(135deg, 
+      var(--safe-color) 0%, 
+      #0099cc 50%, 
+      #007aa3 100%);
   border-color: var(--safe-color);
-  box-shadow: 0 0 20px var(--gem-glow);
-  animation: safeReveal 0.6s ease-out;
+  box-shadow: 
+    0 0 20px rgba(0, 212, 255, 0.6),
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 2px 6px rgba(255, 255, 255, 0.3);
+  animation: safeReveal3D 0.8s ease-out;
+  transform: translateZ(3px);
 }
 
 .mine-tile.mine,
 .mine-tile.show-mine {
-  background: linear-gradient(135deg, var(--mine-color), #d84315);
+  background: 
+    linear-gradient(135deg, 
+      var(--mine-color) 0%, 
+      #cc0000 50%, 
+      #aa0000 100%);
   border-color: var(--mine-color);
-  box-shadow: 0 0 20px var(--mine-glow);
-  animation: mineExplode 0.8s ease-out;
+  box-shadow: 
+    0 0 25px rgba(255, 68, 68, 0.8),
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    inset 0 2px 6px rgba(255, 255, 255, 0.2);
+  animation: mineExplode3D 1s ease-out;
+  transform: translateZ(-2px);
 }
 
 .gem-icon {
   color: var(--gem-color);
-  filter: drop-shadow(0 0 8px var(--gem-glow));
-  animation: gemSparkle 1s ease-in-out infinite;
+  filter: 
+    drop-shadow(0 0 8px var(--gem-glow))
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  animation: gemSparkle3D 2s ease-in-out infinite;
+  transform-style: preserve-3d;
 }
 
 .mine-icon {
   color: var(--mine-color);
-  filter: drop-shadow(0 0 8px var(--mine-glow));
-  animation: mineShake 0.5s ease-in-out;
+  filter: 
+    drop-shadow(0 0 12px var(--mine-glow))
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+  animation: mineShake3D 0.8s ease-in-out;
+  transform-style: preserve-3d;
 }
 
 /* Game Controls */
 .game-controls {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(15px);
-  border-radius: 20px 20px 0 0;
-  padding: 16px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: var(--border-radius);
+  padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
   border-bottom: none;
 }
 
@@ -288,14 +348,15 @@
   padding: 12px 40px 12px 16px;
   border-radius: 12px;
   font-size: 16px;
-  font-family: 'Roboto Mono', monospace;
-  transition: all 0.3s ease;
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  transition: var(--transition);
 }
 
 .bet-input:focus {
   outline: none;
-  border-color: var(--gem-color);
-  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2);
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
 }
 
 .currency {
@@ -353,9 +414,9 @@
 .start-btn,
 .cashout-btn {
   width: 100%;
-  background: linear-gradient(135deg, var(--gem-color), #00ACC1);
-  border: none;
-  color: white;
+  background: linear-gradient(135deg, var(--accent-gold), #b8860b);
+  border: 2px solid var(--accent-gold);
+  color: #000;
   padding: 16px;
   border-radius: 12px;
   font-size: 16px;
@@ -365,14 +426,17 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--transition);
   margin-top: 16px;
+  font-family: 'Orbitron', monospace;
+  text-transform: uppercase;
 }
 
-.start-btn:hover,
-.cashout-btn:hover {
+.start-btn:hover:not(:disabled),
+.cashout-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #fff700, var(--accent-gold));
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
 }
 
 .start-btn:active,
@@ -381,14 +445,21 @@
 }
 
 .cashout-btn {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
+  background: linear-gradient(135deg, var(--accent-blue), #0099cc);
+  border-color: var(--accent-blue);
+  color: white;
   animation: cashoutPulse 2s ease-in-out infinite;
 }
 
 .cashout-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   animation: none;
+}
+
+.start-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .playing-controls {
@@ -499,28 +570,96 @@
   50% { transform: scale(1.1); }
 }
 
-@keyframes gemSparkle {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.1) rotate(5deg); }
-  75% { transform: scale(1.1) rotate(-5deg); }
+@keyframes gemSparkle3D {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  25% { 
+    transform: scale(1.1) rotate(5deg) rotateY(15deg) rotateZ(5deg);
+  }
+  50% { 
+    transform: scale(1.15) rotate(0deg) rotateY(30deg) rotateZ(0deg);
+  }
+  75% { 
+    transform: scale(1.1) rotate(-5deg) rotateY(15deg) rotateZ(-5deg);
+  }
 }
 
-@keyframes mineShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-3px); }
-  75% { transform: translateX(3px); }
+@keyframes mineShake3D {
+  0%, 100% { 
+    transform: translateX(0) translateY(0) rotateZ(0deg);
+  }
+  10% { 
+    transform: translateX(-2px) translateY(-1px) rotateZ(-2deg);
+  }
+  20% { 
+    transform: translateX(2px) translateY(1px) rotateZ(2deg);
+  }
+  30% { 
+    transform: translateX(-3px) translateY(-2px) rotateZ(-3deg);
+  }
+  40% { 
+    transform: translateX(3px) translateY(2px) rotateZ(3deg);
+  }
+  50% { 
+    transform: translateX(-2px) translateY(-1px) rotateZ(-2deg);
+  }
+  60% { 
+    transform: translateX(2px) translateY(1px) rotateZ(2deg);
+  }
+  70% { 
+    transform: translateX(-1px) translateY(-1px) rotateZ(-1deg);
+  }
+  80% { 
+    transform: translateX(1px) translateY(1px) rotateZ(1deg);
+  }
+  90% { 
+    transform: translateX(-1px) translateY(0) rotateZ(0deg);
+  }
 }
 
-@keyframes safeReveal {
-  0% { transform: scale(0.8); opacity: 0; }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
+@keyframes safeReveal3D {
+  0% { 
+    transform: scale(0.5) rotateY(180deg) translateZ(-10px);
+    opacity: 0;
+  }
+  30% { 
+    transform: scale(1.2) rotateY(90deg) translateZ(5px);
+    opacity: 0.7;
+  }
+  60% { 
+    transform: scale(1.1) rotateY(45deg) translateZ(8px);
+    opacity: 0.9;
+  }
+  80% { 
+    transform: scale(1.05) rotateY(10deg) translateZ(3px);
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(1) rotateY(0deg) translateZ(3px);
+    opacity: 1;
+  }
 }
 
-@keyframes mineExplode {
-  0% { transform: scale(1); }
-  30% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+@keyframes mineExplode3D {
+  0% { 
+    transform: scale(1) rotateX(0deg) rotateY(0deg) translateZ(0px);
+  }
+  20% { 
+    transform: scale(1.3) rotateX(15deg) rotateY(15deg) translateZ(8px);
+  }
+  40% { 
+    transform: scale(0.9) rotateX(-10deg) rotateY(-10deg) translateZ(-5px);
+  }
+  60% { 
+    transform: scale(1.2) rotateX(20deg) rotateY(20deg) translateZ(10px);
+  }
+  80% { 
+    transform: scale(0.95) rotateX(-5deg) rotateY(-5deg) translateZ(-2px);
+  }
+  100% { 
+    transform: scale(1) rotateX(0deg) rotateY(0deg) translateZ(-2px);
+  }
 }
 
 @keyframes perfectGlow {

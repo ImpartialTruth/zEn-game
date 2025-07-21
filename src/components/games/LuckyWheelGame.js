@@ -59,9 +59,12 @@ const LuckyWheelGame = ({ onBack }) => {
     <div className="lucky-wheel-game">
       <div className="game-header">
         <button className="back-button" onClick={onBack}>
-          ← Back to Games
+          ← Back
         </button>
-        <h2 className="game-title">Lucky Wheel</h2>
+        <h1 className="game-title">3D Lucky Wheel</h1>
+        <div className="balance-display">
+          Balance: 1000🪙
+        </div>
       </div>
 
       <div className="game-content">

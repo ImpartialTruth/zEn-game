@@ -1,24 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap');
+/* ZEN CASINO - 3D CRASH GAME */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-  --primary-deep-blue: #1A237E;
-  --primary-dark-gray: #263238;
-  --primary-light-gray: #ECEFF1;
-  --primary-medium-gray: #CFD8DC;
-  
-  --accent-turquoise: #00BCD4;
-  --accent-lavender: #BA68C8;
-  --accent-gold: #FFC107;
-  --accent-gold-secondary: #FFAB40;
-  
-  --font-primary: 'Montserrat', sans-serif;
-  --font-heading: 'Poppins', sans-serif;
-  --font-mono: 'Roboto Mono', monospace;
-  
-  --animation-fast: 0.2s;
-  --animation-medium: 0.4s;
-  --animation-slow: 0.8s;
-  --animation-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --primary-bg: #0a0a0a;
+  --card-bg: #1a1a1a;
+  --accent-gold: #ffd700;
+  --accent-blue: #00d4ff;
+  --accent-purple: #9d4edd;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --border-radius: 16px;
+  --shadow-game: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -30,13 +23,14 @@
 .crash-game {
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a2a 50%, #0a0a1a 100%);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   position: fixed;
   top: 0;
   left: 0;
+  font-family: 'Inter', sans-serif;
 }
 
 .game-display {
@@ -101,48 +95,242 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a2a 20%, #2a1a3a 40%, #1a2a3a 60%, #0a0a1a 100%);
+  background: 
+    linear-gradient(135deg, 
+      rgba(10, 10, 10, 0.95) 0%, 
+      rgba(26, 26, 26, 0.9) 50%, 
+      rgba(10, 10, 10, 0.95) 100%),
+    radial-gradient(circle at 70% 30%, 
+      rgba(0, 212, 255, 0.1) 0%, 
+      transparent 50%),
+    radial-gradient(circle at 30% 70%, 
+      rgba(255, 215, 0, 0.1) 0%, 
+      transparent 50%);
   overflow: hidden;
+  perspective: 2000px;
+  transform-style: preserve-3d;
 }
 
+/* 3D Chart Environment */
 .game-canvas {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  transform-style: preserve-3d;
 }
 
+/* 3D Grid System */
+.chart-3d-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.grid-line-horizontal {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  transform-origin: left center;
+  transform: rotateX(5deg);
+}
+
+.grid-line-vertical {
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transform-origin: center bottom;
+  transform: rotateY(2deg);
+}
+
+/* 3D Flight Path Visualization */
+.flight-path-3d {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.path-segment {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, var(--accent-blue), transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent-blue);
+  animation: pathGlow 2s ease-in-out infinite alternate;
+  transform-style: preserve-3d;
+}
+
+@keyframes pathGlow {
+  0% { 
+    opacity: 0.3;
+    transform: scale(0.8) translateZ(0px);
+  }
+  100% { 
+    opacity: 0.8;
+    transform: scale(1.2) translateZ(2px);
+  }
+}
+
+/* 3D Airplane Model */
 .airplane {
   position: absolute;
-  width: 35px;
-  height: 28px;
+  width: 80px;
+  height: 40px;
   z-index: 15;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: transform 0.1s ease-out;
 }
 
-.airplane-emoji {
-  font-size: 24px;
+.airplane-3d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: airplaneFloat 3s ease-in-out infinite;
+}
+
+/* Airplane Body */
+.airplane-body {
   position: absolute;
+  width: 60px;
+  height: 12px;
+  background: linear-gradient(135deg, #e0e0e0, #c0c0c0, #a0a0a0);
+  border-radius: 6px 20px 20px 6px;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%) rotateX(5deg);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 3px rgba(255, 255, 255, 0.3);
+  z-index: 5;
+}
+
+/* Main Wings */
+.airplane-wings {
+  position: absolute;
+  width: 70px;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    #d0d0d0 10%, 
+    #e0e0e0 50%, 
+    #d0d0d0 90%, 
+    transparent 100%);
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%) rotateY(0deg) rotateZ(2deg);
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  z-index: 3;
+}
+
+/* Tail Wings */
+.airplane-tail {
+  position: absolute;
+  width: 25px;
+  height: 2px;
+  background: linear-gradient(90deg, #d0d0d0, #e0e0e0, #d0d0d0);
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%) rotateZ(15deg);
+  border-radius: 2px;
+  z-index: 4;
+}
+
+/* Vertical Stabilizer */
+.airplane-fin {
+  position: absolute;
+  width: 3px;
+  height: 15px;
+  background: linear-gradient(180deg, #d0d0d0, #e0e0e0, #c0c0c0);
+  top: 40%;
+  right: 8px;
+  transform: translateY(-50%) rotateX(10deg);
+  border-radius: 2px;
+  z-index: 4;
+}
+
+/* Propeller */
+.airplane-propeller {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, #a0a0a0, #808080);
+  border-radius: 50%;
+  top: 50%;
+  left: 2px;
+  transform: translateY(-50%);
+  z-index: 6;
+  animation: propellerSpin 0.1s linear infinite;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+.airplane-propeller::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 1px;
+  background: rgba(160, 160, 160, 0.8);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  animation: planeFloat 2s ease-in-out infinite;
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
+  border-radius: 1px;
 }
 
+.airplane-propeller::after {
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 20px;
+  background: rgba(160, 160, 160, 0.8);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 1px;
+}
+
+/* Engine Trail */
 .airplane-trail {
   position: absolute;
   top: 50%;
-  right: 100%;
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, transparent 0%, rgba(0, 188, 212, 0.3) 20%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 255, 255, 0.9) 80%, rgba(255, 255, 255, 1) 100%);
+  right: 75px;
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(0, 212, 255, 0.2) 20%, 
+    rgba(255, 255, 255, 0.6) 50%, 
+    rgba(255, 255, 255, 0.8) 80%, 
+    rgba(255, 255, 255, 1) 100%);
   border-radius: 2px;
   transform: translateY(-50%);
-  opacity: 0.8;
-  animation: trailFlow 1s ease-in-out infinite alternate;
+  opacity: 0.9;
+  animation: engineTrail 1s ease-in-out infinite alternate;
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+  z-index: 1;
+}
+
+/* Crashed State Modifications */
+.airplane.crashed .airplane-3d {
+  animation: crashTumble 2s ease-out;
+}
+
+.airplane.crashed .airplane-propeller {
+  animation: propellerSlowdown 2s ease-out;
+}
+
+.airplane.crashed .airplane-trail {
+  animation: trailFadeOut 1s ease-out;
 }
 
 .multiplier-display {
@@ -511,15 +699,78 @@
   font-family: var(--font-mono);
 }
 
-/* Animations */
-@keyframes planeFloat {
-  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-  50% { transform: translate(-50%, -50%) translateY(-2px); }
+/* 3D Airplane Animations */
+@keyframes airplaneFloat {
+  0%, 100% { 
+    transform: translateY(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  25% { 
+    transform: translateY(-2px) rotateX(2deg) rotateY(1deg) rotateZ(-1deg);
+  }
+  50% { 
+    transform: translateY(-4px) rotateX(0deg) rotateY(-1deg) rotateZ(1deg);
+  }
+  75% { 
+    transform: translateY(-2px) rotateX(-1deg) rotateY(1deg) rotateZ(0deg);
+  }
 }
 
-@keyframes trailFlow {
-  0% { opacity: 0.5; width: 45px; transform: translateY(-50%) scaleX(0.8); }
-  100% { opacity: 0.9; width: 60px; transform: translateY(-50%) scaleX(1.2); }
+@keyframes propellerSpin {
+  from { transform: translateY(-50%) rotateZ(0deg); }
+  to { transform: translateY(-50%) rotateZ(360deg); }
+}
+
+@keyframes engineTrail {
+  0% { 
+    opacity: 0.6; 
+    width: 80px; 
+    transform: translateY(-50%) scaleX(0.8); 
+  }
+  100% { 
+    opacity: 1; 
+    width: 100px; 
+    transform: translateY(-50%) scaleX(1.2); 
+  }
+}
+
+@keyframes crashTumble {
+  0% { 
+    transform: translateY(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  25% { 
+    transform: translateY(-10px) rotateX(180deg) rotateY(90deg) rotateZ(180deg);
+  }
+  50% { 
+    transform: translateY(20px) rotateX(360deg) rotateY(180deg) rotateZ(360deg);
+  }
+  75% { 
+    transform: translateY(10px) rotateX(540deg) rotateY(270deg) rotateZ(540deg);
+  }
+  100% { 
+    transform: translateY(50px) rotateX(720deg) rotateY(360deg) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes propellerSlowdown {
+  0% { 
+    animation-duration: 0.1s;
+  }
+  100% { 
+    animation-duration: 1s;
+    opacity: 0.3;
+  }
+}
+
+@keyframes trailFadeOut {
+  0% { 
+    opacity: 1;
+    width: 100px;
+  }
+  100% { 
+    opacity: 0;
+    width: 20px;
+  }
 }
 
 @keyframes multiplierPulse {

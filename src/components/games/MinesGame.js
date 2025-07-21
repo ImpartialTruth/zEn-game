@@ -255,18 +255,16 @@ const MinesGame = ({ onBack }) => {
     <div className="mines-game">
       <div className="mines-header">
         <button className="back-button" onClick={onBack}>
-          <span>←</span> Back
+          ← Back
         </button>
         
-        <div className="game-title">
+        <h1 className="game-title">
           <div className="title-icon">💎</div>
-          <h2>Mines</h2>
-        </div>
+          <h2>3D Mines</h2>
+        </h1>
         
         <div className="multiplier-display">
-          <span style={{ color: getMultiplierColor() }}>
-            {currentMultiplier.toFixed(2)}x
-          </span>
+          {currentMultiplier.toFixed(2)}x
         </div>
       </div>
 

@@ -10,6 +10,7 @@ const RouletteGame = ({ onBack }) => {
   const [gameHistory, setGameHistory] = useState([]);
   const [totalBet, setTotalBet] = useState(0);
   const [lastWin, setLastWin] = useState(0);
+  const ballRef = useRef(null);
   const wheelRef = useRef(null);
 
   // Roulette numbers in European order
@@ -102,15 +103,46 @@ const RouletteGame = ({ onBack }) => {
     const randomIndex = Math.floor(Math.random() * rouletteNumbers.length);
     const winning = rouletteNumbers[randomIndex];
 
-    // Animate wheel spin
+    // Calculate the final position for the ball
+    const finalAngle = (randomIndex * (360 / rouletteNumbers.length));
+    
+    // Animate ball spin (multiple rotations + final position)
+    if (ballRef.current) {
+      // Reset any previous transform
+      ballRef.current.style.transform = 'rotate(0deg)';
+      ballRef.current.style.transition = 'none';
+      
+      // Add spinning animation
+      setTimeout(() => {
+        ballRef.current.style.transition = 'transform 4s cubic-bezier(0.25, 0.1, 0.25, 1)';
+        // Ball spins counter-clockwise (opposite to wheel direction) 
+        // Multiple rotations + final position
+        const totalRotation = -(360 * 8 + finalAngle); // Negative for counter-clockwise
+        ballRef.current.style.transform = `rotate(${totalRotation}deg)`;
+      }, 50);
+    }
+
+    // Optional: Add slight wheel movement (very subtle)
     if (wheelRef.current) {
-      const rotation = 360 * 5 + (randomIndex * (360 / rouletteNumbers.length));
-      wheelRef.current.style.transform = `rotate(${rotation}deg)`;
+      wheelRef.current.style.transition = 'transform 4s cubic-bezier(0.25, 0.1, 0.25, 1)';
+      wheelRef.current.style.transform = `rotate(${360 * 2}deg)`; // Small wheel rotation
     }
 
     // Calculate winnings after animation
     setTimeout(() => {
       setWinningNumber(winning);
+      
+      // Highlight the winning number on the wheel
+      const winningNumberElement = document.querySelector(
+        `.wheel-number:nth-child(${randomIndex + 1})`
+      );
+      if (winningNumberElement) {
+        winningNumberElement.classList.add('winner');
+        setTimeout(() => {
+          winningNumberElement.classList.remove('winner');
+        }, 3000);
+      }
+      
       let totalWinnings = 0;
 
       selectedNumbers.forEach(bet => {
@@ -157,7 +189,12 @@ const RouletteGame = ({ onBack }) => {
       setSelectedNumbers([]);
       setTotalBet(0);
       setIsSpinning(false);
-    }, 3000);
+      
+      // Reset wheel rotation for next spin
+      if (wheelRef.current) {
+        wheelRef.current.style.transform = 'rotate(0deg)';
+      }
+    }, 4500);
   };
 
   const clearBets = () => {
@@ -183,9 +220,11 @@ const RouletteGame = ({ onBack }) => {
         <div className="wheel-container">
           <div className="wheel-wrapper">
             <div className="wheel-pointer">▼</div>
+            
+            {/* Static Wheel with Numbers */}
             <div
               ref={wheelRef}
-              className={`roulette-wheel ${isSpinning ? 'spinning' : ''}`}
+              className="roulette-wheel"
             >
               {rouletteNumbers.map((item, index) => (
                 <div
@@ -198,6 +237,16 @@ const RouletteGame = ({ onBack }) => {
                   {item.number}
                 </div>
               ))}
+              
+              {/* 3D Ball Track */}
+              <div className="ball-track">
+                <div 
+                  ref={ballRef}
+                  className={`roulette-ball ${isSpinning ? 'spinning' : ''}`}
+                >
+                  <div className="ball-sphere"></div>
+                </div>
+              </div>
             </div>
           </div>
           
