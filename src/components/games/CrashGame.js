@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import * as THREE from 'three';
 import './CrashGame.css';
 
 const CrashGame = ({ onBack }) => {
@@ -25,6 +26,7 @@ const CrashGame = ({ onBack }) => {
   const flyAwayIntervalRef = useRef(null);
   const crashTimeoutRef = useRef(null);
   const audioContextRef = useRef(null);
+  const threeRef = useRef({ scene: null, camera: null, renderer: null, airplane: null });
 
   // Optimize position calculations
   const calculatePosition = useCallback((multiplier) => {
@@ -228,62 +230,188 @@ const CrashGame = ({ onBack }) => {
     };
   }, [gameState, autoCashOutEnabled, cashOutAt, isPlaying, userCashedOut, generateCrashPoint, playSound, handleCashOut]);
 
-  // Canvas drawing effect - simple dashed line
+  // Three.js setup and 3D airplane
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = canvasRef.current;
+    if (!container) return;
     
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0a0a);
+    scene.fog = new THREE.Fog(0x0a0a0a, 10, 100);
     
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
+    // Camera setup
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(0, 5, 15);
+    camera.lookAt(0, 0, 0);
     
-    // Draw simple grid
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 1;
+    // Renderer setup
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
     
-    // Few horizontal lines
-    for (let y = height * 0.2; y <= height * 0.8; y += height * 0.2) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
-    }
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+    scene.add(ambientLight);
     
-    // Few vertical lines
-    for (let x = width * 0.2; x <= width * 0.8; x += width * 0.2) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
-      ctx.stroke();
-    }
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(10, 10, 5);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = 2048;
+    directionalLight.shadow.mapSize.height = 2048;
+    scene.add(directionalLight);
     
-    // Draw simple dashed line path
-    if (flightPath.length > 1) {
-      ctx.setLineDash([8, 4]);
-      ctx.strokeStyle = '#00BCD4';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
+    // 3D Airplane creation
+    const createAirplane = () => {
+      const airplaneGroup = new THREE.Group();
       
-      const scaledPath = flightPath.map(point => ({
-        x: (point.x / 100) * width,
-        y: height - ((point.y) / 100) * height
-      }));
+      // Fuselage (body)
+      const fuselageGeometry = new THREE.CylinderGeometry(0.1, 0.3, 2, 8);
+      const fuselageMaterial = new THREE.MeshPhongMaterial({ color: 0x4CAF50 });
+      const fuselage = new THREE.Mesh(fuselageGeometry, fuselageMaterial);
+      fuselage.rotation.z = Math.PI / 2;
+      fuselage.castShadow = true;
+      airplaneGroup.add(fuselage);
       
-      if (scaledPath.length === 0) return;
+      // Wings
+      const wingGeometry = new THREE.BoxGeometry(2.5, 0.1, 0.5);
+      const wingMaterial = new THREE.MeshPhongMaterial({ color: 0x00BCD4 });
+      const wings = new THREE.Mesh(wingGeometry, wingMaterial);
+      wings.castShadow = true;
+      airplaneGroup.add(wings);
       
-      ctx.moveTo(scaledPath[0].x, scaledPath[0].y);
-      for (let i = 1; i < scaledPath.length; i++) {
-        ctx.lineTo(scaledPath[i].x, scaledPath[i].y);
+      // Tail
+      const tailGeometry = new THREE.BoxGeometry(0.2, 0.8, 0.1);
+      const tailMaterial = new THREE.MeshPhongMaterial({ color: 0x00BCD4 });
+      const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+      tail.position.set(-0.8, 0.3, 0);
+      tail.castShadow = true;
+      airplaneGroup.add(tail);
+      
+      // Propeller
+      const propGeometry = new THREE.BoxGeometry(0.05, 1.2, 0.05);
+      const propMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+      const propeller = new THREE.Mesh(propGeometry, propMaterial);
+      propeller.position.set(1.1, 0, 0);
+      airplaneGroup.add(propeller);
+      
+      airplaneGroup.scale.set(0.5, 0.5, 0.5);
+      return airplaneGroup;
+    };
+    
+    const airplane = createAirplane();
+    scene.add(airplane);
+    
+    // Grid
+    const gridHelper = new THREE.GridHelper(20, 20, 0x00BCD4, 0x444444);
+    gridHelper.position.y = -3;
+    scene.add(gridHelper);
+    
+    // Flight path visualization
+    const pathGeometry = new THREE.BufferGeometry();
+    const pathMaterial = new THREE.LineBasicMaterial({ color: 0x00BCD4, linewidth: 3 });
+    const pathLine = new THREE.Line(pathGeometry, pathMaterial);
+    scene.add(pathLine);
+    
+    // Store references
+    threeRef.current = { scene, camera, renderer, airplane, pathLine, propeller: airplane.children[3] };
+    
+    // Animation loop
+    const animate = () => {
+      requestAnimationFrame(animate);
+      
+      // Rotate propeller
+      if (threeRef.current.propeller && gameState === 'playing') {
+        threeRef.current.propeller.rotation.x += 0.5;
       }
       
-      ctx.stroke();
-      ctx.setLineDash([]);
+      renderer.render(scene, camera);
+    };
+    animate();
+    
+    // Cleanup
+    return () => {
+      if (container && renderer.domElement) {
+        container.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+    };
+  }, []);
+  
+  // Update airplane position and flight path
+  useEffect(() => {
+    const { airplane, pathLine } = threeRef.current;
+    if (!airplane || !pathLine) return;
+    
+    // Convert 2D position to 3D
+    const x = (airplanePosition.x - 50) * 0.3;
+    const y = (airplanePosition.y - 50) * 0.1;
+    const z = 0;
+    
+    airplane.position.set(x, y, z);
+    
+    // Banking and climbing
+    if (airplanePosition.banking !== undefined) {
+      airplane.rotation.z = (airplanePosition.banking * Math.PI) / 180;
+    }
+    if (airplanePosition.climb !== undefined) {
+      airplane.rotation.x = (airplanePosition.climb * Math.PI) / 180;
     }
     
-  }, [flightPath]);
+    // Update flight path
+    if (flightPath.length > 1) {
+      const points = flightPath.map(point => new THREE.Vector3(
+        (point.x - 50) * 0.3,
+        (point.y - 50) * 0.1,
+        0
+      ));
+      pathLine.geometry.setFromPoints(points);
+    }
+  }, [airplanePosition, flightPath]);
+  
+  // Handle game state changes
+  useEffect(() => {
+    const { airplane } = threeRef.current;
+    if (!airplane) return;
+    
+    if (gameState === 'crashed') {
+      // Add explosion effect
+      const particles = new THREE.Group();
+      for (let i = 0; i < 20; i++) {
+        const particleGeometry = new THREE.SphereGeometry(0.05, 4, 4);
+        const particleMaterial = new THREE.MeshBasicMaterial({ color: 0xff4444 });
+        const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+        
+        particle.position.copy(airplane.position);
+        particle.velocity = new THREE.Vector3(
+          (Math.random() - 0.5) * 2,
+          (Math.random() - 0.5) * 2,
+          (Math.random() - 0.5) * 2
+        );
+        particles.add(particle);
+      }
+      
+      threeRef.current.scene.add(particles);
+      
+      // Animate particles
+      const animateExplosion = () => {
+        particles.children.forEach(particle => {
+          particle.position.add(particle.velocity);
+          particle.velocity.multiplyScalar(0.98);
+          particle.material.opacity *= 0.95;
+        });
+        
+        if (particles.children[0]?.material.opacity > 0.1) {
+          requestAnimationFrame(animateExplosion);
+        } else {
+          threeRef.current.scene.remove(particles);
+        }
+      };
+      animateExplosion();
+    }
+  }, [gameState]);
 
   const handlePlaceBet = () => {
     if (betAmount && parseFloat(betAmount) > 0 && gameState === 'waiting') {
@@ -332,39 +460,15 @@ const CrashGame = ({ onBack }) => {
           </div>
         </div>
 
-        {/* Graph container */}
+        {/* 3D Graph container */}
         <div className="graph-container">
-          <canvas 
+          <div 
             ref={canvasRef}
-            className="game-canvas"
-            width="800"
-            height="400"
+            className="game-canvas-3d"
+            style={{ width: '100%', height: '400px', position: 'relative' }}
           />
           
-          {/* 3D Airplane */}
-          <div 
-            className={`airplane ${gameState}`}
-            style={{
-              left: `${airplanePosition.x}%`,
-              bottom: `${airplanePosition.y}%`,
-              transform: `rotate(${Math.min((airplanePosition.x - 10) * 1.2, 40)}deg) scale(1.5)`,
-              transition: gameState === 'crashed' ? 'all 0.3s ease-out' : 'none'
-            }}
-          >
-            <div 
-              className="airplane-3d"
-              style={{
-                transform: `rotateX(${airplanePosition.climb || 0}deg) rotateZ(${airplanePosition.banking || 0}deg)`
-              }}
-            >
-              <div className="airplane-body"></div>
-              <div className="airplane-wings"></div>
-              <div className="airplane-tail"></div>
-              <div className="airplane-fin"></div>
-              <div className="airplane-propeller"></div>
-              <div className="airplane-trail"></div>
-            </div>
-          </div>
+          {/* 3D scene renders here */}
 
           {/* Multiplier display */}
           <div className="multiplier-display">

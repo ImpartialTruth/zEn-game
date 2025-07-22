@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import * as THREE from 'three';
 import './MinesGame.css';
 
 const MinesGame = ({ onBack }) => {
@@ -20,20 +21,231 @@ const MinesGame = ({ onBack }) => {
     winRate: 0
   });
   const audioContextRef = useRef(null);
+  const threeRef = useRef({ scene: null, camera: null, renderer: null, tiles: [] });
+  const containerRef = useRef(null);
 
   const GRID_SIZE = 25; // 5x5 grid
   const MAX_MINES = 20;
   const MIN_MINES = 1;
   
-  // Cleanup on unmount
+  // Three.js 3D grid setup
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1a2e);
+    scene.fog = new THREE.Fog(0x1a1a2e, 10, 50);
+    
+    // Camera setup - isometric view
+    const camera = new THREE.PerspectiveCamera(60, 400 / 400, 0.1, 1000);
+    camera.position.set(10, 15, 10);
+    camera.lookAt(0, 0, 0);
+    
+    // Renderer setup
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(400, 400);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+    
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(10, 10, 5);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = 2048;
+    directionalLight.shadow.mapSize.height = 2048;
+    scene.add(directionalLight);
+    
+    // Create 3D grid tiles
+    const createTiles = () => {
+      const tiles = [];
+      const gridSize = 5; // 5x5 grid
+      const tileSize = 1.5;
+      const spacing = 0.1;
+      const totalSize = (tileSize + spacing) * gridSize - spacing;
+      const offset = totalSize / 2 - tileSize / 2;
+      
+      for (let i = 0; i < GRID_SIZE; i++) {
+        const row = Math.floor(i / gridSize);
+        const col = i % gridSize;
+        
+        const x = col * (tileSize + spacing) - offset;
+        const z = row * (tileSize + spacing) - offset;
+        
+        // Tile base
+        const tileGeometry = new THREE.BoxGeometry(tileSize, 0.3, tileSize);
+        const tileMaterial = new THREE.MeshPhongMaterial({ 
+          color: 0x444444,
+          shininess: 30
+        });
+        const tile = new THREE.Mesh(tileGeometry, tileMaterial);
+        tile.position.set(x, 0, z);
+        tile.castShadow = true;
+        tile.receiveShadow = true;
+        tile.userData = { id: i, revealed: false };
+        
+        // Tile cover
+        const coverGeometry = new THREE.BoxGeometry(tileSize * 0.9, 0.1, tileSize * 0.9);
+        const coverMaterial = new THREE.MeshPhongMaterial({ 
+          color: 0x666666,
+          transparent: true,
+          opacity: 1
+        });
+        const cover = new THREE.Mesh(coverGeometry, coverMaterial);
+        cover.position.set(x, 0.2, z);
+        cover.userData = { id: i, type: 'cover' };
+        
+        // Gem (hidden initially)
+        const gemGeometry = new THREE.OctahedronGeometry(0.3);
+        const gemMaterial = new THREE.MeshPhongMaterial({ 
+          color: 0x00BCD4,
+          transparent: true,
+          opacity: 0,
+          shininess: 100
+        });
+        const gem = new THREE.Mesh(gemGeometry, gemMaterial);
+        gem.position.set(x, 0.4, z);
+        gem.userData = { id: i, type: 'gem' };
+        
+        // Mine (hidden initially)
+        const mineGeometry = new THREE.SphereGeometry(0.25);
+        const mineMaterial = new THREE.MeshPhongMaterial({ 
+          color: 0x333333,
+          transparent: true,
+          opacity: 0
+        });
+        const mine = new THREE.Mesh(mineGeometry, mineMaterial);
+        mine.position.set(x, 0.4, z);
+        mine.userData = { id: i, type: 'mine' };
+        
+        scene.add(tile);
+        scene.add(cover);
+        scene.add(gem);
+        scene.add(mine);
+        
+        tiles.push({ tile, cover, gem, mine, id: i });
+      }
+      
+      return tiles;
+    };
+    
+    const tiles = createTiles();
+    
+    // Base platform
+    const platformGeometry = new THREE.BoxGeometry(12, 0.5, 12);
+    const platformMaterial = new THREE.MeshPhongMaterial({ color: 0x222222 });
+    const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+    platform.position.y = -0.4;
+    platform.receiveShadow = true;
+    scene.add(platform);
+    
+    threeRef.current = { scene, camera, renderer, tiles };
+    
+    // Animation loop
+    const animate = () => {
+      requestAnimationFrame(animate);
+      
+      // Rotate gems
+      tiles.forEach(tileObj => {
+        if (tileObj.gem.material.opacity > 0) {
+          tileObj.gem.rotation.y += 0.02;
+          tileObj.gem.rotation.x += 0.01;
+        }
+      });
+      
+      renderer.render(scene, camera);
+    };
+    animate();
+    
     return () => {
+      if (container && renderer.domElement) {
+        container.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
       if (audioContextRef.current) {
         audioContextRef.current.close();
         audioContextRef.current = null;
       }
     };
   }, []);
+  
+  // Update 3D tiles when game state changes
+  useEffect(() => {
+    const { tiles } = threeRef.current;
+    if (!tiles) return;
+    
+    tiles.forEach(tileObj => {
+      const isRevealed = revealedTiles.has(tileObj.id);
+      const isMine = minePositions.has(tileObj.id);
+      
+      if (isRevealed) {
+        // Hide cover
+        tileObj.cover.material.opacity = 0;
+        
+        if (isMine) {
+          // Show mine with explosion effect
+          tileObj.mine.material.opacity = 1;
+          tileObj.mine.material.color.setHex(0xff4444);
+          tileObj.tile.material.color.setHex(0x884444);
+          
+          // Add explosion particles
+          if (gameState === 'lost') {
+            const particles = new THREE.Group();
+            for (let i = 0; i < 10; i++) {
+              const particleGeometry = new THREE.SphereGeometry(0.05);
+              const particleMaterial = new THREE.MeshBasicMaterial({ color: 0xff4444 });
+              const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+              
+              particle.position.copy(tileObj.mine.position);
+              particle.velocity = new THREE.Vector3(
+                (Math.random() - 0.5) * 2,
+                Math.random() * 2,
+                (Math.random() - 0.5) * 2
+              );
+              particles.add(particle);
+            }
+            
+            threeRef.current.scene.add(particles);
+            
+            const animateExplosion = () => {
+              particles.children.forEach(particle => {
+                particle.position.add(particle.velocity);
+                particle.velocity.y -= 0.05; // gravity
+                particle.material.opacity *= 0.95;
+              });
+              
+              if (particles.children[0]?.material.opacity > 0.1) {
+                requestAnimationFrame(animateExplosion);
+              } else {
+                threeRef.current.scene.remove(particles);
+              }
+            };
+            animateExplosion();
+          }
+        } else {
+          // Show gem
+          tileObj.gem.material.opacity = 1;
+          tileObj.tile.material.color.setHex(0x00BCD4);
+        }
+      } else {
+        // Reset tile
+        tileObj.cover.material.opacity = 1;
+        tileObj.gem.material.opacity = 0;
+        tileObj.mine.material.opacity = 0;
+        tileObj.tile.material.color.setHex(0x444444);
+      }
+      
+      // Show all mines when game is lost
+      if (gameState === 'lost' && minePositions.has(tileObj.id)) {
+        tileObj.mine.material.opacity = 0.7;
+      }
+    });
+  }, [revealedTiles, minePositions, gameState]);
 
   // Calculate multiplier based on mines count and safe clicks
   const calculateMultiplier = useCallback((mines, clicks) => {
@@ -280,30 +492,29 @@ const MinesGame = ({ onBack }) => {
         ))}
       </div>
 
-      {/* Game Grid */}
+      {/* 3D Game Grid */}
       <div className="game-container">
-        <div className="mines-grid">
-          {Array(GRID_SIZE).fill().map((_, index) => (
-            <div
-              key={index}
-              className={getTileClass(index)}
-              onClick={() => handleTileClick(index)}
-            >
-              <div className="tile-content">
-                {revealedTiles.has(index) && (
-                  <>
-                    {minePositions.has(index) ? (
-                      <span className="mine-icon">💣</span>
-                    ) : (
-                      <span className="gem-icon">💎</span>
-                    )}
-                  </>
-                )}
-              </div>
-              <div className="tile-glow"></div>
-            </div>
-          ))}
-        </div>
+        <div 
+          ref={containerRef}
+          className="mines-grid-3d"
+          style={{ width: '400px', height: '400px', margin: '20px auto', cursor: 'pointer' }}
+          onClick={(e) => {
+            // Convert mouse position to tile ID (simplified)
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width - 0.5) * 10;
+            const z = ((e.clientY - rect.top) / rect.height - 0.5) * 10;
+            
+            // Simple grid mapping (5x5)
+            const col = Math.floor((x + 5) / 2);
+            const row = Math.floor((z + 5) / 2);
+            const tileId = row * 5 + col;
+            
+            if (tileId >= 0 && tileId < GRID_SIZE) {
+              handleTileClick(tileId);
+            }
+          }}
+        />
+        <p style={{ textAlign: 'center', color: '#999', fontSize: '14px' }}>Click on the 3D tiles to reveal gems or mines</p>
       </div>
 
       {/* Game Controls */}
