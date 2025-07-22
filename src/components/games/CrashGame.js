@@ -238,18 +238,40 @@ const CrashGame = ({ onBack }) => {
     // Scene setup
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a0a);
-    scene.fog = new THREE.Fog(0x0a0a0a, 10, 100);
+    scene.fog = new THREE.Fog(0x0a0a0a, 5, 50);
     
-    // Camera setup
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(0, 5, 15);
+    // Responsive camera setup
+    const getAspectRatio = () => {
+      const isMobile = window.innerWidth < 768;
+      return isMobile ? 1 : container.clientWidth / container.clientHeight;
+    };
+    
+    const camera = new THREE.PerspectiveCamera(60, getAspectRatio(), 0.1, 1000);
+    const isMobile = window.innerWidth < 768;
+    camera.position.set(0, isMobile ? 3 : 5, isMobile ? 8 : 15);
     camera.lookAt(0, 0, 0);
     
-    // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.shadowMap.enabled = true;
+    // Renderer setup with mobile optimization
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: !isMobile, // Disable antialiasing on mobile for performance
+      alpha: true,
+      powerPreference: 'high-performance'
+    });
+    
+    const updateSize = () => {
+      const isMobile = window.innerWidth < 768;
+      const width = isMobile ? Math.min(container.clientWidth, 350) : container.clientWidth;
+      const height = isMobile ? 250 : 400;
+      
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    };
+    
+    updateSize();
+    renderer.shadowMap.enabled = !isMobile; // Disable shadows on mobile
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
     
     // Lighting
@@ -263,51 +285,115 @@ const CrashGame = ({ onBack }) => {
     directionalLight.shadow.mapSize.height = 2048;
     scene.add(directionalLight);
     
-    // 3D Airplane creation
+    // Enhanced 3D Airplane creation
     const createAirplane = () => {
       const airplaneGroup = new THREE.Group();
+      const scale = isMobile ? 0.3 : 0.5;
       
-      // Fuselage (body)
-      const fuselageGeometry = new THREE.CylinderGeometry(0.1, 0.3, 2, 8);
-      const fuselageMaterial = new THREE.MeshPhongMaterial({ color: 0x4CAF50 });
+      // Modern fuselage with gradient colors
+      const fuselageGeometry = new THREE.CylinderGeometry(0.08, 0.25, 2.2, 12);
+      const fuselageMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0x2E7D32,
+        shininess: 100,
+        specular: 0x4CAF50
+      });
       const fuselage = new THREE.Mesh(fuselageGeometry, fuselageMaterial);
       fuselage.rotation.z = Math.PI / 2;
       fuselage.castShadow = true;
       airplaneGroup.add(fuselage);
       
-      // Wings
-      const wingGeometry = new THREE.BoxGeometry(2.5, 0.1, 0.5);
-      const wingMaterial = new THREE.MeshPhongMaterial({ color: 0x00BCD4 });
+      // Sleeker wings with metallic finish
+      const wingGeometry = new THREE.BoxGeometry(2.8, 0.08, 0.6);
+      const wingMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0x0097A7,
+        shininess: 120,
+        specular: 0x00BCD4
+      });
       const wings = new THREE.Mesh(wingGeometry, wingMaterial);
       wings.castShadow = true;
       airplaneGroup.add(wings);
       
-      // Tail
-      const tailGeometry = new THREE.BoxGeometry(0.2, 0.8, 0.1);
-      const tailMaterial = new THREE.MeshPhongMaterial({ color: 0x00BCD4 });
+      // Enhanced tail design
+      const tailGeometry = new THREE.BoxGeometry(0.15, 0.9, 0.08);
+      const tailMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0x0097A7,
+        shininess: 120
+      });
       const tail = new THREE.Mesh(tailGeometry, tailMaterial);
-      tail.position.set(-0.8, 0.3, 0);
+      tail.position.set(-0.9, 0.35, 0);
       tail.castShadow = true;
       airplaneGroup.add(tail);
       
-      // Propeller
-      const propGeometry = new THREE.BoxGeometry(0.05, 1.2, 0.05);
-      const propMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+      // Spinning propeller with transparent effect
+      const propGeometry = new THREE.BoxGeometry(0.03, 1.4, 0.03);
+      const propMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0xE0E0E0,
+        transparent: true,
+        opacity: 0.8
+      });
       const propeller = new THREE.Mesh(propGeometry, propMaterial);
-      propeller.position.set(1.1, 0, 0);
+      propeller.position.set(1.15, 0, 0);
       airplaneGroup.add(propeller);
       
-      airplaneGroup.scale.set(0.5, 0.5, 0.5);
+      // Engine glow effect
+      const glowGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+      const glowMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0xFF6B35,
+        transparent: true,
+        opacity: 0.6
+      });
+      const engineGlow = new THREE.Mesh(glowGeometry, glowMaterial);
+      engineGlow.position.set(1.0, 0, 0);
+      airplaneGroup.add(engineGlow);
+      
+      airplaneGroup.scale.set(scale, scale, scale);
       return airplaneGroup;
     };
     
     const airplane = createAirplane();
     scene.add(airplane);
     
-    // Grid
-    const gridHelper = new THREE.GridHelper(20, 20, 0x00BCD4, 0x444444);
-    gridHelper.position.y = -3;
+    // Enhanced grid with gradient colors
+    const gridSize = isMobile ? 15 : 25;
+    const gridHelper = new THREE.GridHelper(gridSize, gridSize/2, 0x00BCD4, 0x333366);
+    gridHelper.position.y = isMobile ? -2 : -3;
+    gridHelper.material.transparent = true;
+    gridHelper.material.opacity = 0.3;
     scene.add(gridHelper);
+    
+    // Add atmospheric particles
+    const createAtmosphere = () => {
+      const particleCount = isMobile ? 30 : 80;
+      const positions = new Float32Array(particleCount * 3);
+      const colors = new Float32Array(particleCount * 3);
+      
+      for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 50;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+        
+        const color = new THREE.Color().setHSL(0.6 + Math.random() * 0.2, 0.7, 0.5);
+        colors[i * 3] = color.r;
+        colors[i * 3 + 1] = color.g;
+        colors[i * 3 + 2] = color.b;
+      }
+      
+      const particleGeometry = new THREE.BufferGeometry();
+      particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      
+      const particleMaterial = new THREE.PointsMaterial({
+        size: 0.5,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.6
+      });
+      
+      return new THREE.Points(particleGeometry, particleMaterial);
+    };
+    
+    const atmosphere = createAtmosphere();
+    scene.add(atmosphere);
     
     // Flight path visualization
     const pathGeometry = new THREE.BufferGeometry();
@@ -315,16 +401,40 @@ const CrashGame = ({ onBack }) => {
     const pathLine = new THREE.Line(pathGeometry, pathMaterial);
     scene.add(pathLine);
     
-    // Store references
-    threeRef.current = { scene, camera, renderer, airplane, pathLine, propeller: airplane.children[3] };
+    // Handle window resize
+    const handleResize = () => {
+      updateSize();
+    };
+    window.addEventListener('resize', handleResize);
     
-    // Animation loop
+    // Store references
+    threeRef.current = { 
+      scene, camera, renderer, airplane, pathLine, 
+      propeller: airplane.children[3], 
+      engineGlow: airplane.children[4],
+      atmosphere
+    };
+    
+    // Enhanced animation loop
+    let animationId;
     const animate = () => {
-      requestAnimationFrame(animate);
+      animationId = requestAnimationFrame(animate);
       
       // Rotate propeller
       if (threeRef.current.propeller && gameState === 'playing') {
-        threeRef.current.propeller.rotation.x += 0.5;
+        threeRef.current.propeller.rotation.x += 0.8;
+      }
+      
+      // Engine glow pulsing effect
+      if (threeRef.current.engineGlow && gameState === 'playing') {
+        const time = Date.now() * 0.005;
+        threeRef.current.engineGlow.material.opacity = 0.4 + Math.sin(time) * 0.3;
+      }
+      
+      // Animate atmosphere particles
+      if (threeRef.current.atmosphere) {
+        threeRef.current.atmosphere.rotation.y += 0.001;
+        threeRef.current.atmosphere.rotation.x += 0.0005;
       }
       
       renderer.render(scene, camera);
@@ -333,6 +443,10 @@ const CrashGame = ({ onBack }) => {
     
     // Cleanup
     return () => {
+      window.removeEventListener('resize', handleResize);
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
       if (container && renderer.domElement) {
         container.removeChild(renderer.domElement);
       }
@@ -460,30 +574,67 @@ const CrashGame = ({ onBack }) => {
           </div>
         </div>
 
-        {/* 3D Graph container */}
-        <div className="graph-container">
+        {/* Enhanced 3D Graph container */}
+        <div className="graph-container" style={{ 
+          background: 'linear-gradient(135deg, rgba(26,35,126,0.1) 0%, rgba(16,22,58,0.2) 100%)',
+          borderRadius: '15px',
+          padding: '10px',
+          boxShadow: '0 8px 32px rgba(0,188,212,0.15)',
+          border: '1px solid rgba(0,188,212,0.2)'
+        }}>
           <div 
             ref={canvasRef}
             className="game-canvas-3d"
-            style={{ width: '100%', height: '400px', position: 'relative' }}
+            style={{ 
+              width: '100%', 
+              height: window.innerWidth < 768 ? '250px' : '400px', 
+              position: 'relative',
+              borderRadius: '10px',
+              overflow: 'hidden'
+            }}
           />
           
           {/* 3D scene renders here */}
 
-          {/* Multiplier display */}
-          <div className="multiplier-display">
+          {/* Enhanced Multiplier display */}
+          <div className="multiplier-display" style={{
+            position: 'absolute',
+            top: '20px',
+            right: '20px',
+            background: 'rgba(0,0,0,0.8)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '15px',
+            padding: '15px 25px',
+            border: `2px solid ${getMultiplierColor()}`,
+            boxShadow: `0 0 20px ${getMultiplierColor()}50`
+          }}>
             <div className="multiplier-container">
               <div 
                 className={`multiplier-value ${gameState}`}
-                style={{ color: getMultiplierColor() }}
+                style={{ 
+                  color: getMultiplierColor(),
+                  fontSize: window.innerWidth < 768 ? '24px' : '32px',
+                  fontWeight: 'bold',
+                  textShadow: `0 0 10px ${getMultiplierColor()}`
+                }}
               >
                 {multiplier.toFixed(2)}x
               </div>
               {gameState === 'crashed' && (
-                <div className="crashed-text">CRASHED!</div>
+                <div className="crashed-text" style={{
+                  color: '#ff4444',
+                  fontSize: window.innerWidth < 768 ? '14px' : '16px',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  animation: 'pulse 0.5s ease-in-out'
+                }}>CRASHED!</div>
               )}
               {countdown > 0 && gameState === 'waiting' && (
-                <div className="countdown-text">
+                <div className="countdown-text" style={{
+                  color: '#00BCD4',
+                  fontSize: window.innerWidth < 768 ? '12px' : '14px',
+                  textAlign: 'center'
+                }}>
                   Starting in {countdown}...
                 </div>
               )}
