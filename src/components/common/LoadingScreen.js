@@ -293,9 +293,9 @@ const LoadingScreen = ({ onComplete }) => {
           }, 500);
           return 100;
         }
-        return prev + 2;
+        return prev + 10; // Faster loading for testing
       });
-    }, 50);
+    }, 100); // Slower interval for visibility
 
     return () => clearInterval(interval);
   }, [onComplete]);
