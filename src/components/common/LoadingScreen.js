@@ -48,57 +48,56 @@ const LoadingScreen = ({ onComplete }) => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     container.appendChild(renderer.domElement);
     
-    // Create enhanced cosmic particles
+    // Create realistic starfield
     const particleGeometry = new THREE.BufferGeometry();
-    const particleCount = isMobile ? 150 : 300;
+    const particleCount = isMobile ? 800 : 1500;
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
     const sizes = new Float32Array(particleCount);
-    const velocities = new Float32Array(particleCount * 3);
     
-    const colorPalette = [
-      new THREE.Color(0x00E5FF), // Bright cyan
-      new THREE.Color(0xE1BEE7), // Light lavender  
-      new THREE.Color(0xFFD54F), // Warm gold
-      new THREE.Color(0x66BB6A), // Fresh green
-      new THREE.Color(0xFF4081), // Vibrant pink
-      new THREE.Color(0x7986CB), // Soft blue
-      new THREE.Color(0xFFB74D)  // Orange
+    // Realistic star colors based on stellar classification
+    const starColors = [
+      new THREE.Color(0xFFFFFF), // White dwarf
+      new THREE.Color(0xFFF4EA), // Sun-like
+      new THREE.Color(0xFFE4B5), // Warm yellow
+      new THREE.Color(0xFFD700), // Golden
+      new THREE.Color(0xE6E6FA), // Blue-white
+      new THREE.Color(0xB0C4DE), // Light blue
+      new THREE.Color(0xFF6B47), // Red giant
+      new THREE.Color(0xFFA500)  // Orange
     ];
     
     for (let i = 0; i < particleCount; i++) {
-      // Create spiral galaxy distribution
-      const radius = Math.random() * 80 + 20;
-      const angle = Math.random() * Math.PI * 2;
-      const height = (Math.random() - 0.5) * 60;
+      // Distribute stars realistically in 3D space
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const radius = 100 + Math.random() * 200;
       
-      positions[i * 3] = Math.cos(angle) * radius;
-      positions[i * 3 + 1] = height;
-      positions[i * 3 + 2] = Math.sin(angle) * radius;
+      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = radius * Math.cos(phi);
       
-      // Random velocities for floating effect
-      velocities[i * 3] = (Math.random() - 0.5) * 0.02;
-      velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.02;
-      velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.02;
-      
-      const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+      // Realistic star color distribution
+      const colorIndex = Math.floor(Math.pow(Math.random(), 2) * starColors.length);
+      const color = starColors[colorIndex];
       colors[i * 3] = color.r;
       colors[i * 3 + 1] = color.g;
       colors[i * 3 + 2] = color.b;
       
-      sizes[i] = Math.random() * 3 + 0.5;
+      // Realistic star size distribution (most stars are small)
+      sizes[i] = Math.pow(Math.random(), 3) * 2 + 0.5;
     }
     
     particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
     
-    // Enhanced particle material
+    // Realistic star material
     const particleMaterial = new THREE.PointsMaterial({
-      size: isMobile ? 1.5 : 2.5,
+      size: isMobile ? 1.0 : 1.5,
       vertexColors: true,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.8,
       sizeAttenuation: true,
       blending: THREE.AdditiveBlending
     });
@@ -106,109 +105,90 @@ const LoadingScreen = ({ onComplete }) => {
     const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
     scene.add(particleSystem);
     
-    // Add floating energy orbs
-    const createEnergyOrbs = () => {
-      const orbGroup = new THREE.Group();
-      const orbCount = isMobile ? 8 : 15;
+    // Add realistic nebula clouds
+    const createNebula = () => {
+      const nebulaGroup = new THREE.Group();
+      const cloudCount = isMobile ? 3 : 6;
       
-      for (let i = 0; i < orbCount; i++) {
-        const orbGeometry = new THREE.SphereGeometry(0.5 + Math.random() * 0.5, 8, 8);
-        const orbMaterial = new THREE.MeshBasicMaterial({
-          color: colorPalette[Math.floor(Math.random() * colorPalette.length)],
+      for (let i = 0; i < cloudCount; i++) {
+        const cloudGeometry = new THREE.SphereGeometry(15 + Math.random() * 20, 8, 6);
+        
+        // Realistic nebula colors (hydrogen, oxygen, sulfur emissions)
+        const nebulaColors = [0x994455, 0x556699, 0x669944, 0x664499, 0x996644];
+        const nebulaColor = nebulaColors[Math.floor(Math.random() * nebulaColors.length)];
+        
+        const cloudMaterial = new THREE.MeshBasicMaterial({
+          color: nebulaColor,
           transparent: true,
-          opacity: 0.3,
+          opacity: 0.08 + Math.random() * 0.05,
           blending: THREE.AdditiveBlending
         });
         
-        const orb = new THREE.Mesh(orbGeometry, orbMaterial);
-        orb.position.set(
-          (Math.random() - 0.5) * 60,
-          (Math.random() - 0.5) * 40,
-          (Math.random() - 0.5) * 40
+        const cloud = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        cloud.position.set(
+          (Math.random() - 0.5) * 300,
+          (Math.random() - 0.5) * 200,
+          (Math.random() - 0.5) * 300
         );
         
-        orbGroup.add(orb);
+        nebulaGroup.add(cloud);
       }
       
-      return orbGroup;
+      return nebulaGroup;
     };
     
-    const energyOrbs = createEnergyOrbs();
-    scene.add(energyOrbs);
+    const nebula = createNebula();
+    scene.add(nebula);
     
-    // Enhanced sacred geometry mandala
-    const createMandala = () => {
-      const mandalaGroup = new THREE.Group();
-      const scale = isMobile ? 0.7 : 1.0;
+    // Add distant galaxy
+    const createGalaxy = () => {
+      const galaxyGroup = new THREE.Group();
       
-      // Create multiple mandala layers
-      for (let ring = 0; ring < 6; ring++) {
-        const radius = (ring + 1) * 4 * scale;
-        const count = (ring + 2) * 6;
+      // Create spiral galaxy structure
+      const spiralStars = new THREE.BufferGeometry();
+      const spiralCount = isMobile ? 200 : 400;
+      const spiralPositions = new Float32Array(spiralCount * 3);
+      const spiralColors = new Float32Array(spiralCount * 3);
+      
+      for (let i = 0; i < spiralCount; i++) {
+        const t = i / spiralCount;
+        const angle = t * Math.PI * 8; // 4 spiral arms
+        const radius = t * 25;
         
-        for (let i = 0; i < count; i++) {
-          const angle = (i / count) * Math.PI * 2;
-          const x = Math.cos(angle) * radius;
-          const y = Math.sin(angle) * radius;
-          
-          // Alternating geometry types for visual interest
-          let geometry, material;
-          
-          if (ring % 2 === 0) {
-            geometry = new THREE.RingGeometry(0.1, 0.4, 6);
-            material = new THREE.MeshBasicMaterial({ 
-              color: colorPalette[ring % colorPalette.length],
-              transparent: true,
-              opacity: 0.7 - ring * 0.08,
-              blending: THREE.AdditiveBlending
-            });
-          } else {
-            geometry = new THREE.CircleGeometry(0.2, 6);
-            material = new THREE.MeshBasicMaterial({ 
-              color: colorPalette[(ring + 1) % colorPalette.length],
-              transparent: true,
-              opacity: 0.5 - ring * 0.06,
-              blending: THREE.AdditiveBlending
-            });
-          }
-          
-          const shape = new THREE.Mesh(geometry, material);
-          shape.position.set(x, y, (Math.random() - 0.5) * 10);
-          shape.rotation.z = angle + ring * 0.5;
-          mandalaGroup.add(shape);
-        }
+        spiralPositions[i * 3] = Math.cos(angle) * radius;
+        spiralPositions[i * 3 + 1] = Math.sin(angle) * radius;
+        spiralPositions[i * 3 + 2] = (Math.random() - 0.5) * 5;
+        
+        // Galaxy core is brighter
+        const brightness = Math.max(0.3, 1 - t);
+        spiralColors[i * 3] = brightness;
+        spiralColors[i * 3 + 1] = brightness * 0.9;
+        spiralColors[i * 3 + 2] = brightness * 0.7;
       }
       
-      // Central lotus pattern
-      const centerGroup = new THREE.Group();
-      for (let i = 0; i < 8; i++) {
-        const angle = (i / 8) * Math.PI * 2;
-        const petalGeometry = new THREE.CircleGeometry(1.5 * scale, 8);
-        const petalMaterial = new THREE.MeshBasicMaterial({
-          color: colorPalette[i % 3],
-          transparent: true,
-          opacity: 0.4,
-          blending: THREE.AdditiveBlending
-        });
-        
-        const petal = new THREE.Mesh(petalGeometry, petalMaterial);
-        petal.position.set(
-          Math.cos(angle) * 1.5 * scale,
-          Math.sin(angle) * 1.5 * scale,
-          0
-        );
-        petal.rotation.z = angle;
-        centerGroup.add(petal);
-      }
+      spiralStars.setAttribute('position', new THREE.BufferAttribute(spiralPositions, 3));
+      spiralStars.setAttribute('color', new THREE.BufferAttribute(spiralColors, 3));
       
-      mandalaGroup.add(centerGroup);
-      return mandalaGroup;
+      const spiralMaterial = new THREE.PointsMaterial({
+        size: 0.5,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.6,
+        blending: THREE.AdditiveBlending
+      });
+      
+      const spiral = new THREE.Points(spiralStars, spiralMaterial);
+      spiral.position.set(-50, -30, -100);
+      spiral.rotation.x = Math.PI / 6;
+      galaxyGroup.add(spiral);
+      
+      return galaxyGroup;
     };
     
-    const mandala = createMandala();
-    scene.add(mandala);
+    const galaxy = createGalaxy();
+    scene.add(galaxy);
     
-    threeRef.current = { scene, camera, renderer, particles: particleSystem, mandala, energyOrbs, velocities };
+    threeRef.current = { scene, camera, renderer, particles: particleSystem, nebula, galaxy };
     
     // Enhanced animation loop
     let animationId;
@@ -217,45 +197,26 @@ const LoadingScreen = ({ onComplete }) => {
       
       const time = Date.now() * 0.001;
       
-      // Gentle particle system rotation
-      particleSystem.rotation.y += 0.003;
-      particleSystem.rotation.x += 0.001;
+      // Realistic slow space rotation
+      particleSystem.rotation.y += 0.0005;
+      particleSystem.rotation.x += 0.0002;
       
-      // Organic particle movement with velocities
-      const positions = particleSystem.geometry.attributes.position.array;
-      for (let i = 0; i < particleCount; i++) {
-        const i3 = i * 3;
+      // Subtle nebula movement
+      nebula.children.forEach((cloud, index) => {
+        cloud.rotation.x += 0.0001 * (index + 1);
+        cloud.rotation.y += 0.0002 * (index + 1);
+        cloud.rotation.z += 0.00015 * (index + 1);
         
-        // Apply stored velocities
-        positions[i3] += velocities[i3];
-        positions[i3 + 1] += velocities[i3 + 1] + Math.sin(time + i * 0.01) * 0.02;
-        positions[i3 + 2] += velocities[i3 + 2];
-        
-        // Boundary wrapping
-        if (Math.abs(positions[i3]) > 100) velocities[i3] *= -1;
-        if (Math.abs(positions[i3 + 1]) > 50) velocities[i3 + 1] *= -1;
-        if (Math.abs(positions[i3 + 2]) > 100) velocities[i3 + 2] *= -1;
-      }
-      particleSystem.geometry.attributes.position.needsUpdate = true;
-      
-      // Sacred geometry mandala rotation
-      mandala.rotation.z += 0.008;
-      mandala.rotation.x = Math.sin(time * 0.5) * 0.1;
-      mandala.rotation.y = Math.cos(time * 0.3) * 0.05;
-      
-      // Energy orbs floating animation
-      energyOrbs.children.forEach((orb, index) => {
-        orb.position.y += Math.sin(time * 2 + index) * 0.01;
-        orb.rotation.x += 0.01;
-        orb.rotation.y += 0.005;
-        
-        // Pulsing opacity
-        orb.material.opacity = 0.2 + Math.sin(time * 3 + index) * 0.15;
+        // Very subtle opacity variation
+        cloud.material.opacity = (0.08 + Math.sin(time * 0.1 + index) * 0.02);
       });
       
-      // Camera gentle movement
-      camera.position.x = Math.sin(time * 0.2) * 2;
-      camera.position.y = Math.cos(time * 0.15) * 1;
+      // Distant galaxy rotation
+      galaxy.rotation.z += 0.001;
+      
+      // Very subtle camera drift like astronaut perspective
+      camera.position.x = Math.sin(time * 0.02) * 0.5;
+      camera.position.y = Math.cos(time * 0.015) * 0.3;
       camera.lookAt(0, 0, 0);
       
       renderer.render(scene, camera);
@@ -293,9 +254,9 @@ const LoadingScreen = ({ onComplete }) => {
           }, 500);
           return 100;
         }
-        return prev + 10; // Faster loading for testing
+        return prev + 1; // Slower loading to see cosmic effects
       });
-    }, 100); // Slower interval for visibility
+    }, 200); // Even slower to see cosmic loading
 
     return () => clearInterval(interval);
   }, [onComplete]);
@@ -313,11 +274,11 @@ const LoadingScreen = ({ onComplete }) => {
         left: 0, 
         width: '100%', 
         height: '100%', 
-        zIndex: 0 
+        zIndex: 3
       }} />
       <div className="loading-content" style={{ 
         position: 'relative', 
-        zIndex: 1,
+        zIndex: 4,
         backdropFilter: 'blur(1px)'
       }}>
         <div className="zen-logo">
