@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GAME_TYPES } from '../../utils/constants';
-import CrashGame from './CrashGame';
+import CrashGameNew from './CrashGameNew';
 import CoinFlipGame from './CoinFlipGame';
 import LuckyWheelGame from './LuckyWheelGame';
 import MinesGame from './MinesGame';
@@ -76,7 +76,7 @@ const GamesSection = ({ onGameSelect, onGameExit, exitGame }) => {
   const renderGameComponent = () => {
     switch (selectedGame) {
       case GAME_TYPES.CRASH:
-        return <CrashGame onBack={handleBackToSelection} />;
+        return <CrashGameNew onBack={handleBackToSelection} />;
       case GAME_TYPES.COIN_FLIP:
         return <CoinFlipGame onBack={handleBackToSelection} />;
       case GAME_TYPES.LUCKY_WHEEL:
