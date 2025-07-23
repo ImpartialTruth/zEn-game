@@ -51,44 +51,67 @@ const CrashGameNew = ({ onBack }) => {
     const fuselage = new THREE.Mesh(fuselageGeometry, fuselageMaterial);
     fuselage.rotation.z = Math.PI / 2;
     fuselage.position.x = 0.2;
+<<<<<<< HEAD
     fuselage.castShadow = true;
+=======
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
     airplaneGroup.add(fuselage);
 
     // Cockpit canopy - realistic fighter cockpit
     const canopyGeometry = new THREE.SphereGeometry(0.25, 8, 6, 0, Math.PI);
     const canopyMaterial = new THREE.MeshPhongMaterial({
+<<<<<<< HEAD
       color: 0x1a365d,
       transparent: true,
       opacity: 0.7,
       shininess: 200,
       specular: 0xffffff
+=======
+      color: 0x2d3748,
+      transparent: true,
+      opacity: 0.8,
+      shininess: 200
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
     });
     const canopy = new THREE.Mesh(canopyGeometry, canopyMaterial);
     canopy.position.set(0.8, 0.1, 0);
     canopy.rotation.z = Math.PI / 2;
+<<<<<<< HEAD
     canopy.castShadow = true;
+=======
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
     airplaneGroup.add(canopy);
 
     // Delta wings - F-16 style swept wings
     const wingGeometry = new THREE.ConeGeometry(1.8, 0.8, 3);
     const wingMaterial = new THREE.MeshPhongMaterial({
       color: 0x5a6578,
+<<<<<<< HEAD
       shininess: 80,
       specular: 0x777777
+=======
+      shininess: 80
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
     });
     
     const leftWing = new THREE.Mesh(wingGeometry, wingMaterial);
     leftWing.rotation.x = Math.PI / 2;
     leftWing.rotation.z = -Math.PI / 6;
     leftWing.position.set(-0.2, 0, 1.2);
+<<<<<<< HEAD
     leftWing.castShadow = true;
+=======
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
     airplaneGroup.add(leftWing);
     
     const rightWing = new THREE.Mesh(wingGeometry, wingMaterial);
     rightWing.rotation.x = Math.PI / 2;
     rightWing.rotation.z = Math.PI / 6;
     rightWing.position.set(-0.2, 0, -1.2);
+<<<<<<< HEAD
     rightWing.castShadow = true;
+=======
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
     airplaneGroup.add(rightWing);
 
     // Vertical stabilizer - tail fin
@@ -96,20 +119,30 @@ const CrashGameNew = ({ onBack }) => {
     const tail = new THREE.Mesh(tailGeometry, wingMaterial);
     tail.rotation.z = Math.PI / 2;
     tail.position.set(-1.2, 0.6, 0);
+<<<<<<< HEAD
     tail.castShadow = true;
+=======
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
     airplaneGroup.add(tail);
 
     // Engine exhaust with afterburner effect
     const exhaustGeometry = new THREE.CylinderGeometry(0.12, 0.18, 0.6, 8);
     const exhaustMaterial = new THREE.MeshPhongMaterial({
       color: 0x2d2d2d,
+<<<<<<< HEAD
       emissive: 0x331100,
       shininess: 50
+=======
+      emissive: 0x331100
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
     });
     const exhaust = new THREE.Mesh(exhaustGeometry, exhaustMaterial);
     exhaust.rotation.z = Math.PI / 2;
     exhaust.position.x = -1.6;
+<<<<<<< HEAD
     exhaust.castShadow = true;
+=======
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
     airplaneGroup.add(exhaust);
 
     // Afterburner flame effect
@@ -126,6 +159,7 @@ const CrashGameNew = ({ onBack }) => {
 
     // Landing gear (retracted position details)
     const gearGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.3);
+<<<<<<< HEAD
     const gearMaterial = new THREE.MeshPhongMaterial({ 
       color: 0x333333,
       shininess: 30
@@ -133,6 +167,11 @@ const CrashGameNew = ({ onBack }) => {
     const gear = new THREE.Mesh(gearGeometry, gearMaterial);
     gear.position.set(0.2, -0.15, 0);
     gear.castShadow = true;
+=======
+    const gearMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
+    const gear = new THREE.Mesh(gearGeometry, gearMaterial);
+    gear.position.set(0.2, -0.15, 0);
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
     airplaneGroup.add(gear);
 
     // Scale and position
@@ -263,6 +302,10 @@ const CrashGameNew = ({ onBack }) => {
         oscillator.frequency.setValueAtTime(sound.frequency, audioContext.currentTime);
         
         if (type === 'engine') {
+<<<<<<< HEAD
+=======
+          // Engine sound with modulation
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
           gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
           oscillator.frequency.exponentialRampToValueAtTime(
             sound.frequency * 1.5, 
@@ -388,7 +431,10 @@ const CrashGameNew = ({ onBack }) => {
     const ocean = new THREE.Mesh(oceanGeometry, oceanMaterial);
     ocean.rotation.x = -Math.PI / 2;
     ocean.position.y = -15;
+<<<<<<< HEAD
     ocean.receiveShadow = !isMobile;
+=======
+>>>>>>> 12bc164e6a407ea2738ba90c3732d24a316b44db
     scene.add(ocean);
 
     // Store references
